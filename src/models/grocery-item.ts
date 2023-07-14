@@ -1,20 +1,26 @@
-export enum GroceryTypes {
+export enum eGroceryType {
     Fruit = 'fruit',
     Vegetable = 'vegetable',
     Other = 'other',
 }
 
-export enum GroceryItemStatuses {
+export enum eGroceryItemStatus {
     Done = 'done',
     Undone = 'undone',
+}
+
+export enum eGroceryItemPriority {
+    Major= 'major',
+    Medium = 'medium',
+    Low = 'low',
 }
 
 export class GroceryItemDTO {
     id: string;
     name: string;
-    type: GroceryTypes;
+    type: eGroceryType;
 
-    constructor(id: string, name: string, type: GroceryTypes) {
+    constructor(id: string, name: string, type: eGroceryType) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -24,6 +30,7 @@ export class GroceryItemDTO {
 export interface IGroceryItem {
     id: string;
     name: string;
-    type: GroceryTypes;
-    status: GroceryItemStatuses;
+    type: eGroceryType;
+    status: eGroceryItemStatus;
+    priority: eGroceryItemPriority;
 }

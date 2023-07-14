@@ -1,11 +1,38 @@
+@import "../../styles/colors";
+
 .groceryItem {
   & label {
     font-size: 1.6rem;
   }
 
   &Done {
+    background-color: $disabled !important;
+
     & label {
       text-decoration: line-through;
+    }
+  }
+
+  &Content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &Priority {
+    font-weight: 500;
+    text-transform: lowercase;
+
+    &.major {
+      color: $danger;
+    }
+
+    &.medium {
+      color: $warning;
+    }
+
+    &.low {
+      color: $success;
     }
   }
 }
