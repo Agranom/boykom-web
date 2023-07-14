@@ -1,0 +1,33 @@
+@import "../../styles/colors";
+
+
+.listGroup {
+  position: relative;
+  display: grid;
+  grid-row-gap: 1.5rem;
+  margin-top: 7rem;
+
+  &Label {
+    $height: 4rem;
+    position: absolute;
+    right: 0;
+    top: -$height;
+    width: 20rem;
+    height: $height;
+    line-height: $height;
+    text-align: center;
+    background-color: $primary-color;
+    border-radius: 5px 5px 0 0 ;
+    z-index: -1;
+    &>span {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 500;
+    }
+  }
+
+  &Item {
+
+  }
+
+}

@@ -1,0 +1,12 @@
+.groceryItem {
+  & label {
+    font-size: 1.6rem;
+  }
+
+  &Done {
+    & label {
+      text-decoration: line-through;
+    }
+  }
+}
+
