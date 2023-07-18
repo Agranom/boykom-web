@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from '../../models/grocery-item';
+import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem, INewGroceryItem } from '../../models/grocery-item';
 import GroceriesList from './GroceriesList';
+import GroceryForm from './GroceryForm';
+import styles from './Grocery.module.scss'
 
 const defaultData: IGroceryItem[] = [
     {
@@ -35,8 +37,14 @@ const Grocery = () => {
             return prevData.slice();
         });
     };
+    const addItemHandler = (item: INewGroceryItem) => {
+        setData((prevData: IGroceryItem[]) => {
+            return [...prevData, {...item, id: String(prevData.length + 1)} as IGroceryItem]
+        })
+    }
     return (
-        <div>
+        <div className={styles.groceryWrapper}>
+            <GroceryForm onSubmit={addItemHandler}/>
             <GroceriesList onItemStatusChange={itemStatusHandler} data={data}/>
         </div>
     );

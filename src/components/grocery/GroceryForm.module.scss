@@ -1,0 +1,12 @@
+.groceryForm {
+  display: flex;
+  gap: 1rem;
+
+  &ProductName {
+    flex: 1;
+  }
+
+  &Priority {
+    flex: 0.5;
+  }
+}

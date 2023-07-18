@@ -34,3 +34,8 @@ export interface IGroceryItem {
     status: eGroceryItemStatus;
     priority: eGroceryItemPriority;
 }
+
+export interface INewGroceryItem {
+    name: string;
+    priority: eGroceryItemPriority;
+}
