@@ -1,26 +1,23 @@
 import { useState } from 'react';
-import { eGroceryItemPriority, eGroceryItemStatus, eGroceryType, IGroceryItem } from '../../models/grocery-item';
+import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from '../../models/grocery-item';
 import GroceriesList from './GroceriesList';
 
 const defaultData: IGroceryItem[] = [
     {
         id: '1',
         name: 'Яблоко',
-        type: eGroceryType.Fruit,
         status: eGroceryItemStatus.Undone,
         priority: eGroceryItemPriority.Major,
     },
     {
         id: '2',
         name: 'Абрикос',
-        type: eGroceryType.Fruit,
         status: eGroceryItemStatus.Undone,
         priority: eGroceryItemPriority.Medium,
     },
     {
         id: '3',
         name: 'Помидор',
-        type: eGroceryType.Vegetable,
         status: eGroceryItemStatus.Undone,
         priority: eGroceryItemPriority.Low,
     },

@@ -30,7 +30,7 @@ export class GroceryItemDTO {
 export interface IGroceryItem {
     id: string;
     name: string;
-    type: eGroceryType;
+    // type: eGroceryType;
     status: eGroceryItemStatus;
     priority: eGroceryItemPriority;
 }
