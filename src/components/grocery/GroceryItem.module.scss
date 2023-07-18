@@ -24,18 +24,22 @@
 
   &Priority {
     font-weight: 500;
+    font-size: 1.2rem !important;
     text-transform: lowercase;
 
     &.major {
       color: $danger;
+      border-color: $danger;
     }
 
     &.medium {
       color: $warning;
+      border-color: $warning;
     }
 
     &.low {
       color: $success;
+      border-color: $success;
     }
   }
 
