@@ -1,5 +1,5 @@
 import React from 'react';
-import { IGroceryItem, IGroceryItem as GroceryItemModel } from '../../models/grocery-item';
+import { IGroceryItem, IGroceryItem as GroceryItemModel } from '../models/grocery-item';
 import GroceryItem from './GroceryItem';
 import styles from './GroceriesList.module.scss'
 

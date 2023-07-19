@@ -2,8 +2,8 @@ import { Add } from '@mui/icons-material';
 import { Fab, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
-import { eGroceryItemPriority, INewGroceryItem } from '../../models/grocery-item';
-import { GroceryTypesTranslator } from '../../utils/grocery-types-translator';
+import { eGroceryItemPriority, INewGroceryItem } from '../models/grocery-item';
+import { GroceryTypesTranslator } from '../utils/grocery-types-translator';
 import styles from './GroceryForm.module.scss'
 import * as yup from 'yup';
 

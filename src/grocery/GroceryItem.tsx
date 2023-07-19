@@ -11,8 +11,8 @@ import {
     MenuItem,
 } from '@mui/material';
 import React, { useRef } from 'react';
-import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from '../../models/grocery-item';
-import { GroceryTypesTranslator } from '../../utils/grocery-types-translator';
+import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from '../models/grocery-item';
+import { GroceryTypesTranslator } from '../utils/grocery-types-translator';
 import ToggleMenu, { IToggleMenuRef } from '../shared/ToggleMenu';
 import styles from './GroceryItem.module.scss';
 

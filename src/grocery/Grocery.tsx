@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem, INewGroceryItem } from '../../models/grocery-item';
+import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem, INewGroceryItem } from '../models/grocery-item';
 import GroceriesList from './GroceriesList';
 import GroceryForm from './GroceryForm';
 import styles from './Grocery.module.scss'

@@ -1,4 +1,4 @@
-@import "../../styles/colors";
+@import "../styles/colors";
 
 .groceryItem {
   display: flex;
@@ -20,6 +20,7 @@
     align-items: center;
     justify-content: space-between;
     flex: 1;
+    padding: 1rem !important;
   }
 
   &Priority {
