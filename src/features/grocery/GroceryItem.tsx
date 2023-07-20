@@ -11,35 +11,46 @@ import {
     MenuItem,
 } from '@mui/material';
 import React, { useRef } from 'react';
-import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from '../models/grocery-item';
-import { GroceryTypesTranslator } from '../utils/grocery-types-translator';
-import ToggleMenu, { IToggleMenuRef } from '../shared/ToggleMenu';
+import ToggleMenu, { IToggleMenuRef } from '../../shared/ToggleMenu';
+import { GroceryTypesTranslator } from '../../utils/grocery-types-translator';
 import styles from './GroceryItem.module.scss';
+import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
 
 enum eMenuActions {
     Edit,
     Delete,
 }
 
-const GroceryItem: React.FC<{ item: IGroceryItem, onItemChange: (item: Partial<IGroceryItem>) => void }> = ({
-                                                                                                                item,
-                                                                                                                onItemChange,
-                                                                                                            }) => {
+type GroceryItemProps = {
+    item: IGroceryItem;
+    onItemStatusChange: (item: Partial<IGroceryItem>) => void;
+    onItemUpdate: (item: IGroceryItem) => void;
+    onItemDelete: (id: string) => void;
+}
+
+const GroceryItem: React.FC<GroceryItemProps> = ({
+                                                     item,
+                                                     onItemStatusChange,
+                                                     onItemUpdate,
+                                                     onItemDelete,
+                                                 }) => {
     const priorityMenuRef = useRef<IToggleMenuRef>(null);
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
-        onItemChange({ status, id: item.id });
+        onItemStatusChange({ status, id: item.id });
     };
     const handlePriorityChange = (priority: eGroceryItemPriority) => {
         return () => {
-            console.log(priority);
+            onItemUpdate({ ...item, priority });
             priorityMenuRef.current?.closeMenu();
         };
     };
     const handleActionClick = (action: eMenuActions) => {
         return () => {
-            console.log(action);
+            if (action === eMenuActions.Delete) {
+                onItemDelete(item.id as string);
+            }
             actionsMenuRef.current?.closeMenu();
         };
     };
@@ -52,7 +63,8 @@ const GroceryItem: React.FC<{ item: IGroceryItem, onItemChange: (item: Partial<I
             <CardContent className={styles.groceryItemContent}>
                 <FormControlLabel disableTypography className={styles.groceryItemControl}
                                   control={<Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
-                                                     onChange={handleChange}/>}
+                                                     checked={item.status === eGroceryItemStatus.Done}
+                                                     onChange={handleStatusChange}/>}
                                   label={item.name}/>
 
 

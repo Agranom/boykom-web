@@ -1,4 +1,4 @@
-import { eGroceryItemPriority, eGroceryType } from '../models/grocery-item';
+import { eGroceryItemPriority, eGroceryType } from '../features/grocery/models/grocery-item';
 
 export class GroceryTypesTranslator {
     static toCategoryType(type: eGroceryType): string {
