@@ -5,7 +5,7 @@ import httpClient from '../../../services/http-client';
 import { IGroceryItem } from '../models/grocery-item';
 
 export const updateGrocery = ({ id, ...rest }: IGroceryItem): Promise<IGroceryItem> => {
-    return httpClient.put(`groceries/${id}.json`, { json: rest }).json();
+    return httpClient.put(`groceries/${id}`, { json: rest }).json();
 };
 
 export const useUpdateGrocery = () => {

@@ -5,7 +5,7 @@ import httpClient from '../../../services/http-client';
 import { IGroceryItem } from '../models/grocery-item';
 
 export const deleteGrocery = (id: string): Promise<string> => {
-    return httpClient.delete(`groceries/${id}.json`).json();
+    return httpClient.delete(`groceries/${id}`).json();
 };
 
 export const useDeleteGrocery = () => {

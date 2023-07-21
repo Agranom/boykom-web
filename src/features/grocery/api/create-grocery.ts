@@ -5,7 +5,7 @@ import httpClient from '../../../services/http-client';
 import { IGroceryItem } from '../models/grocery-item';
 
 export const createGrocery = (item: IGroceryItem): Promise<Partial<IGroceryItem>> => {
-    return httpClient.post(`groceries.json`, { json: item }).json();
+    return httpClient.post(`groceries`, { json: item }).json();
 };
 
 export const useCreateGrocery = () => {

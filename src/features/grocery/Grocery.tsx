@@ -1,4 +1,3 @@
-import { useChangeGroceryStatus } from './api/change-grocery-status';
 import { useCreateGrocery } from './api/create-grocery';
 import { useDeleteGrocery } from './api/delete-grocery';
 import { useGroceries } from './api/get-groceries';
@@ -11,7 +10,6 @@ import { eGroceryItemStatus, INewGroceryItem } from './models/grocery-item';
 const Grocery = () => {
     const { data } = useGroceries();
     const { mutate: addGrocery } = useCreateGrocery();
-    const { mutate: changeStatus } = useChangeGroceryStatus();
     const { mutate: updateGrocery } = useUpdateGrocery();
     const { mutate: deleteGrocery } = useDeleteGrocery();
 
@@ -21,7 +19,7 @@ const Grocery = () => {
     return (
         <div className={styles.groceryWrapper}>
             <GroceryForm onSubmit={addItemHandler}/>
-            <GroceriesList onItemDelete={deleteGrocery} onItemUpdate={updateGrocery} onItemStatusChange={changeStatus} data={data}/>
+            <GroceriesList onItemDelete={deleteGrocery} onItemUpdate={updateGrocery} data={data}/>
         </div>
     );
 };

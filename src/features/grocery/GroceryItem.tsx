@@ -23,14 +23,12 @@ enum eMenuActions {
 
 type GroceryItemProps = {
     item: IGroceryItem;
-    onItemStatusChange: (item: Partial<IGroceryItem>) => void;
     onItemUpdate: (item: IGroceryItem) => void;
     onItemDelete: (id: string) => void;
 }
 
 const GroceryItem: React.FC<GroceryItemProps> = ({
                                                      item,
-                                                     onItemStatusChange,
                                                      onItemUpdate,
                                                      onItemDelete,
                                                  }) => {
@@ -38,7 +36,7 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
-        onItemStatusChange({ status, id: item.id });
+        onItemUpdate({ status, id: item.id } as IGroceryItem);
     };
     const handlePriorityChange = (priority: eGroceryItemPriority) => {
         return () => {

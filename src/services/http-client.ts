@@ -2,7 +2,7 @@ import ky from 'ky';
 
 const httpClient = ky.extend({
     // TODO: Move to CI/CD env variables
-    prefixUrl: 'https://boykom-2ab82-default-rtdb.europe-west1.firebasedatabase.app/',
+    prefixUrl: 'http://localhost:3000/',
     hooks: {
         beforeRequest: [
             (request) => {
