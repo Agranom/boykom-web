@@ -1,4 +1,5 @@
 import ky from 'ky';
+import tokenStorage from '../utils/token-storage';
 
 const httpClient = ky.extend({
     // TODO: Move to CI/CD env variables
@@ -6,7 +7,11 @@ const httpClient = ky.extend({
     hooks: {
         beforeRequest: [
             (request) => {
-                console.log(request);
+                const authToken = tokenStorage.getToken();
+                if (authToken) {
+                    request.headers.set('Authorization', `Bearer ${tokenStorage.getToken()}`);
+                }
+                return request;
             },
         ],
         afterResponse: [
@@ -17,4 +22,4 @@ const httpClient = ky.extend({
     },
 });
 
-export default httpClient
+export default httpClient;
