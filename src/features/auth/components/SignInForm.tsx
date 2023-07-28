@@ -39,7 +39,7 @@ const SignInForm: React.FC<SignInProps> = ({ email, password, onSuccess }) => {
                     name="email"
                     label={'E-mail'}
                     variant={'standard'}
-                    value={formik.values.email}
+                    value={formik.values.email || ''}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.email && !!formik.errors.email}
@@ -52,7 +52,7 @@ const SignInForm: React.FC<SignInProps> = ({ email, password, onSuccess }) => {
                     type="password"
                     label={'Пароль'}
                     variant={'standard'}
-                    value={formik.values.password}
+                    value={formik.values.password || ''}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.password && !!formik.errors.password}

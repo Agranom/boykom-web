@@ -1,8 +1,10 @@
 import { AppBar, Container, Toolbar } from '@mui/material';
+import React from 'react';
+import { IUser } from '../features/user/models/user.interface';
 import UserMenu from '../features/user/UserMenu';
 import styles from './Header.module.scss'
 
-const Header = () => {
+const Header: React.FC<{ user: IUser | null}> = ({user}) => {
     return (
         <AppBar position={'sticky'}>
             <Container maxWidth="xl">
@@ -10,7 +12,7 @@ const Header = () => {
                     <div>
                         <h1>boyKom</h1>
                     </div>
-                    <UserMenu firstName={'Vitalii'} lastName={'Boiko'}/>
+                    {user && <UserMenu firstName={user.firstName} lastName={user.lastName}/>}
                 </Toolbar>
             </Container>
         </AppBar>
