@@ -3,4 +3,5 @@ export enum eAppRoutes {
     Auth = 'auth',
     Groceries = 'groceries',
     Profile = 'profile',
+    Groups = 'groups',
 }

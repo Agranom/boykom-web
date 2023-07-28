@@ -1,0 +1,9 @@
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &Body {
+    flex: 1;
+  }
+}
