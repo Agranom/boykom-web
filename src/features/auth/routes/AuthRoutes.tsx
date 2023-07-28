@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 
@@ -10,9 +10,9 @@ export enum eAuthRoutes {
 const AuthRoutes = () => {
     return (
         <Routes>
-            <Route path="sign-in" element={<SignIn/>}/>
-            <Route path="sign-up" element={<SignUp/>}/>
-            <Route index element={<SignIn/>}/>
+            <Route path={eAuthRoutes.SignIn} element={<SignIn/>}/>
+            <Route path={eAuthRoutes.SignUp} element={<SignUp/>}/>
+            <Route path="*" element={<Navigate to={eAuthRoutes.SignIn} replace/>}/>
         </Routes>
     );
 };

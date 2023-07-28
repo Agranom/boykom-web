@@ -13,12 +13,12 @@ function App() {
     const { user } = useSelector(selectUser);
     return (
         <QueryClientProvider client={queryClient}>
-            <Header user={user}/>
-            <Container>
-                <BrowserRouter basename={'/'}>
+            <BrowserRouter basename={'/'}>
+                <Header user={user}/>
+                <Container>
                     <AppRoutes/>
-                </BrowserRouter>
-            </Container>
+                </Container>
+            </BrowserRouter>
         </QueryClientProvider>
     );
 }
