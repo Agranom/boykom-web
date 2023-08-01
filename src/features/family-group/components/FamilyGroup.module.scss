@@ -32,3 +32,10 @@
     margin-bottom: 2rem;
   }
 }
+
+.familyGroupActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid $outline;
+}

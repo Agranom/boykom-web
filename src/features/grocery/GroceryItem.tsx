@@ -53,8 +53,6 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
         };
     };
 
-    // TODO: Move mapping to Redux selectors
-
     return (
         <Card
             className={styles.groceryItem + ' ' + (item.status === eGroceryItemStatus.Done ? styles.groceryItemDone : '')}>

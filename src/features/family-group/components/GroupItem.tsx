@@ -8,12 +8,12 @@ import styles from './GroupItem.module.scss';
 
 type GroupItemProps = {
     user: IUser;
-    isClickable?: boolean;
+    showMenu?: boolean;
     isOwner?: boolean;
     onDeleteMember?: (memberId: string) => void;
 }
 
-const GroupItem: React.FC<GroupItemProps> = ({ user, isClickable, isOwner, onDeleteMember }) => {
+const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDeleteMember }) => {
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
     const handleDeleteMember = () => {
         actionsMenuRef.current?.closeMenu();
@@ -26,11 +26,14 @@ const GroupItem: React.FC<GroupItemProps> = ({ user, isClickable, isOwner, onDel
             <UserAvatar firstName={user.firstName} lastName={user.lastName}/>
             <div className={styles.groupItemUserInfo}>
                 <p className={styles.groupItemUserName}>{user.firstName + ' ' + user.lastName}</p>
-                <span className={styles.groupItemRole}>
+                <p className={styles.groupItemRole}>
+                    {user.username}
+                </p>
+                <p className={styles.groupItemRole}>
                     {isOwner ? 'Администратор группы' : 'Участник'}
-                </span>
+                </p>
             </div>
-            {isClickable && !isOwner && <div>
+            {showMenu && <div>
               <ToggleMenu ref={actionsMenuRef} toggleButton={
                   <IconButton>
                       <MoreVert/>
