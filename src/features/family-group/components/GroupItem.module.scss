@@ -1,0 +1,26 @@
+@import "../../../styles/colors";
+
+.groupItem {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
+    border-top: 1px solid $outline;
+
+    &Avatar {
+        flex-shrink: 0;
+    }
+
+    &UserInfo {
+        flex: 1;
+    }
+
+    &UserName {
+        font-size: 1.6rem;
+        line-height: 2.4rem;
+    }
+    &Role {
+        font-size: 1.4rem;
+        color: $secondary-text;
+    }
+}

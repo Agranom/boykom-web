@@ -17,6 +17,14 @@ body {
   height: 100%;
 }
 
+p {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .MuiInput-root {
   font-size: 1.4rem !important;
 }

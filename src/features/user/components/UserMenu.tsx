@@ -1,7 +1,8 @@
-import { Avatar, IconButton, MenuItem, Tooltip } from '@mui/material';
+import { IconButton, MenuItem, Tooltip } from '@mui/material';
 import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import ToggleMenu, { IToggleMenuRef } from '../../../shared/ToggleMenu';
+import UserAvatar from '../../../shared/UserAvatar';
 import { AppDispatch } from '../../../store/store';
 import { signOut } from '../../auth/store/auth-slice';
 
@@ -15,7 +16,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ firstName, lastName }) => {
     const dispatch = useDispatch<AppDispatch>();
     const toggleButton = <Tooltip title="Открыть настройки">
         <IconButton sx={{ p: 0 }}>
-            <Avatar alt={`${firstName} ${lastName}`} sx={{ fontSize: '1.4rem' }}>{firstName[0] + lastName[0]}</Avatar>
+            <UserAvatar firstName={firstName} lastName={lastName}/>
         </IconButton>
     </Tooltip>;
     const handleSignOut = () => {

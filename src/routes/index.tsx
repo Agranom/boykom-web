@@ -8,6 +8,7 @@ import AuthProvider from '../providers/auth-provider';
 import { AppDispatch } from '../store/store';
 
 const Grocery = React.lazy(() => import('../features/grocery/Grocery'));
+const FamilyGroup = React.lazy(() => import('../features/family-group/components/FamilyGroup'));
 
 const MainContent = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +31,7 @@ export const routes = [
         children: [
             { path: `/`, element: <Grocery/> },
             { path: `/${eAppRoutes.Groceries}`, element: <Grocery/> },
+            { path: `/${eAppRoutes.Groups}`, element: <FamilyGroup/> },
             // Will be developed in the future
             // { path: `/${eAppRoutes.Profile}/*`, element: <UserProfileRoutes/> },
         ],
