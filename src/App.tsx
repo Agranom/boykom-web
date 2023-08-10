@@ -13,7 +13,7 @@ import Footer from './shared/Footer';
 import Header from './shared/Header';
 
 function App() {
-    const { user } = useSelector(selectUser);
+    const { user, loading } = useSelector(selectUser);
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter basename={'/'}>
@@ -23,7 +23,7 @@ function App() {
                         <Container className={styles.mainContentBody}>
                             <AppRoutes/>
                         </Container>
-                        <Footer/>
+                        {!loading && !!user &&<Footer/>}
                     </div>
                 </AuthProvider>
             </BrowserRouter>

@@ -1,6 +1,6 @@
 import { Groups, Home } from '@mui/icons-material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { eAppRoutes } from '../const/app-routes.enum';
 import styles from './Footer.module.scss';
@@ -8,7 +8,7 @@ import styles from './Footer.module.scss';
 const Footer = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
-    const [value, setValue] = React.useState(pathname.substring(1));
+    const [value, setValue] = useState(pathname.substring(1) || eAppRoutes.Home);
     const handleChange = (event: React.SyntheticEvent, newValue: eAppRoutes) => {
         setValue(newValue);
         navigate(newValue);
