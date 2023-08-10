@@ -10,11 +10,13 @@ import {
     ListItemText,
     MenuItem,
 } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ToggleMenu, { IToggleMenuRef } from '../../shared/ToggleMenu';
 import { GroceryTypesTranslator } from '../../utils/grocery-types-translator';
 import styles from './GroceryItem.module.scss';
 import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
+
+declare const Swiped: any;
 
 enum eMenuActions {
     Edit,
@@ -34,6 +36,18 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
                                                  }) => {
     const priorityMenuRef = useRef<IToggleMenuRef>(null);
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
+
+    useEffect(() => {
+        Swiped.init({
+            query: `.swiped-item-${item.id}`,
+            right: 400,
+            tolerance: 250,
+            onOpen: function () {
+                onItemDelete(item.id as string);
+            },
+        });
+    }, []);
+
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
         onItemUpdate({ status, id: item.id } as IGroceryItem);
@@ -54,49 +68,53 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
     };
 
     return (
-        <Card
-            className={styles.groceryItem + ' ' + (item.status === eGroceryItemStatus.Done ? styles.groceryItemDone : '')}>
-            <CardContent className={styles.groceryItemContent}>
-                <FormControlLabel disableTypography className={styles.groceryItemControl}
-                                  control={<Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
-                                                     checked={item.status === eGroceryItemStatus.Done}
-                                                     onChange={handleStatusChange}/>}
-                                  label={item.name}/>
+        <div className={styles.swipedItemWrapper}>
+            <div className={`swiped-item-${item.id}`}>
+                <Card
+                    className={styles.groceryItem + ' ' + (item.status === eGroceryItemStatus.Done ? styles.groceryItemDone : '')}>
+                    <CardContent className={styles.groceryItemContent}>
+                        <FormControlLabel disableTypography className={styles.groceryItemControl}
+                                          control={<Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
+                                                             checked={item.status === eGroceryItemStatus.Done}
+                                                             onChange={handleStatusChange}/>}
+                                          label={item.name}/>
 
 
-                <ToggleMenu ref={priorityMenuRef} toggleButton={<Chip
-                    className={styles.groceryItemPriority + ' ' + styles[item.priority]}
-                    label={GroceryTypesTranslator.toItemPriority(item.priority)}
-                    variant={'outlined'}
-                />}>
-                    <MenuItem
-                        onClick={handlePriorityChange(eGroceryItemPriority.Major)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Major)}</MenuItem>
-                    <MenuItem
-                        onClick={handlePriorityChange(eGroceryItemPriority.Medium)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Medium)}</MenuItem>
-                    <MenuItem
-                        onClick={handlePriorityChange(eGroceryItemPriority.Low)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Low)}</MenuItem>
-                </ToggleMenu>
-            </CardContent>
-            <div className={styles.groceryItemActions}>
-                <ToggleMenu ref={actionsMenuRef} toggleButton={
-                    <IconButton>
-                        <MoreVert/>
-                    </IconButton>}>
-                    <MenuItem onClick={handleActionClick(eMenuActions.Edit)}>
-                        <ListItemIcon>
-                            <Edit/>
-                        </ListItemIcon>
-                        <ListItemText>Редактировать</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={handleActionClick(eMenuActions.Delete)}>
-                        <ListItemIcon>
-                            <Delete/>
-                        </ListItemIcon>
-                        <ListItemText>Удалить</ListItemText>
-                    </MenuItem>
-                </ToggleMenu>
+                        <ToggleMenu ref={priorityMenuRef} toggleButton={<Chip
+                            className={styles.groceryItemPriority + ' ' + styles[item.priority]}
+                            label={GroceryTypesTranslator.toItemPriority(item.priority)}
+                            variant={'outlined'}
+                        />}>
+                            <MenuItem
+                                onClick={handlePriorityChange(eGroceryItemPriority.Major)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Major)}</MenuItem>
+                            <MenuItem
+                                onClick={handlePriorityChange(eGroceryItemPriority.Medium)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Medium)}</MenuItem>
+                            <MenuItem
+                                onClick={handlePriorityChange(eGroceryItemPriority.Low)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Low)}</MenuItem>
+                        </ToggleMenu>
+                    </CardContent>
+                    <div className={styles.groceryItemActions}>
+                        <ToggleMenu ref={actionsMenuRef} toggleButton={
+                            <IconButton>
+                                <MoreVert/>
+                            </IconButton>}>
+                            <MenuItem onClick={handleActionClick(eMenuActions.Edit)}>
+                                <ListItemIcon>
+                                    <Edit/>
+                                </ListItemIcon>
+                                <ListItemText>Редактировать</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={handleActionClick(eMenuActions.Delete)}>
+                                <ListItemIcon>
+                                    <Delete/>
+                                </ListItemIcon>
+                                <ListItemText>Удалить</ListItemText>
+                            </MenuItem>
+                        </ToggleMenu>
+                    </div>
+                </Card>
             </div>
-        </Card>
+        </div>
     );
 };
 
