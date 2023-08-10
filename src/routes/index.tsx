@@ -5,7 +5,6 @@ import { subscribeToNotifications } from '../config/push-notifications';
 import { eAppRoutes } from '../const/app-routes.enum';
 import AuthRoutes from '../features/auth/routes/AuthRoutes';
 import { getUser } from '../features/auth/store/auth-slice';
-import AuthProvider from '../providers/auth-provider';
 import { AppDispatch } from '../store/store';
 
 const Grocery = React.lazy(() => import('../features/grocery/Grocery'));
@@ -20,9 +19,7 @@ const MainContent = () => {
     }, [dispatch]);
 
     return (
-        <AuthProvider>
-            <Outlet/>
-        </AuthProvider>
+        <Outlet/>
     );
 };
 

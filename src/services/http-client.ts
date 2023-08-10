@@ -13,11 +13,6 @@ const httpClient = ky.extend({
                 return request;
             },
         ],
-        afterResponse: [
-            (response) => {
-                console.log(response);
-            },
-        ],
     },
 });
 

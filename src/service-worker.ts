@@ -98,10 +98,12 @@ self.addEventListener('message', (event) => {
 // Any other custom service worker logic can go here.
 self.addEventListener('push', (event) => {
     const data = event.data?.json();
-    console.log('New Notification', data);
     const options = {
-        body: data.body,
+        body: data?.body,
+        icon: '/logo512.png',
+        badge: '/logo192.png',
+        requireInteraction: true,
     };
-    event.waitUntil(self.registration.showNotification(data.title, options));
+    event.waitUntil(self.registration.showNotification(data?.title, options));
 });
 

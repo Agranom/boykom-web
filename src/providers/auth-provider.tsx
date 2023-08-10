@@ -14,13 +14,14 @@ const AuthProvider: React.FC<PropsWithChildren> = (props) => {
             return navigate(`/${eAppRoutes.Auth}/${eAuthRoutes.SignIn}`);
         }
         setIsSignedIn(true);
+        return navigate(eAppRoutes.Home);
     }, [navigate]);
     useEffect(() => {
         verifyUserToken();
     }, [isSignedIn, verifyUserToken]);
 
     return (
-        <>{isSignedIn ? props.children : null}</>
+        <>{props.children}</>
     );
 };
 

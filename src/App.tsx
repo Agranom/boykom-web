@@ -7,6 +7,7 @@ import './App.module.scss';
 import styles from './App.module.scss';
 import { queryClient } from './config/react-query';
 import { selectUser } from './features/auth/store/auth-selectors';
+import AuthProvider from './providers/auth-provider';
 import AppRoutes from './routes/AppRoutes';
 import Footer from './shared/Footer';
 import Header from './shared/Header';
@@ -16,13 +17,15 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter basename={'/'}>
-                <div className={styles.mainContent}>
-                    <Header user={user}/>
-                    <Container className={styles.mainContentBody}>
-                        <AppRoutes/>
-                    </Container>
-                    <Footer/>
-                </div>
+                <AuthProvider>
+                    <div className={styles.mainContent}>
+                        <Header user={user}/>
+                        <Container className={styles.mainContentBody}>
+                            <AppRoutes/>
+                        </Container>
+                        <Footer/>
+                    </div>
+                </AuthProvider>
             </BrowserRouter>
         </QueryClientProvider>
     );
