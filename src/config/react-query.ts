@@ -5,6 +5,7 @@ const queryConfig: DefaultOptions = {
         useErrorBoundary: true,
         refetchOnWindowFocus: false,
         retry: false,
+        networkMode: 'offlineFirst',
     },
 };
 

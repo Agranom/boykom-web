@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Outlet } from 'react-router-dom';
+import { subscribeToNotifications } from '../config/push-notifications';
 import { eAppRoutes } from '../const/app-routes.enum';
 import AuthRoutes from '../features/auth/routes/AuthRoutes';
 import { getUser } from '../features/auth/store/auth-slice';
@@ -15,6 +16,7 @@ const MainContent = () => {
 
     useEffect(() => {
         dispatch(getUser());
+        subscribeToNotifications();
     }, [dispatch]);
 
     return (

@@ -15,7 +15,11 @@ export const useCreateGrocery = () => {
 
             const previousGroceries = queryClient.getQueryData<IGroceryItem[]>([queryKeys.grocery]);
 
-            queryClient.setQueryData([queryKeys.grocery], [...(previousGroceries || []), newItem]);
+            queryClient.setQueryData([queryKeys.grocery], [...(previousGroceries || []), {
+                ...newItem,
+                // Set temporary id to assign it as `key` into the list
+                id: Date.now().toString(),
+            }]);
 
             return { previousGroceries };
         },

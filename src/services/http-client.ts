@@ -2,8 +2,7 @@ import ky from 'ky';
 import tokenStorage from '../utils/token-storage';
 
 const httpClient = ky.extend({
-    // TODO: Move to CI/CD env variables
-    prefixUrl: 'http://localhost:3000/',
+    prefixUrl: process.env.REACT_APP_SERVER_URL,
     hooks: {
         beforeRequest: [
             (request) => {
