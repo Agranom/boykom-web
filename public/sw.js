@@ -9,7 +9,8 @@ self.addEventListener('push', (event) => {
   const options = {
     body: data.body,
     icon: '/logo512.png',
-    badge: '/logo192.png'
+    badge: '/logo192.png',
+    requireInteraction: true,
   };
   event.waitUntil(self.registration.showNotification(data?.title, options));
 });
