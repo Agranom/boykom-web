@@ -41,7 +41,7 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
         Swiped.init({
             query: `.swiped-item-${item.id}`,
             right: 400,
-            tolerance: 250,
+            tolerance: 200,
             onOpen: function () {
                 onItemDelete(item.id as string);
             },
@@ -69,7 +69,7 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
 
     return (
         <div className={styles.swipedItemWrapper}>
-            <div className={`swiped-item-${item.id}`}>
+            <div className={`swiped-item-${item.id} ${styles.swipedItemWrapperInner}`}>
                 <Card
                     className={styles.groceryItem + ' ' + (item.status === eGroceryItemStatus.Done ? styles.groceryItemDone : '')}>
                     <CardContent className={styles.groceryItemContent}>

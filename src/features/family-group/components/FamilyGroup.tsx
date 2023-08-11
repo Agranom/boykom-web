@@ -26,21 +26,23 @@ const FamilyGroup = () => {
     const groupOwner: IUser | undefined = users?.find(u => u.id === familyGroup?.ownerId);
     const isUserAdmin = groupOwner?.id === user?.id;
 
-    const handleGroupSubmit = (userIds: string[]) => createGroup({ userIds });
-    const addUserToGroup = (userIds: string[]) => {
-        updateGroup({ userIds: [...(familyGroup?.memberIds || []), ...userIds], ownerId: user?.id as string });
+    const getUserIds = (users: IUser[]) => (username: string) => users.filter(u => u.username === username).map(u => u.id);
+    const getUserIdsByUsername = getUserIds(users || []);
+    const handleGroupSubmit = (username: string) => createGroup({ userIds: getUserIdsByUsername(username) });
+    const addUsersToGroup = (username: string) => {
+        updateGroup({ userIds: getUserIdsByUsername(username), ownerId: user?.id as string });
     };
     const handleDeleteUser = (userId: string) => {
-        updateGroup({
-            userIds: familyGroup?.memberIds?.filter(id => id !== userId) || [],
-            ownerId: user?.id as string,
-        });
+        // updateGroup({
+        //     userIds: familyGroup?.members?.filter(id => id !== userId) || [],
+        //     ownerId: user?.id as string,
+        // });
     };
     const handleDeleteGroup = () => setIsDeleteDialogOpen(true);
     const closeDialog = () => setIsDeleteDialogOpen(false);
     const handleDialogConfirm = () => {
         closeDialog();
-        deleteGroup(familyGroup?.id as string)
+        deleteGroup(familyGroup?.id as string);
     };
 
 
@@ -54,11 +56,12 @@ const FamilyGroup = () => {
                   <h3 className={styles.familyGroupHeadingTitle}>Участники вашей семейной группы</h3>
                   <p className={styles.familyGroupHeadingSubtitle}>Здесь вы можете управлять своей семейной группой.</p>
                 </div>
-                  {!!groupOwner && <GroupItem key={familyGroup.ownerId} user={groupOwner} isOwner/>}
-                  {users?.filter(user => familyGroup?.memberIds?.includes(user.id))
-                      .map(user => <GroupItem user={user} key={user.id}
-                                              showMenu={isUserAdmin}
-                                              onDeleteMember={handleDeleteUser}/>)}
+                  {!!groupOwner && <GroupItem key={familyGroup.ownerId} user={groupOwner} isActive={true} isOwner/>}
+                  {familyGroup?.members?.map(member => <GroupItem user={users?.find(u => u.id === member.id)}
+                                                                  key={member.id}
+                                                                  isActive={member.isAccepted}
+                                                                  showMenu={isUserAdmin}
+                                                                  onDeleteMember={handleDeleteUser}/>)}
                   {isUserAdmin && <div className={styles.familyGroupActions}>
                     <Button color={'primary'} onClick={handleDeleteGroup}>Удалить семейную группу</Button>
                   </div>}
@@ -67,8 +70,7 @@ const FamilyGroup = () => {
                 {isUserAdmin && <>
                   <h4>Добавьте нового участника в группу</h4>
                   <NewUsersGroup
-                    options={users?.filter(u => u.id !== groupOwner?.id && !familyGroup?.memberIds.includes(u.id)) || []}
-                    onSubmit={addUserToGroup}/>
+                    onSubmit={addUsersToGroup}/>
                 </>}
             </div>
             }
@@ -77,7 +79,7 @@ const FamilyGroup = () => {
                 <h3 className={styles.familyGroupHeadingTitle}>В вашей группе нет участников</h3>
                 <p>Добавьте участников в вашу семейную группу.</p>
               </div>
-              <NewUsersGroup options={users?.filter(u => u.id !== user?.id) || []} onSubmit={handleGroupSubmit}/>
+              <NewUsersGroup onSubmit={handleGroupSubmit}/>
             </div>}
             <AlertDialog isOpened={isDeleteDialogOpen} onConfirm={handleDialogConfirm} onReject={closeDialog}
                          title={'Вы уверены, что хотите удалить семейную группу?'}>

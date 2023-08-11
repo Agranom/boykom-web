@@ -3,6 +3,7 @@
 .groceryItem {
   display: flex;
   align-items: center;
+
   & label {
     font-size: 1.6rem;
   }
@@ -52,5 +53,9 @@
 .swipedItemWrapper {
   background-color: $danger-light;
   border-radius: 5px;
+
+  &Inner {
+    background-color: #fff;
+  }
 }
 

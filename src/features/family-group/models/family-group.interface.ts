@@ -1,5 +1,10 @@
+export interface IGroupMember  {
+    id: string;
+    isAccepted: boolean;
+}
+
 export interface IFamilyGroup {
     id: string;
     ownerId: string;
-    memberIds: string[];
+    members: IGroupMember[];
 }

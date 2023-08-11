@@ -1,6 +1,10 @@
 .newUsersGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  justify-content: center;
 
+  &EmailField {
+    flex: 1;
+  }
 }

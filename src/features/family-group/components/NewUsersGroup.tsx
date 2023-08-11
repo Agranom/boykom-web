@@ -1,46 +1,45 @@
-import { Autocomplete, Button, TextField } from '@mui/material';
-import { uniqBy } from 'lodash';
-import React, { useState } from 'react';
-import { IUser } from '../../user/models/user.interface';
-import GroupItem from './GroupItem';
+import { Button, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import React from 'react';
+import * as yup from 'yup';
 import styles from './NewUsersGroup.module.scss';
 
 type UserAutocompleteProps = {
-    options: IUser[];
-    onSubmit: (userIds: string[]) => void;
+    onSubmit: (username: string) => void;
 }
 
-const NewUsersGroup: React.FC<UserAutocompleteProps> = ({ options, onSubmit }) => {
-    const [users, setUsers] = useState<IUser[]>([]);
+const validationSchema = yup.object({
+    email: yup.string()
+        .email('Неверный формат')
+        .required('Введите e-mail'),
+});
 
-    const handleChange = (event: any, newValue: IUser | null) => {
-        setUsers((preVUsers) => {
-            if (newValue) {
-                return uniqBy([...preVUsers, newValue], 'id');
-            }
-            return preVUsers;
-        });
-    };
-    const handleSubmit = () => {
-        onSubmit(users.map(u => u.id));
-        setUsers([]);
-    };
+const NewUsersGroup: React.FC<UserAutocompleteProps> = ({ onSubmit }) => {
+    const userForm = useFormik({
+        validationSchema,
+        initialValues: {
+            email: '',
+        },
+        onSubmit: ({ email }) => {
+            onSubmit(email);
+            userForm.resetForm();
+        },
+    });
+
     return (
-        <>
-            <Autocomplete
-                renderInput={(params) => <TextField {...params} variant={'standard'} label="Участник"
-                                                    placeholder="Выберите участника"/>}
-                options={options}
-                getOptionLabel={(option: IUser) => option.username}
-                onChange={handleChange}
-                value={null}
-                blurOnSelect={true}
+        <form className={styles.newUsersGroup} onSubmit={userForm.handleSubmit}>
+            <TextField variant={'standard'} label="E-mail пользователя"
+                       className={styles.newUsersGroupEmailField}
+                       placeholder="Введите e-mail пользователя"
+                       name="email"
+                       value={userForm.values.email}
+                       onChange={userForm.handleChange}
+                       onBlur={userForm.handleBlur}
+                       error={userForm.touched.email && Boolean(userForm.errors.email)}
+                       helperText={userForm.touched.email && userForm.errors.email}
             />
-            {!!users.length && <div className={styles.newUsersGroup}>
-                {users.map(user => <GroupItem key={user.id} user={user}/>)}
-              <Button color={'primary'} variant={'contained'} fullWidth onClick={handleSubmit}>Добавить</Button>
-            </div>}
-        </>
+            <Button color={'primary'} variant={'contained'} type={'submit'}>Добвить</Button>
+        </form>
     );
 };
 
