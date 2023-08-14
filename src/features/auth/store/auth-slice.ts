@@ -13,7 +13,7 @@ export const signOut = createAsyncThunk(
     'auth/signOut',
     () => {
         tokenStorage.clearToken();
-        window.location.assign(eAppRoutes.Home);
+        window.location.assign(`/${eAppRoutes.Auth}`);
     },
 );
 
