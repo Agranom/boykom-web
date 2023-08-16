@@ -39,3 +39,16 @@
   padding: 1rem;
   border-top: 1px solid $outline;
 }
+
+.groupRequestContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+
+  &Icon {
+    align-self: center;
+    font-size: 6rem !important;
+  }
+
+}

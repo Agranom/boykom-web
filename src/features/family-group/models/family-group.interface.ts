@@ -1,5 +1,5 @@
 export interface IGroupMember  {
-    id: string;
+    userId: string;
     isAccepted: boolean;
 }
 

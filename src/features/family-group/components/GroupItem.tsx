@@ -1,4 +1,4 @@
-import { Delete, MoreVert } from '@mui/icons-material';
+import { GroupRemove, MoreVert } from '@mui/icons-material';
 import { IconButton, ListItemIcon, ListItemText, MenuItem, Skeleton } from '@mui/material';
 import React, { useRef } from 'react';
 import ToggleMenu, { IToggleMenuRef } from '../../../shared/ToggleMenu';
@@ -9,9 +9,9 @@ import styles from './GroupItem.module.scss';
 type GroupItemProps = {
     user: IUser | undefined;
     isActive: boolean;
+    onDeleteMember?: (memberId: string) => void;
     showMenu?: boolean;
     isOwner?: boolean;
-    onDeleteMember?: (memberId: string) => void;
 }
 
 const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDeleteMember, isActive = true }) => {
@@ -24,8 +24,8 @@ const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDelete
     }
     const handleDeleteMember = () => {
         actionsMenuRef.current?.closeMenu();
-        if (onDeleteMember && user) {
-            onDeleteMember(user.id);
+        if (onDeleteMember) {
+            onDeleteMember(user?.id as string);
         }
     };
     return (
@@ -43,19 +43,17 @@ const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDelete
                     {roleLabel}
                 </p>
               </div>
-                {showMenu && <div>
-                  <ToggleMenu ref={actionsMenuRef} toggleButton={
-                      <IconButton>
-                          <MoreVert/>
-                      </IconButton>}>
-                    <MenuItem onClick={handleDeleteMember}>
-                      <ListItemIcon>
-                        <Delete/>
-                      </ListItemIcon>
-                      <ListItemText>Удалить из группы</ListItemText>
-                    </MenuItem>
-                  </ToggleMenu>
-                </div>}
+                {showMenu && <ToggleMenu ref={actionsMenuRef} toggleButton={
+                    <IconButton>
+                        <MoreVert/>
+                    </IconButton>}>
+                  <MenuItem onClick={handleDeleteMember}>
+                    <ListItemIcon>
+                      <GroupRemove/>
+                    </ListItemIcon>
+                    <ListItemText>{isOwner ? 'Удалить из группы' : 'Покинуть группу'}</ListItemText>
+                  </MenuItem>
+                </ToggleMenu>}
             </div>}
         </>
     );

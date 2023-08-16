@@ -8,16 +8,16 @@ import httpClient from '../../../services/http-client';
 import { IFamilyGroup } from '../models/family-group.interface';
 
 type UpdateGroupDto = {
-    ownerId: string;
+    groupId: string;
     userIds: string[]
 }
 
-export const updateGroup = ({ userIds, ownerId }: UpdateGroupDto): Promise<IFamilyGroup | IStatusResponse> => {
-    return httpClient.put(`family-groups/${ownerId}`, { json: { userIds } }).json();
+export const updateGroup = ({ userIds, groupId }: UpdateGroupDto): Promise<IFamilyGroup | IStatusResponse> => {
+    return httpClient.put(`family-groups/${groupId}`, { json: { userIds } }).json();
 };
 
 export const useUpdateGroup = () => {
-    const { showError } = useContext<AlertContextValues>(AlertContext);
+    const { showError, showSuccess } = useContext<AlertContextValues>(AlertContext);
     return useMutation({
         onMutate: async (newGroup: UpdateGroupDto) => {
             await queryClient.cancelQueries([queryKeys.familyGroup]);
@@ -34,6 +34,7 @@ export const useUpdateGroup = () => {
             if ((response as IStatusResponse).message) {
                 showError((response as IStatusResponse).message);
             } else {
+                showSuccess('Запрос отправлен');
                 queryClient.invalidateQueries([queryKeys.familyGroup]);
             }
         },
