@@ -29,28 +29,31 @@ type GroceryItemProps = {
     onItemDelete: (id: string) => void;
 }
 
-const GroceryItem: React.FC<GroceryItemProps> = ({
-                                                     item,
-                                                     onItemUpdate,
-                                                     onItemDelete,
-                                                 }) => {
+const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
+                                                                item,
+                                                                onItemUpdate,
+                                                                onItemDelete,
+                                                            }) => {
     const priorityMenuRef = useRef<IToggleMenuRef>(null);
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
 
     useEffect(() => {
-        Swiped.init({
-            query: `.swiped-item-${item.id}`,
-            right: 400,
-            tolerance: 200,
-            onOpen: function () {
-                onItemDelete(item.id as string);
-            },
-        });
-    }, []);
+        if (item.status === eGroceryItemStatus.Undone) {
+            Swiped.init({
+                query: `.swiped-item-${item.id}`,
+                right: 400,
+                tolerance: 200,
+                onOpen: function () {
+                    onItemDelete(item.id as string);
+                },
+            });
+        }
+
+    }, [item.status]);
 
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
-        onItemUpdate({ status, id: item.id } as IGroceryItem);
+        onItemUpdate({ ...item, status } as IGroceryItem);
     };
     const handlePriorityChange = (priority: eGroceryItemPriority) => {
         return () => {
@@ -116,6 +119,6 @@ const GroceryItem: React.FC<GroceryItemProps> = ({
             </div>
         </div>
     );
-};
+});
 
 export default GroceryItem;

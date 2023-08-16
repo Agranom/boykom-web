@@ -1,5 +1,5 @@
 import { CircularProgress } from '@mui/material';
-import React, { PropsWithChildren } from 'react';
+import React, { Fragment, PropsWithChildren } from 'react';
 import styles from './LoaderLayout.module.scss';
 
 type LoaderLayoutProps = PropsWithChildren & {
@@ -8,9 +8,11 @@ type LoaderLayoutProps = PropsWithChildren & {
 
 const LoaderLayout: React.FC<LoaderLayoutProps> = React.memo(({ children, isLoading }) => {
     return (
-        <div className={styles.loaderLayout}>
-            {isLoading ? <CircularProgress className={styles.loaderLayoutLoader}/> : children}
-        </div>
+        <Fragment>
+            {isLoading ?
+                <div className={styles.loaderLayout}><CircularProgress className={styles.loaderLayoutLoader}/></div>
+                : children}
+        </Fragment>
     );
 });
 

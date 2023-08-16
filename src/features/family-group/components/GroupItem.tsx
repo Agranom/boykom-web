@@ -14,7 +14,7 @@ type GroupItemProps = {
     isOwner?: boolean;
 }
 
-const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDeleteMember, isActive = true }) => {
+const GroupItem: React.FC<GroupItemProps> = React.memo(({ user, showMenu, isOwner, onDeleteMember, isActive = true }) => {
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
     let roleLabel = 'Участник';
     if (!isActive) {
@@ -57,6 +57,6 @@ const GroupItem: React.FC<GroupItemProps> = ({ user, showMenu, isOwner, onDelete
             </div>}
         </>
     );
-};
+});
 
 export default GroupItem;

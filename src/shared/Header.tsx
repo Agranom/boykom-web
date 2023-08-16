@@ -10,7 +10,7 @@ const Header: React.FC<{ user: IUser | null}> = ({user}) => {
             <Container maxWidth="xl">
                 <Toolbar className={styles.toolbar} disableGutters>
                     <div>
-                        <h1>boyKom</h1>
+                        <h1 className={styles.toolbarLogo}>boyKom</h1>
                     </div>
                     {user && <UserMenu firstName={user.firstName} lastName={user.lastName}/>}
                 </Toolbar>
