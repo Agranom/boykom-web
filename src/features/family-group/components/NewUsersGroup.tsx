@@ -32,6 +32,7 @@ const NewUsersGroup: React.FC<UserAutocompleteProps> = ({ onSubmit }) => {
                        className={styles.newUsersGroupEmailField}
                        placeholder="Введите e-mail пользователя"
                        name="email"
+                       autoComplete="off"
                        value={userForm.values.email}
                        onChange={userForm.handleChange}
                        onBlur={userForm.handleBlur}
