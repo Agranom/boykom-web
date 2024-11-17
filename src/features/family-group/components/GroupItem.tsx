@@ -9,23 +9,24 @@ import styles from './GroupItem.module.scss';
 type GroupItemProps = {
     user: IUser | undefined;
     isActive: boolean;
-    onDeleteMember?: (memberId: string) => void;
+    onDeleteMember?: () => void;
     showMenu?: boolean;
     isOwner?: boolean;
+    isAdmin?: boolean;
 }
 
-const GroupItem: React.FC<GroupItemProps> = React.memo(({ user, showMenu, isOwner, onDeleteMember, isActive = true }) => {
+const GroupItem: React.FC<GroupItemProps> = React.memo(({ user, showMenu, isOwner, isAdmin, onDeleteMember, isActive = true }) => {
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
     let roleLabel = 'Участник';
     if (!isActive) {
         roleLabel = 'Ожидается подтверждение';
-    } else if (isOwner) {
+    } else if (isAdmin) {
         roleLabel = 'Администратор группы';
     }
     const handleDeleteMember = () => {
         actionsMenuRef.current?.closeMenu();
         if (onDeleteMember) {
-            onDeleteMember(user?.id as string);
+            onDeleteMember();
         }
     };
     return (

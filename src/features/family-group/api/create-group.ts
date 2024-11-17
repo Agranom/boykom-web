@@ -7,7 +7,7 @@ import { IStatusResponse } from '../../../models/status-response.interface';
 import httpClient from '../../../services/http-client';
 
 type CreateGroupDto = {
-    userIds: string[]
+    username: string;
 }
 
 
