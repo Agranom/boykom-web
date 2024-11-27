@@ -19,7 +19,7 @@ export const useDeleteMember = () => {
             await queryClient.cancelQueries([queryKeys.familyGroup]);
             const previousGroup = queryClient.getQueryData<IFamilyGroup>([queryKeys.familyGroup]);
             queryClient.setQueryData([queryKeys.familyGroup], () => {
-                return { ...previousGroup, members: previousGroup?.members?.filter(m => m.userId !== values.memberId) };
+                return { ...previousGroup, members: previousGroup?.members?.filter(m => m.user?.id !== values.memberId) };
             });
 
             return {previousGroup};
