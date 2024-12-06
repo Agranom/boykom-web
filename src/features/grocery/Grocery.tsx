@@ -7,24 +7,27 @@ import GroceriesList from './GroceriesList';
 import styles from './Grocery.module.scss';
 import GroceryForm from './GroceryForm';
 import { eGroceryItemStatus, INewGroceryItem } from './models/grocery-item';
+import { eSocketEvent, useSocketEvent } from '../../hooks/use-socket';
 
 const Grocery = () => {
-    const { data, isLoading } = useGroceries();
-    const { mutate: addGrocery } = useCreateGrocery();
-    const { mutate: updateGrocery } = useUpdateGrocery();
-    const { mutate: deleteGrocery } = useDeleteGrocery();
+  const { data, isLoading, refetch } = useGroceries();
+  const { mutate: addGrocery } = useCreateGrocery();
+  const { mutate: updateGrocery } = useUpdateGrocery();
+  const { mutate: deleteGrocery } = useDeleteGrocery();
 
-    const addItemHandler = (item: INewGroceryItem) => {
-        addGrocery({ ...item, status: eGroceryItemStatus.Undone });
-    };
-    return (
-        <div className={styles.groceryWrapper}>
-            <GroceryForm onSubmit={addItemHandler}/>
-            <LoaderLayout isLoading={isLoading}>
-                <GroceriesList onItemDelete={deleteGrocery} onItemUpdate={updateGrocery} data={data}/>
-            </LoaderLayout>
-        </div>
-    );
+  useSocketEvent(eSocketEvent.GroceryChanged, () => refetch());
+
+  const addItemHandler = (item: INewGroceryItem) => {
+    addGrocery({ ...item, status: eGroceryItemStatus.Undone });
+  };
+  return (
+    <div className={styles.groceryWrapper}>
+      <GroceryForm onSubmit={addItemHandler}/>
+      <LoaderLayout isLoading={isLoading}>
+        <GroceriesList onItemDelete={deleteGrocery} onItemUpdate={updateGrocery} data={data}/>
+      </LoaderLayout>
+    </div>
+  );
 };
 
 export default Grocery;
