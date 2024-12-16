@@ -1,4 +1,4 @@
-import { Delete, Edit, MoreVert } from '@mui/icons-material';
+import { Delete, MoreVert } from '@mui/icons-material';
 import {
     Card,
     CardContent,
@@ -101,12 +101,12 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                             <IconButton>
                                 <MoreVert/>
                             </IconButton>}>
-                            <MenuItem onClick={handleActionClick(eMenuActions.Edit)}>
-                                <ListItemIcon>
-                                    <Edit/>
-                                </ListItemIcon>
-                                <ListItemText>Редактировать</ListItemText>
-                            </MenuItem>
+                            {/*<MenuItem onClick={handleActionClick(eMenuActions.Edit)}>*/}
+                            {/*    <ListItemIcon>*/}
+                            {/*        <Edit/>*/}
+                            {/*    </ListItemIcon>*/}
+                            {/*    <ListItemText>Редактировать</ListItemText>*/}
+                            {/*</MenuItem>*/}
                             <MenuItem onClick={handleActionClick(eMenuActions.Delete)}>
                                 <ListItemIcon>
                                     <Delete/>
