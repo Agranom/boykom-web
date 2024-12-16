@@ -17,7 +17,7 @@ const GroceryCategory: React.FC<GroceryCategoryType> = ({ data}) => {
       {Object.entries(data || {})
         .sort((a, b) => b[1].length - a[1].length)
         .map(([category, items]) => (
-          <div className={styles.groceryCategoryGroup}>
+          <div className={styles.groceryCategoryGroup} key={category}>
             <span className={styles.groceryCategoryGroupLabel}>
               {categoryTranslations[category as eGroceryCategory] || categoryTranslations[eGroceryCategory.Unknown]}
             </span>
