@@ -1,3 +1,22 @@
+export enum eGroceryCategory {
+    Fruits = 'fruits',
+    Vegetables = 'vegetables',
+    HouseholdGoods = 'household_goods',
+    PersonalCare = 'personal_care',
+    Dairy = 'dairy',
+    Meat = 'meat',
+    Seafood = 'seafood',
+    PantryStaples = 'pantry_staples',
+    CannedGoods = 'canned_goods',
+    Bakery = 'bakery',
+    Beverages = 'beverages',
+    Alcohol = 'alcohol',
+    Spices = 'spices',
+    Oils = 'oils',
+    HygieneProducts = 'hygiene_products',
+    Unknown = 'unknown',
+}
+
 export enum eGroceryType {
     Fruit = 'fruit',
     Vegetable = 'vegetable',
@@ -15,23 +34,12 @@ export enum eGroceryItemPriority {
     Low = 'low',
 }
 
-export class GroceryItemDTO {
-    id: string;
-    name: string;
-    type: eGroceryType;
-
-    constructor(id: string, name: string, type: eGroceryType) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-    }
-}
-
 export interface IGroceryItem {
     id?: string;
     name: string;
     status: eGroceryItemStatus;
     priority: eGroceryItemPriority;
+    category: eGroceryCategory;
 }
 
 export interface INewGroceryItem {
