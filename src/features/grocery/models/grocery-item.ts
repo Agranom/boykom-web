@@ -40,6 +40,7 @@ export interface IGroceryItem {
     status: eGroceryItemStatus;
     priority: eGroceryItemPriority;
     category: eGroceryCategory;
+    version: number;
 }
 
 export interface INewGroceryItem {

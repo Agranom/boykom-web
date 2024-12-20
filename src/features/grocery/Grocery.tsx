@@ -11,14 +11,14 @@ import { useEffect } from 'react';
 import { useLoading } from '../../hooks/use-loading';
 
 const Grocery = () => {
-  const { data, isLoading, refetch, isRefetching } = useGroceries();
+  const { data, isLoading, refetch } = useGroceries();
   const { mutate: addGrocery, isLoading: isAddGroceryLoading } = useCreateGrocery();
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    setLoading(isAddGroceryLoading || isRefetching);
+    setLoading(isAddGroceryLoading);
 
-  }, [isAddGroceryLoading, isRefetching]);
+  }, [isAddGroceryLoading]);
 
   useSocketEvent(eSocketEvent.GroceryChanged, () => refetch());
 
