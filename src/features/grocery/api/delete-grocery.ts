@@ -20,7 +20,7 @@ export const useDeleteGrocery = () => {
             return { previousGroceries };
         },
         onSuccess: () => {
-            queryClient.invalidateQueries([queryKeys.grocery]);
+            queryClient.invalidateQueries([queryKeys.grocery], { refetchType: 'none' });
         },
         onError: (error, _, context: any) => {
             if (context?.previousGroceries) {
