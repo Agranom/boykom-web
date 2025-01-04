@@ -1,0 +1,9 @@
+.form {
+
+  &Actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 3rem;
+  }
+}

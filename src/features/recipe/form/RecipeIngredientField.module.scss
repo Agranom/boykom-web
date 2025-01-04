@@ -1,0 +1,6 @@
+.ingredientField {
+  display: grid;
+  grid-template-columns: minmax(100px, 2fr) minmax(50px, 1fr) minmax(50px, 1fr) auto;
+  gap: 1rem;
+  align-items: baseline;
+}

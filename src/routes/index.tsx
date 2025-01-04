@@ -12,6 +12,7 @@ import SocketProvider from '../providers/socket-provider';
 
 const Grocery = React.lazy(() => import('../features/grocery/Grocery'));
 const FamilyGroup = React.lazy(() => import('../features/family-group/components/FamilyGroup'));
+const Recipe = React.lazy(() => import('../features/recipe/Recipe'));
 
 const MainContent = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,6 +41,7 @@ export const routes = [
       { path: `/`, element: <Grocery/> },
       { path: `/${eAppRoutes.Groceries}`, element: <Grocery/> },
       { path: `/${eAppRoutes.Groups}`, element: <FamilyGroup/> },
+      { path: `/${eAppRoutes.Recipes}`, element: <Recipe/> },
       // Will be developed in the future
       // { path: `/${eAppRoutes.Profile}/*`, element: <UserProfileRoutes/> },
     ],
