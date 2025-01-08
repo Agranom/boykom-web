@@ -1,14 +1,17 @@
 import React from 'react';
 import { useForm } from 'antd/es/form/Form';
-import { Form, Input } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { Button } from '@mui/material';
 import style from './UpsertRecipeForm.module.scss';
 import RecipeIngredients from './RecipeIngredients';
-import { IRecipeIngredient } from '../models/recipe';
+import { IRecipe, IRecipeIngredient } from '../models/recipe';
 
 type UpsertRecipeFormProps = {
+  recipe?: IRecipe;
   onCancel: () => void;
   onConfirm: (value: RecipeFormValue) => void;
+  onDelete: () => void;
+  isLoading: boolean;
 }
 
 export interface RecipeFormValue {
@@ -16,18 +19,20 @@ export interface RecipeFormValue {
   description: string;
   cookingMethod: string;
   ingredients: IRecipeIngredient[];
-  cookingTime?: string;
+  cookingTime?: number;
 }
 
 const requiredMessage = 'Обязательное поле';
 
-const UpsertRecipeForm = ({ onCancel, onConfirm }: UpsertRecipeFormProps) => {
+const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: UpsertRecipeFormProps) => {
   const [form] = useForm<RecipeFormValue>();
+  const { title, description, ingredients, cookingMethod, cookingTime } = recipe || {};
   const initialFormValue: RecipeFormValue = {
-    title: '',
-    description: '',
-    cookingMethod: '',
-    ingredients: [
+    title: title || '',
+    description: description || '',
+    cookingMethod: cookingMethod || '',
+    cookingTime,
+    ingredients: ingredients || [
       { name: '', quantity: undefined, measurementUnit: undefined },
     ],
   };
@@ -36,10 +41,29 @@ const UpsertRecipeForm = ({ onCancel, onConfirm }: UpsertRecipeFormProps) => {
     onConfirm(value);
   };
 
-  return <Form onFinish={submitHandler} layout={'vertical'} form={form} initialValues={initialFormValue}>
+  const deleteHandler = () => {
+    Modal.confirm({
+      title: 'Вы уверены, что хотите удалить рецепт?',
+      okText: 'Да',
+      cancelText: 'Нет',
+      okButtonProps: {
+        type: 'default',
+      },
+      onOk() {
+        onDelete();
+      },
+    });
+  }
+
+  return <Form onFinish={submitHandler}
+               layout={'vertical'}
+               form={form}
+               initialValues={initialFormValue}
+               disabled={isLoading}
+  >
     <Form.Item name="title" label="Название" rules={[
       { required: true, message: requiredMessage },
-      { max: 30, message: 'Текст должен быть меньше 30 символов' },
+      { max: 100, message: 'Текст должен быть меньше 100 символов' },
     ]}>
       <Input placeholder="Введите название"/>
     </Form.Item>
@@ -57,16 +81,17 @@ const UpsertRecipeForm = ({ onCancel, onConfirm }: UpsertRecipeFormProps) => {
 
     <Form.Item name="cookingMethod" label="Способ приготовления" rules={[
       { required: true, message: requiredMessage },
-      { max: 400, message: 'Текст должен быть меньше 400 символов' },
+      { max: 2000, message: 'Текст должен быть меньше 2000 символов' },
     ]}>
       <Input.TextArea rows={5} placeholder="Распишите способ приготовления"/>
     </Form.Item>
 
-    <Form.Item name="cookingTime" label="Время приготовления" extra="(в минутах)">
+    <Form.Item name="cookingTime" label="Время приготовления" extra="(в миq нутах)">
       <Input type={'number'} placeholder="60" min="0"/>
     </Form.Item>
 
     <div className={style.formActions}>
+      {!!recipe && <Button size="large" type="button" variant="outlined" color={'error'} onClick={deleteHandler}>Удалить</Button>}
       <Button size="large" type="button" variant="outlined" onClick={onCancel}>Отменить</Button>
       <Button size="large" type="submit" variant="contained">Сохранить</Button>
     </div>

@@ -3,4 +3,5 @@ export const queryKeys = {
     familyGroup: 'family-group',
     user: 'users',
     userRecipe: 'user-recipes',
+    recipes: 'recipes',
 }

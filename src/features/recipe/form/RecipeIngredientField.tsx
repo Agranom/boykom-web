@@ -39,7 +39,7 @@ const RecipeIngredientField = ({ isFirstItem, field, remove, add }: RecipeIngred
       label={isFirstItem ? 'Наименование' : ''}
       rules={[
         { required: true, message: 'Обязательное поле' },
-        { max: 30, message: 'Текст должен быть меньше 30 символов' },
+        { max: 50, message: 'Текст должен быть меньше 50 символов' },
       ]}
     >
       <Input placeholder="Репчатый лук"/>
