@@ -9,9 +9,11 @@ import AuthProvider from '../providers/auth-provider';
 import LoaderProvider from '../providers/loader-provider';
 import { AppDispatch } from '../store/store';
 import SocketProvider from '../providers/socket-provider';
+import RecipeDetails from '../features/recipe/RecipeDetails';
 
 const Grocery = React.lazy(() => import('../features/grocery/Grocery'));
 const FamilyGroup = React.lazy(() => import('../features/family-group/components/FamilyGroup'));
+const Recipe = React.lazy(() => import('../features/recipe/Recipe'));
 
 const MainContent = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,6 +42,8 @@ export const routes = [
       { path: `/`, element: <Grocery/> },
       { path: `/${eAppRoutes.Groceries}`, element: <Grocery/> },
       { path: `/${eAppRoutes.Groups}`, element: <FamilyGroup/> },
+      { path: `/${eAppRoutes.Recipes}`, element: <Recipe/> },
+      { path: `/${eAppRoutes.Recipes}/:id`, element: <RecipeDetails/> },
       // Will be developed in the future
       // { path: `/${eAppRoutes.Profile}/*`, element: <UserProfileRoutes/> },
     ],
