@@ -20,10 +20,10 @@ const RecipeManagement = ({ recipe }: RecipeManagementProps) => {
 
   return (<>
     <Fab onClick={openUpsertModal}
-         color={'primary'}
-         size={'medium'}
-         sx={{ alignSelf: 'flex-end', flexShrink: 0, marginTop: '2rem', zIndex: 1 }}>
-      {!recipe ? <Add fontSize={'large'}/> : <Edit fontSize={'large'}/>}
+         color="primary"
+         size="medium"
+         sx={{ alignSelf: 'flex-end', flexShrink: 0, marginTop: 'auto', zIndex: 1}}>
+      {!recipe ? <Add fontSize="large"/> : <Edit fontSize="large"/>}
     </Fab>
     {isUpsertModalOpened && <UpsertRecipeModal recipe={recipe} onClose={closeUpsertModal}/>}
   </>);

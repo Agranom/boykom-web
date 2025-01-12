@@ -1,5 +1,4 @@
-import { Form, FormListFieldData, Input, Select } from 'antd';
-import { eMeasurementUnit } from '../models/recipe';
+import { Form, FormListFieldData, Input } from 'antd';
 import styles from './RecipeIngredientField.module.scss';
 import { IconButton } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
@@ -10,17 +9,6 @@ type RecipeIngredientFieldProps = {
   remove: (index: number | number[]) => void;
   add: () => void;
 }
-
-const measurementUnits = [
-  { value: eMeasurementUnit.Kilogram, label: 'кг' },
-  { value: eMeasurementUnit.Gram, label: 'г' },
-  { value: eMeasurementUnit.Liter, label: 'л' },
-  { value: eMeasurementUnit.Millilitre, label: 'мл' },
-  { value: eMeasurementUnit.Tablespoon, label: 'ст. л.' },
-  { value: eMeasurementUnit.Teaspoon, label: 'ч. л.' },
-  { value: eMeasurementUnit.Cup, label: 'стакан' },
-  { value: eMeasurementUnit.Pound, label: 'фунт' },
-];
 
 const RecipeIngredientField = ({ isFirstItem, field, remove, add }: RecipeIngredientFieldProps) => {
   const { key, name: fieldName, ...restField } = field;
@@ -47,18 +35,10 @@ const RecipeIngredientField = ({ isFirstItem, field, remove, add }: RecipeIngred
 
     <Form.Item
       {...restField}
-      name={[fieldName, 'quantity']}
-      label={isFirstItem ? 'Кол.' : ''}
+      name={[fieldName, 'amount']}
+      label={isFirstItem ? 'Количество' : ''}
     >
-      <Input type="number" placeholder="1" min="0"/>
-    </Form.Item>
-
-    <Form.Item
-      {...restField}
-      name={[fieldName, 'measurementUnit']}
-      label={isFirstItem ? 'Ед. изм.' : ''}
-    >
-      <Select placeholder="кг" options={measurementUnits}/>
+      <Input placeholder="250 г"/>
     </Form.Item>
 
     <IconButton type="button" sx={{ padding: 0 }} onClick={isFirstItem ? addHandler : removeHandler}>

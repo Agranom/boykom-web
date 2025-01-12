@@ -19,21 +19,21 @@ export interface RecipeFormValue {
   description: string;
   cookingMethod: string;
   ingredients: IRecipeIngredient[];
-  cookingTime?: number;
+  portionsCount?: number;
 }
 
 const requiredMessage = 'Обязательное поле';
 
 const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: UpsertRecipeFormProps) => {
   const [form] = useForm<RecipeFormValue>();
-  const { title, description, ingredients, cookingMethod, cookingTime } = recipe || {};
+  const { title, description, ingredients, cookingMethod, portionsCount } = recipe || {};
   const initialFormValue: RecipeFormValue = {
     title: title || '',
     description: description || '',
     cookingMethod: cookingMethod || '',
-    cookingTime,
+    portionsCount,
     ingredients: ingredients || [
-      { name: '', quantity: undefined, measurementUnit: undefined },
+      { name: '', amount: '' },
     ],
   };
 
@@ -86,12 +86,12 @@ const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: 
       <Input.TextArea rows={5} placeholder="Распишите способ приготовления"/>
     </Form.Item>
 
-    <Form.Item name="cookingTime" label="Время приготовления" extra="(в миq нутах)">
-      <Input type={'number'} placeholder="60" min="0"/>
+    <Form.Item name="portionsCount" label="Количество порций">
+      <Input type={'number'} placeholder="2" min="1"/>
     </Form.Item>
 
     <div className={style.formActions}>
-      {!!recipe && <Button size="large" type="button" variant="outlined" color={'error'} onClick={deleteHandler}>Удалить</Button>}
+      {!!recipe && <Button size="large" type="button" variant="outlined" color="error" onClick={deleteHandler}>Удалить</Button>}
       <Button size="large" type="button" variant="outlined" onClick={onCancel}>Отменить</Button>
       <Button size="large" type="submit" variant="contained">Сохранить</Button>
     </div>

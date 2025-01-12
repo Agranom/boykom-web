@@ -31,13 +31,13 @@ const UpsertRecipeModal = ({ onClose, recipe }: UpsertRecipeModalProps) => {
     },
   });
 
-  const confirmFormHandler = ({ title, cookingTime, cookingMethod, description, ingredients }: RecipeFormValue) => {
+  const confirmFormHandler = ({ title, portionsCount, cookingMethod, description, ingredients }: RecipeFormValue) => {
     const payload = {
       title,
       description,
       cookingMethod,
-      ingredients: ingredients.map(i => ({ ...i, quantity: i.quantity ? Number(i.quantity) : undefined })),
-      cookingTime: cookingTime ? Number(cookingTime) : undefined,
+      ingredients,
+      portionsCount: portionsCount ? Number(portionsCount) : undefined,
     };
 
     if (recipe) {
