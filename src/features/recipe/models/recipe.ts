@@ -1,18 +1,6 @@
-export enum eMeasurementUnit {
-  Kilogram = 0,
-  Gram = 1,
-  Liter = 2,
-  Millilitre = 3,
-  Tablespoon = 4,
-  Teaspoon = 5,
-  Cup,
-  Pound,
-}
-
 export interface IRecipeIngredient {
   name: string;
-  quantity?: number;
-  measurementUnit?: eMeasurementUnit;
+  amount: string;
 }
 
 export interface IRecipe {
@@ -22,7 +10,7 @@ export interface IRecipe {
   cookingMethod: string;
   ingredients: IRecipeIngredient[];
   imageUrl?: string;
-  cookingTime?: number;
+  portionsCount?: number;
 }
 
 export interface IUserRecipe extends Omit<IRecipe, 'ingredients'> {

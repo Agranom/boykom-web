@@ -11,35 +11,41 @@ const RecipeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: recipe, isLoading } = useRecipeById(id!);
-  const { imageUrl, cookingMethod, ingredients, description, title } = recipe || {};
+  const { imageUrl, cookingMethod, ingredients, description, title, portionsCount } = recipe || {};
 
   const backClickHandler = () => navigate('..', { relative: 'path' });
 
   return <LoaderLayout isLoading={isLoading}>
     <div className={styles.recipeDetails}>
       <div className={styles.recipeDetailsHoryzontal}>
-        <IconButton onClick={backClickHandler} size={'small'}>
+        <IconButton onClick={backClickHandler} size="small">
           <ArrowBack fontSize="large"/>
         </IconButton>
       </div>
       <h2>{title}</h2>
       <div className={styles.recipeDetailsHoryzontal}>
         <RecipeImage imageUrl={imageUrl}/>
-        <p>{description}</p>
+        <div>
+          <p>{description}</p>
+          <div className={styles.recipeDetailsHoryzontal} style={{alignItems: 'baseline', gap: '1rem'}}>
+            <h4>Количество порций:</h4>
+            <p>{portionsCount}</p>
+          </div>
+        </div>
       </div>
       <div>
         <h4>Ингредиенты:</h4>
         <ul>
-          {ingredients?.map(({ name, measurementUnit, quantity }, i) => (
-            quantity ? <li key={i}>{name} - ${quantity} ${measurementUnit}</li> : <li key={i}>{name}</li>
+          {ingredients?.map(({ name, amount }, i) => (
+            <li key={i}>{name} - {amount}</li>
           ))}
         </ul>
       </div>
-      <div>
+      <div style={{marginBottom: '2rem'}}>
         <h4>Способ приготовления:</h4>
         <p>{cookingMethod}</p>
       </div>
-      <RecipeManagement recipe={recipe} />
+      <RecipeManagement recipe={recipe}/>
     </div>
   </LoaderLayout>;
 };
