@@ -5,13 +5,16 @@ import { Button } from '@mui/material';
 import style from './UpsertRecipeForm.module.scss';
 import RecipeIngredients from './RecipeIngredients';
 import { IRecipe, IRecipeIngredient } from '../models/recipe';
+import { useNavigate } from 'react-router-dom';
+import { useCreateRecipe } from '../api/create-recipe';
+import { useUpdateRecipe } from '../api/update-recipe';
+import { useDeleteRecipe } from '../api/delete-recipe';
+import { eAppRoutes } from '../../../const/app-routes.enum';
+import { validationMessages } from '../../../translations/validation-messages.translations';
 
 type UpsertRecipeFormProps = {
   recipe?: IRecipe;
-  onCancel: () => void;
-  onConfirm: (value: RecipeFormValue) => void;
-  onDelete: () => void;
-  isLoading: boolean;
+  closeModal: () => void;
 }
 
 export interface RecipeFormValue {
@@ -22,11 +25,30 @@ export interface RecipeFormValue {
   portionsCount?: number;
 }
 
-const requiredMessage = 'Обязательное поле';
+const requiredMessage = validationMessages.required;
 
-const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: UpsertRecipeFormProps) => {
-  const [form] = useForm<RecipeFormValue>();
+const UpsertRecipeForm = ({ recipe, closeModal }: UpsertRecipeFormProps) => {
   const { title, description, ingredients, cookingMethod, portionsCount } = recipe || {};
+
+  const [form] = useForm<RecipeFormValue>();
+  const navigate = useNavigate();
+  const { mutate: createRecipe, isLoading: isCreating } = useCreateRecipe({
+    onSuccess: () => {
+      closeModal();
+    },
+  });
+  const { mutate: updateRecipe, isLoading: isUpdating } = useUpdateRecipe({
+    onSuccess: () => {
+      closeModal();
+    },
+  });
+  const { mutate: deleteRecipe, isLoading: isDeleting } = useDeleteRecipe({
+    onSuccess: () => {
+      closeModal();
+      navigate(`/${eAppRoutes.Recipes}`);
+    },
+  });
+
   const initialFormValue: RecipeFormValue = {
     title: title || '',
     description: description || '',
@@ -37,8 +59,20 @@ const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: 
     ],
   };
 
-  const submitHandler = (value: RecipeFormValue) => {
-    onConfirm(value);
+  const submitHandler = ({ title, portionsCount, cookingMethod, description, ingredients }: RecipeFormValue) => {
+    const payload = {
+      title,
+      description,
+      cookingMethod,
+      ingredients,
+      portionsCount: portionsCount ? Number(portionsCount) : undefined,
+    };
+
+    if (recipe?.id) {
+      updateRecipe({ ...payload, id: recipe.id });
+    } else {
+      createRecipe(payload);
+    }
   };
 
   const deleteHandler = () => {
@@ -50,7 +84,7 @@ const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: 
         type: 'default',
       },
       onOk() {
-        onDelete();
+        deleteRecipe(recipe!.id);
       },
     });
   }
@@ -59,7 +93,7 @@ const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: 
                layout={'vertical'}
                form={form}
                initialValues={initialFormValue}
-               disabled={isLoading}
+               disabled={isCreating || isUpdating || isDeleting}
   >
     <Form.Item name="title" label="Название" rules={[
       { required: true, message: requiredMessage },
@@ -91,8 +125,8 @@ const UpsertRecipeForm = ({ recipe, onCancel, onConfirm, onDelete, isLoading }: 
     </Form.Item>
 
     <div className={style.formActions}>
-      {!!recipe && <Button size="large" type="button" variant="outlined" color="error" onClick={deleteHandler}>Удалить</Button>}
-      <Button size="large" type="button" variant="outlined" onClick={onCancel}>Отменить</Button>
+      {!!recipe?.id && <Button size="large" type="button" variant="outlined" color="error" onClick={deleteHandler}>Удалить</Button>}
+      <Button size="large" type="button" variant="outlined" onClick={closeModal}>Отменить</Button>
       <Button size="large" type="submit" variant="contained">Сохранить</Button>
     </div>
   </Form>;

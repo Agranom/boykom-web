@@ -27,7 +27,7 @@ const RecipeDetails = () => {
         <RecipeImage imageUrl={imageUrl}/>
         <div>
           <p>{description}</p>
-          <div className={styles.recipeDetailsHoryzontal} style={{alignItems: 'baseline', gap: '1rem'}}>
+          <div className={styles.recipeDetailsHoryzontal} style={{ alignItems: 'baseline', gap: '1rem' }}>
             <h4>Количество порций:</h4>
             <p>{portionsCount}</p>
           </div>
@@ -41,11 +41,11 @@ const RecipeDetails = () => {
           ))}
         </ul>
       </div>
-      <div style={{marginBottom: '2rem'}}>
+      <div style={{ marginBottom: '2rem' }}>
         <h4>Способ приготовления:</h4>
-        <p>{cookingMethod}</p>
+        <p style={{ whiteSpace: 'pre-wrap' }}>{cookingMethod}</p>
       </div>
-      <RecipeManagement recipe={recipe}/>
+      <RecipeManagement data={recipe}/>
     </div>
   </LoaderLayout>;
 };

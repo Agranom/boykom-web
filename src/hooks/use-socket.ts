@@ -4,6 +4,7 @@ import { Socket } from 'socket.io-client';
 
 export enum eSocketEvent {
   GroceryChanged = 'grocery-changed',
+  RecipeGenerated = 'recipe-generated',
 }
 
 
