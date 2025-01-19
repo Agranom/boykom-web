@@ -7,15 +7,15 @@ import RecipeManagement from './RecipeManagement';
 const Recipe = () => {
   const { data, isLoading } = useUserRecipes();
 
-
   return (
     <div className={styles.recipe}>
+      <h2>Мои рецепты</h2>
       <LoaderLayout isLoading={isLoading}>
 
         {data && <RecipeList recipes={data}/>}
 
-        <RecipeManagement />
       </LoaderLayout>
+      <RecipeManagement/>
     </div>
   );
 };
