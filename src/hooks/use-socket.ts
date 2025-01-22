@@ -30,10 +30,6 @@ export const useSocketEvent = (event: eSocketEvent, eventHandler: (...arg: any[]
 
 
   useEffect(() => {
-    if (socketRef.current === socket) {
-      return;
-    }
-
     unsubscribeFromSocket();
 
     socketRef.current = socket;
