@@ -30,16 +30,16 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
   } = useGenerateRecipeFromInstagram({ onSuccess: onGenerateRecipeApiSuccess });
   const open = !!anchorEl;
 
-  useSocketEvent(eSocketEvent.RecipeGenerated, (payload?: IRecipe) => {
-    setLoading(false);
-
-    if (payload) {
-      setRecipe(payload);
-      setIsUpsertModalOpened(true);
-    } else {
-      showError('Не удалось сгенерировать рецепт');
-    }
-  });
+  // useSocketEvent(eSocketEvent.RecipeGenerated, (payload?: IRecipe) => {
+  //   setLoading(false);
+  //
+  //   if (payload) {
+  //     // setRecipe(payload);
+  //     // setIsUpsertModalOpened(true);
+  //   } else {
+  //     showError('Не удалось сгенерировать рецепт');
+  //   }
+  // });
 
   const openUpsertModal = () => {
     setIsUpsertModalOpened(true);
@@ -91,7 +91,7 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
       open={open}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={openUpsertModal}>Вручную</MenuItem>
+      {/*<MenuItem onClick={openUpsertModal}>Вручную</MenuItem>*/}
       <MenuItem onClick={openGenerateModal}>Из инстаграма</MenuItem>
     </Menu>
     {isUpsertModalOpened && <UpsertRecipeModal recipe={recipe} onClose={closeUpsertModal}/>}
