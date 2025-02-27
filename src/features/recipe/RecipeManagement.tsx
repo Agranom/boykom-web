@@ -4,10 +4,10 @@ import { Add, Edit } from '@mui/icons-material';
 import { Fab, Menu, MenuItem } from '@mui/material';
 import { IRecipe } from './models/recipe';
 import GenerateRecipeModal from './GenerateRecipeModal';
-import { useGenerateRecipeFromInstagram } from './api/generate-recipe';
 import { useLoading } from '../../hooks/use-loading';
-import { eSocketEvent, useSocketEvent } from '../../hooks/use-socket';
 import { useAlert } from '../../hooks/use-alert';
+import { IRecipeMetadata } from './models/recipe-metadata';
+import { useCreateRecipeFromSocial } from './api/create-recipe-from-social';
 
 type RecipeManagementProps = {
   data?: IRecipe;
@@ -26,20 +26,20 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
   };
 
   const {
-    mutate: generateFromInstagram,
-  } = useGenerateRecipeFromInstagram({ onSuccess: onGenerateRecipeApiSuccess });
+    mutate: createFromInstagram,
+  } = useCreateRecipeFromSocial({ onSuccess: onGenerateRecipeApiSuccess });
   const open = !!anchorEl;
 
-  useSocketEvent(eSocketEvent.RecipeGenerated, (payload?: IRecipe) => {
-    setLoading(false);
-
-    if (payload) {
-      setRecipe(payload);
-      setIsUpsertModalOpened(true);
-    } else {
-      showError('Не удалось сгенерировать рецепт');
-    }
-  });
+  // useSocketEvent(eSocketEvent.RecipeGenerated, (payload?: IRecipe) => {
+  //   setLoading(false);
+  //
+  //   if (payload) {
+  //     // setRecipe(payload);
+  //     // setIsUpsertModalOpened(true);
+  //   } else {
+  //     showError('Не удалось сгенерировать рецепт');
+  //   }
+  // });
 
   const openUpsertModal = () => {
     setIsUpsertModalOpened(true);
@@ -71,8 +71,8 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
     setAnchorEl(null);
   };
 
-  const generateRecipeSubmitHandler = (postUrl: string) => {
-    generateFromInstagram(postUrl);
+  const generateRecipeSubmitHandler = (recipeMetadata: IRecipeMetadata) => {
+    createFromInstagram(recipeMetadata);
   };
 
   return (<>
@@ -91,12 +91,12 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
       open={open}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={openUpsertModal}>Вручную</MenuItem>
+      {/*<MenuItem onClick={openUpsertModal}>Вручную</MenuItem>*/}
       <MenuItem onClick={openGenerateModal}>Из инстаграма</MenuItem>
     </Menu>
     {isUpsertModalOpened && <UpsertRecipeModal recipe={recipe} onClose={closeUpsertModal}/>}
     {isGenerateModalOpened &&
-      <GenerateRecipeModal onCancel={closeGenerateModal} onSubmit={generateRecipeSubmitHandler}/>}
+      <GenerateRecipeModal onCancel={closeGenerateModal} onCreate={generateRecipeSubmitHandler}/>}
   </>);
 };
 

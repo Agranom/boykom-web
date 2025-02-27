@@ -3,15 +3,24 @@ export interface IRecipeIngredient {
   amount: string;
 }
 
+export interface IRecipeInstruction {
+  step: number;
+  text: string;
+  videoStartTime?: string;
+  videoEndTime?: string;
+  imageUrl: string;
+}
+
 export interface IRecipe {
   id: string;
   title: string;
   description: string;
-  cookingMethod: string;
   ingredients: IRecipeIngredient[];
+  instructions?: IRecipeInstruction[];
   imageUrl?: string;
+  videoUrl?: string;
   portionsCount?: number;
 }
 
-export interface IUserRecipe extends Omit<IRecipe, 'ingredients'> {
+export interface IUserRecipe extends Omit<IRecipe, 'ingredients' | 'instructions'> {
 }

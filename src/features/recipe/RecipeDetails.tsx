@@ -6,12 +6,13 @@ import RecipeImage from './RecipeImage';
 import { IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import RecipeManagement from './RecipeManagement';
+import RecipeVideo from './RecipeVideo';
 
 const RecipeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: recipe, isLoading } = useRecipeById(id!);
-  const { imageUrl, cookingMethod, ingredients, description, title, portionsCount } = recipe || {};
+  const { imageUrl, instructions, ingredients, description, title, portionsCount, videoUrl } = recipe || {};
 
   const backClickHandler = () => navigate('..', { relative: 'path' });
 
@@ -43,7 +44,17 @@ const RecipeDetails = () => {
       </div>
       <div style={{ marginBottom: '2rem' }}>
         <h4>Способ приготовления:</h4>
-        <p style={{ whiteSpace: 'pre-wrap' }}>{cookingMethod}</p>
+        {videoUrl
+          ? <RecipeVideo videoUrl={videoUrl} instructions={instructions || []} />
+          : <ol>
+          {instructions?.map((instruction, index) => (
+            <li
+              key={index}
+            >
+              {instruction.text}
+            </li>
+          ))}
+        </ol>}
       </div>
       <RecipeManagement data={recipe}/>
     </div>

@@ -20,7 +20,6 @@ type UpsertRecipeFormProps = {
 export interface RecipeFormValue {
   title: string;
   description: string;
-  cookingMethod: string;
   ingredients: IRecipeIngredient[];
   portionsCount?: number;
 }
@@ -28,7 +27,7 @@ export interface RecipeFormValue {
 const requiredMessage = validationMessages.required;
 
 const UpsertRecipeForm = ({ recipe, closeModal }: UpsertRecipeFormProps) => {
-  const { title, description, ingredients, cookingMethod, portionsCount } = recipe || {};
+  const { title, description, ingredients, portionsCount } = recipe || {};
 
   const [form] = useForm<RecipeFormValue>();
   const navigate = useNavigate();
@@ -52,18 +51,16 @@ const UpsertRecipeForm = ({ recipe, closeModal }: UpsertRecipeFormProps) => {
   const initialFormValue: RecipeFormValue = {
     title: title || '',
     description: description || '',
-    cookingMethod: cookingMethod || '',
     portionsCount,
     ingredients: ingredients || [
       { name: '', amount: '' },
     ],
   };
 
-  const submitHandler = ({ title, portionsCount, cookingMethod, description, ingredients }: RecipeFormValue) => {
+  const submitHandler = ({ title, portionsCount, description, ingredients }: RecipeFormValue) => {
     const payload = {
       title,
       description,
-      cookingMethod,
       ingredients,
       portionsCount: portionsCount ? Number(portionsCount) : undefined,
     };
@@ -112,13 +109,6 @@ const UpsertRecipeForm = ({ recipe, closeModal }: UpsertRecipeFormProps) => {
     <h3 style={{ marginTop: 0 }}>Ингредиенты:</h3>
 
     <RecipeIngredients/>
-
-    <Form.Item name="cookingMethod" label="Способ приготовления" rules={[
-      { required: true, message: requiredMessage },
-      { max: 2000, message: 'Текст должен быть меньше 2000 символов' },
-    ]}>
-      <Input.TextArea rows={5} placeholder="Распишите способ приготовления"/>
-    </Form.Item>
 
     <Form.Item name="portionsCount" label="Количество порций">
       <Input type={'number'} placeholder="2" min="1"/>
