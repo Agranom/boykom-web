@@ -43,8 +43,8 @@ const RecipeVideo = ({ videoUrl, instructions }: RecipeVideoProps) => {
   };
 
   return <div>
-    <video ref={videoRef} width="100%" height="270px" controls>
-      <source src={videoUrl} type="video/mp4"/>
+    <video ref={videoRef} width="100%" className="h-[400px]" controls preload="metadata">
+      <source src={`${videoUrl}#t=0.1`} type="video/mp4"/>
       Ваш браузер не поддерживает данное видео.
     </video>
     <div>

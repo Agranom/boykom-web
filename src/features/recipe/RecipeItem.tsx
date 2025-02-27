@@ -16,13 +16,12 @@ const RecipeItem = ({ recipe }: RecipeItemProps) => {
   };
 
   return (
-    <Card sx={{ height: '180px' }}>
+    <Card sx={{ height: '120px' }}>
       <CardActionArea onClick={cardClickHandler}>
         <div className={styles.recipeItem}>
           <RecipeImage imageUrl={recipe.imageUrl}/>
           <CardContent sx={{ padding: 0 }}>
             <h3>{recipe.title}</h3>
-            <p>{recipe.description}</p>
           </CardContent>
         </div>
       </CardActionArea>

@@ -58,6 +58,7 @@
   "devDependencies": {
     "@types/antd": "^1.0.4",
     "@types/lodash": "^4.14.195",
-    "sass": "^1.63.6"
+    "sass": "^1.63.6",
+    "tailwindcss": "^3.4.17"
   }
 }
