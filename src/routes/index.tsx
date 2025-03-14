@@ -11,7 +11,7 @@ import { AppDispatch } from '../store/store';
 import SocketProvider from '../providers/socket-provider';
 import RecipeDetails from '../features/recipe/RecipeDetails';
 
-const Grocery = React.lazy(() => import('../features/grocery/Grocery'));
+const GroceryManager = React.lazy(() => import('../features/grocery/GroceryManager'));
 const FamilyGroup = React.lazy(() => import('../features/family-group/components/FamilyGroup'));
 const Recipe = React.lazy(() => import('../features/recipe/Recipe'));
 
@@ -39,8 +39,8 @@ export const routes = [
     path: eAppRoutes.Home,
     element: <MainContent/>,
     children: [
-      { path: `/`, element: <Grocery/> },
-      { path: `/${eAppRoutes.Groceries}`, element: <Grocery/> },
+      { path: `/`, element: <GroceryManager/> },
+      { path: `/${eAppRoutes.Groceries}`, element: <GroceryManager/> },
       { path: `/${eAppRoutes.Groups}`, element: <FamilyGroup/> },
       { path: `/${eAppRoutes.Recipes}`, element: <Recipe/> },
       { path: `/${eAppRoutes.Recipes}/:id`, element: <RecipeDetails/> },

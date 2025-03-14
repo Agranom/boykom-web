@@ -27,12 +27,14 @@ type GroceryItemProps = {
     item: IGroceryItem;
     onItemUpdate: (item: Partial<IGroceryItem>) => void;
     onItemDelete: (id: string) => void;
+    showPriority?: boolean;
 }
 
 const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                                                                 item,
                                                                 onItemUpdate,
                                                                 onItemDelete,
+                                                                showPriority = true,
                                                             }) => {
     const priorityMenuRef = useRef<IToggleMenuRef>(null);
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
@@ -82,19 +84,20 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                                                              onChange={handleStatusChange}/>}
                                           label={item.name}/>
 
-
-                        <ToggleMenu ref={priorityMenuRef} toggleButton={<Chip
-                            className={styles.groceryItemPriority + ' ' + styles[item.priority]}
-                            label={GroceryTypesTranslator.toItemPriority(item.priority)}
-                            variant={'outlined'}
-                        />}>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Major)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Major)}</MenuItem>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Medium)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Medium)}</MenuItem>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Low)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Low)}</MenuItem>
-                        </ToggleMenu>
+                        {showPriority && (
+                            <ToggleMenu ref={priorityMenuRef} toggleButton={<Chip
+                                className={styles.groceryItemPriority + ' ' + styles[item.priority]}
+                                label={GroceryTypesTranslator.toItemPriority(item.priority)}
+                                variant={'outlined'}
+                            />}>
+                                <MenuItem
+                                    onClick={handlePriorityChange(eGroceryItemPriority.Major)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Major)}</MenuItem>
+                                <MenuItem
+                                    onClick={handlePriorityChange(eGroceryItemPriority.Medium)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Medium)}</MenuItem>
+                                <MenuItem
+                                    onClick={handlePriorityChange(eGroceryItemPriority.Low)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Low)}</MenuItem>
+                            </ToggleMenu>
+                        )}
                     </CardContent>
                     <div className={styles.groceryItemActions}>
                         <ToggleMenu ref={actionsMenuRef} toggleButton={

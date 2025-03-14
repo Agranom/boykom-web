@@ -8,17 +8,24 @@ import { useDeleteGrocery } from './api/delete-grocery';
 
 type GroceriesListType = {
   data: GroceryItemModel[];
+  showPriority?: boolean;
 }
 
-const GroceriesList: React.FC<GroceriesListType> = ({ data }) => {
+const GroceriesList: React.FC<GroceriesListType> = ({ data, showPriority = true }) => {
   const { mutate: updateGrocery } = useUpdateGrocery();
   const { mutate: deleteGrocery } = useDeleteGrocery();
 
   return (
     <div className={styles.listGroup}>
       {orderBy(data, 'status', 'desc').map((i) => (
-        <GroceryItem key={i.id} item={i}
-                     onItemUpdate={updateGrocery} onItemDelete={deleteGrocery}/>))}
+        <GroceryItem 
+          key={i.id} 
+          item={i}
+          showPriority={showPriority}
+          onItemUpdate={updateGrocery} 
+          onItemDelete={deleteGrocery}
+        />
+      ))}
     </div>
   );
 };
