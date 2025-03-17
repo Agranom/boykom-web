@@ -41,6 +41,7 @@ export interface IGroceryItem {
     priority: eGroceryItemPriority;
     category: eGroceryCategory;
     version: number;
+    inFridge: boolean;
 }
 
 export interface INewGroceryItem {

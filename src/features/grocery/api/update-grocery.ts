@@ -16,8 +16,8 @@ export const useUpdateGrocery = () => {
       const previousGroceries = queryClient.getQueryData<IGroceryItem[]>([queryKeys.grocery]);
 
       const updatedGroceries = (previousGroceries || [])
-        .map(i => (newItem.id === i.id) ? { ...i, ...newItem } : i);
-
+          .map(i => (newItem.id === i.id) ? { ...i, ...newItem } : i);
+          
       queryClient.setQueryData([queryKeys.grocery], updatedGroceries);
 
       return { previousGroceries };

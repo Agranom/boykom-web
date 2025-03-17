@@ -59,3 +59,18 @@
   }
 }
 
+.moveButton {
+  margin-left: 8px;
+  background-color: #f0f8ff !important;
+  border: 1px solid #b3d9ff !important;
+  color: #0066cc !important;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #e6f2ff !important;
+    border-color: #80bfff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
