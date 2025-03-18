@@ -1,6 +1,5 @@
-import { Delete, MoreVert, LocalGroceryStore, Kitchen } from '@mui/icons-material';
+import { Delete, Kitchen, LocalGroceryStore, MoreVert } from '@mui/icons-material';
 import {
-    Button,
     Card,
     CardContent,
     Checkbox,
@@ -15,7 +14,6 @@ import React, { useEffect, useRef } from 'react';
 import ToggleMenu, { IToggleMenuRef } from '../../shared/ToggleMenu';
 import styles from './GroceryItem.module.scss';
 import { eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
-import { log } from 'console';
 
 declare const Swiped: any;
 
