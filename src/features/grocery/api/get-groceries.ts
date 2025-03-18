@@ -9,7 +9,7 @@ export const getGroceries = async (inFridge: boolean): Promise<IGroceryItem[]> =
 
 export const useGroceries = (inFridge: boolean) => {
     return useQuery({ 
-        queryKey: [queryKeys.grocery, inFridge], 
+        queryKey: [queryKeys.grocery], 
         queryFn: () => getGroceries(inFridge) 
     });
 };

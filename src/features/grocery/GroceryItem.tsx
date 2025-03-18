@@ -1,6 +1,5 @@
-import { Delete, MoreVert, LocalGroceryStore, Kitchen } from '@mui/icons-material';
+import { Delete, Kitchen, LocalGroceryStore, MoreVert } from '@mui/icons-material';
 import {
-    Button,
     Card,
     CardContent,
     Checkbox,
