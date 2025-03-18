@@ -15,7 +15,9 @@ export const useDeleteGrocery = () => {
 
             const previousGroceries = queryClient.getQueryData<IGroceryItem[]>([queryKeys.grocery]);
 
-            queryClient.setQueryData([queryKeys.grocery], previousGroceries?.filter(g => g.id !== itemId));
+            const updatedGroceries = previousGroceries?.filter(g => g.id !== itemId);
+
+            queryClient.setQueryData([queryKeys.grocery], updatedGroceries);
 
             return { previousGroceries };
         },

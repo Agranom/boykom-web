@@ -15,6 +15,7 @@ import React, { useEffect, useRef } from 'react';
 import ToggleMenu, { IToggleMenuRef } from '../../shared/ToggleMenu';
 import styles from './GroceryItem.module.scss';
 import { eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
+import { log } from 'console';
 
 declare const Swiped: any;
 
