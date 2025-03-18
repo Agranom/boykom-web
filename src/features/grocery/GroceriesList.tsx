@@ -17,8 +17,13 @@ const GroceriesList: React.FC<GroceriesListType> = ({ data }) => {
   return (
     <div className={styles.listGroup}>
       {orderBy(data, 'status', 'desc').map((i) => (
-        <GroceryItem key={i.id} item={i}
-                     onItemUpdate={updateGrocery} onItemDelete={deleteGrocery}/>))}
+        <GroceryItem 
+          key={i.id} 
+          item={i}
+          onItemUpdate={updateGrocery} 
+          onItemDelete={deleteGrocery}
+        />
+      ))}
     </div>
   );
 };

@@ -9,7 +9,7 @@ type GroceryCategoryType = {
   data: { [key: string]: IGroceryItem[] } | undefined;
 }
 
-const GroceryCategory: React.FC<GroceryCategoryType> = ({ data}) => {
+const GroceryCategory: React.FC<GroceryCategoryType> = ({ data }) => {
   const categoryTranslations = groceryCategories[eSystemLanguages.Ru]
 
   return (
@@ -21,7 +21,7 @@ const GroceryCategory: React.FC<GroceryCategoryType> = ({ data}) => {
             <span className={styles.groceryCategoryGroupLabel}>
               {categoryTranslations[category as eGroceryCategory] || categoryTranslations[eGroceryCategory.Unknown]}
             </span>
-            <GroceriesList data={items}/>
+            <GroceriesList data={items} />
           </div>
         ))}
     </>

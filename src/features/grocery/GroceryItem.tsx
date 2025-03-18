@@ -1,20 +1,20 @@
-import { Delete, MoreVert } from '@mui/icons-material';
+import { Delete, MoreVert, LocalGroceryStore, Kitchen } from '@mui/icons-material';
 import {
+    Button,
     Card,
     CardContent,
     Checkbox,
-    Chip,
     FormControlLabel,
     IconButton,
     ListItemIcon,
     ListItemText,
     MenuItem,
+    Tooltip,
 } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import ToggleMenu, { IToggleMenuRef } from '../../shared/ToggleMenu';
-import { GroceryTypesTranslator } from '../../utils/grocery-types-translator';
 import styles from './GroceryItem.module.scss';
-import { eGroceryItemPriority, eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
+import { eGroceryItemStatus, IGroceryItem } from './models/grocery-item';
 
 declare const Swiped: any;
 
@@ -34,7 +34,6 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                                                                 onItemUpdate,
                                                                 onItemDelete,
                                                             }) => {
-    const priorityMenuRef = useRef<IToggleMenuRef>(null);
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
 
     useEffect(() => {
@@ -55,12 +54,15 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
         onItemUpdate({ status, version: item.version, id: item.id  });
     };
-    const handlePriorityChange = (priority: eGroceryItemPriority) => {
-        return () => {
-            onItemUpdate({ priority, version: item.version, id: item.id });
-            priorityMenuRef.current?.closeMenu();
-        };
+
+    const handleMoveItem = () => {
+        onItemUpdate({ 
+            inFridge: !item.inFridge, // Toggle the inFridge status
+            version: item.version, 
+            id: item.id 
+        });
     };
+
     const handleActionClick = (action: eMenuActions) => {
         return () => {
             if (action === eMenuActions.Delete) {
@@ -69,6 +71,8 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
             actionsMenuRef.current?.closeMenu();
         };
     };
+
+    const isInFridge = !!item.inFridge;
 
     return (
         <div className={styles.swipedItemWrapper}>
@@ -82,31 +86,22 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                                                              onChange={handleStatusChange}/>}
                                           label={item.name}/>
 
-
-                        <ToggleMenu ref={priorityMenuRef} toggleButton={<Chip
-                            className={styles.groceryItemPriority + ' ' + styles[item.priority]}
-                            label={GroceryTypesTranslator.toItemPriority(item.priority)}
-                            variant={'outlined'}
-                        />}>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Major)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Major)}</MenuItem>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Medium)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Medium)}</MenuItem>
-                            <MenuItem
-                                onClick={handlePriorityChange(eGroceryItemPriority.Low)}>{GroceryTypesTranslator.toItemPriority(eGroceryItemPriority.Low)}</MenuItem>
-                        </ToggleMenu>
+                        <Tooltip title={isInFridge ? "В список покупок" : "В холодильник"}>
+                            <IconButton
+                                onClick={handleMoveItem}
+                                className={styles.moveButton}
+                                color="primary"
+                                size="large"
+                            >
+                                {isInFridge ? <LocalGroceryStore fontSize="medium" /> : <Kitchen fontSize="medium" />}
+                            </IconButton>
+                        </Tooltip>
                     </CardContent>
                     <div className={styles.groceryItemActions}>
                         <ToggleMenu ref={actionsMenuRef} toggleButton={
                             <IconButton>
                                 <MoreVert/>
                             </IconButton>}>
-                            {/*<MenuItem onClick={handleActionClick(eMenuActions.Edit)}>*/}
-                            {/*    <ListItemIcon>*/}
-                            {/*        <Edit/>*/}
-                            {/*    </ListItemIcon>*/}
-                            {/*    <ListItemText>Редактировать</ListItemText>*/}
-                            {/*</MenuItem>*/}
                             <MenuItem onClick={handleActionClick(eMenuActions.Delete)}>
                                 <ListItemIcon>
                                     <Delete/>
