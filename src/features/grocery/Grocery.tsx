@@ -35,7 +35,7 @@ const Grocery = () => {
         {!data || Object.keys(groupedByCategory).length === 0 ? (
           <NoData message="No grocery items available" />
         ) : (
-          <GroceryCategory data={groupedByCategory} showPriority={true} />
+          <GroceryCategory data={groupedByCategory} />
         )}
       </LoaderLayout>
     </div>

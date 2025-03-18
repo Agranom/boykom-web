@@ -8,10 +8,9 @@ import { useDeleteGrocery } from './api/delete-grocery';
 
 type GroceriesListType = {
   data: GroceryItemModel[];
-  showPriority?: boolean;
 }
 
-const GroceriesList: React.FC<GroceriesListType> = ({ data, showPriority = true }) => {
+const GroceriesList: React.FC<GroceriesListType> = ({ data }) => {
   const { mutate: updateGrocery } = useUpdateGrocery();
   const { mutate: deleteGrocery } = useDeleteGrocery();
 
@@ -21,7 +20,6 @@ const GroceriesList: React.FC<GroceriesListType> = ({ data, showPriority = true 
         <GroceryItem 
           key={i.id} 
           item={i}
-          showPriority={showPriority}
           onItemUpdate={updateGrocery} 
           onItemDelete={deleteGrocery}
         />

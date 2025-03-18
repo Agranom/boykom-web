@@ -27,14 +27,12 @@ type GroceryItemProps = {
     item: IGroceryItem;
     onItemUpdate: (item: Partial<IGroceryItem>) => void;
     onItemDelete: (id: string) => void;
-    showPriority?: boolean;
 }
 
 const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
                                                                 item,
                                                                 onItemUpdate,
                                                                 onItemDelete,
-                                                                showPriority = true,
                                                             }) => {
     const actionsMenuRef = useRef<IToggleMenuRef>(null);
 

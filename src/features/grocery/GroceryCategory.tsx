@@ -7,10 +7,9 @@ import { eSystemLanguages } from '../../const/system-languages.enum';
 
 type GroceryCategoryType = {
   data: { [key: string]: IGroceryItem[] } | undefined;
-  showPriority?: boolean;
 }
 
-const GroceryCategory: React.FC<GroceryCategoryType> = ({ data, showPriority = true }) => {
+const GroceryCategory: React.FC<GroceryCategoryType> = ({ data }) => {
   const categoryTranslations = groceryCategories[eSystemLanguages.Ru]
 
   return (
@@ -22,7 +21,7 @@ const GroceryCategory: React.FC<GroceryCategoryType> = ({ data, showPriority = t
             <span className={styles.groceryCategoryGroupLabel}>
               {categoryTranslations[category as eGroceryCategory] || categoryTranslations[eGroceryCategory.Unknown]}
             </span>
-            <GroceriesList data={items} showPriority={showPriority}/>
+            <GroceriesList data={items} />
           </div>
         ))}
     </>
