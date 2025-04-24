@@ -6,7 +6,8 @@ type RecipePreviewProps = {
 }
 
 const RecipePreview = ({ metadata }: RecipePreviewProps) => {
-  const { videoUrl, imageUrl, description } = metadata;
+  const { videoFile, imageUrl, description } = metadata;
+  const videoUrl = videoFile?.url || metadata.videoUrl;
 
   return <div className="flex flex-col gap-4">
     {videoUrl ? <video className="h-96" src={`${videoUrl}#t=0.1`}></video> : <Image src={imageUrl} className="h-96"/>}

@@ -2,6 +2,8 @@ export interface IRecipeVideoFile {
   uri: string;
   fileId: string;
   fileName: string;
+  url?: string;
+  publicFileId?: string;
 }
 
 export interface IRecipeMetadata {
