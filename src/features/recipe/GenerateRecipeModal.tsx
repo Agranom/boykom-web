@@ -47,7 +47,7 @@ const GenerateRecipeModal = ({ onCreate, onCancel }: GenerateRecipeModalProps) =
   const cancelHandler = () => {
     const videoFile = recipeMetadata?.videoFile;
     if (videoFile) {
-      abortRecipe({ fileId: videoFile.fileId, fileName: videoFile.fileName });
+      abortRecipe({ publicFileId: videoFile.publicFileId, fileId: videoFile.fileId });
     }
     onCancel();
   };
