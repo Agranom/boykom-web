@@ -11,23 +11,26 @@ import AlertProvider from './providers/alert-provider';
 import AppRoutes from './routes/AppRoutes';
 import Footer from './shared/Footer';
 import Header from './shared/Header';
+import { ErrorBoundary } from './components/error-boundary';
 
 function App() {
     const { user, loading } = useSelector(selectUser);
     return (
-        <QueryClientProvider client={queryClient}>
-            <BrowserRouter basename={'/'}>
-                <AlertProvider>
-                    <div className={styles.mainContent}>
-                        <Header user={user}/>
-                        <Container className={styles.mainContentBody}>
-                            <AppRoutes/>
-                        </Container>
-                        {!loading && !!user && <Footer/>}
-                    </div>
-                </AlertProvider>
-            </BrowserRouter>
-        </QueryClientProvider>
+        // <ErrorBoundary>
+            <QueryClientProvider client={queryClient}>
+                <BrowserRouter basename={'/'}>
+                    <AlertProvider>
+                        <div className={styles.mainContent}>
+                            <Header user={user}/>
+                            <Container className={styles.mainContentBody}>
+                                <AppRoutes/>
+                            </Container>
+                            {!loading && !!user && <Footer/>}
+                        </div>
+                    </AlertProvider>
+                </BrowserRouter>
+            </QueryClientProvider>
+        // </ErrorBoundary>
     );
 }
 

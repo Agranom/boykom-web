@@ -45,6 +45,7 @@ const SocketProvider: React.FC<PropsWithChildren> = ({ children }) => {
       },
       reconnectionDelay: 5000,
       reconnectionAttempts: 10,
+      reconnection: true,
     });
 
     socketInstance.on('connect', () => {
