@@ -14,6 +14,14 @@ export enum eGroceryCategory {
     Spices = 'spices',
     Oils = 'oils',
     HygieneProducts = 'hygiene_products',
+    Greens = 'greens',
+    Drugs = 'drugs',
+    Sweets = 'sweets',
+    Snacks = 'snacks',
+    Souces = 'souces',
+    Fungi = 'fungi',
+    Nuts = 'nuts',
+    SemiProducts = 'semi_products',
     Unknown = 'unknown',
 }
 
