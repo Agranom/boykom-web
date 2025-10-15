@@ -1,9 +1,10 @@
 import React from 'react';
-import { eGroceryCategory, IGroceryItem } from './models/grocery-item';
+import { IGroceryItem } from './models/grocery-item';
 import GroceriesList from './GroceriesList';
 import styles from './GroceryCategory.module.scss';
 import { groceryCategories } from '../../translations/grocery.translations';
 import { eSystemLanguages } from '../../const/system-languages.enum';
+import { GroceryCategory as eGroceryCategory } from '@agranom/boykom-common';
 
 type GroceryCategoryType = {
   data: { [key: string]: IGroceryItem[] } | undefined;

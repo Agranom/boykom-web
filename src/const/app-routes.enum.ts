@@ -5,4 +5,5 @@ export enum eAppRoutes {
     Profile = 'profile',
     Groups = 'groups',
     Recipes = 'recipes',
+    Analytics = 'analytics',
 }
