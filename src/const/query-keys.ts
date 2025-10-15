@@ -4,4 +4,5 @@ export const queryKeys = {
     user: 'users',
     userRecipe: 'user-recipes',
     recipes: 'recipes',
+    analytics: 'analytics',
 }
