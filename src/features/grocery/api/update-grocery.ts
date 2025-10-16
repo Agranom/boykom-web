@@ -15,9 +15,17 @@ export const useUpdateGrocery = () => {
 
       const previousGroceries = queryClient.getQueryData<IGroceryItem[]>([queryKeys.grocery]);
 
-      const updatedGroceries = (previousGroceries || [])
-          .map(i => (newItem.id === i.id) ? { ...i, ...newItem } : i);
-          
+      const previousItem = previousGroceries?.find(i => i.id === newItem.id);
+      const isMoved = previousItem && previousItem.inFridge !== newItem.inFridge;
+
+      let updatedGroceries = [];
+
+      if (isMoved) {
+        updatedGroceries = (previousGroceries || []).filter(i => i.id !== newItem.id);
+      } else {
+        updatedGroceries = (previousGroceries || []).map(i => (newItem.id === i.id) ? { ...i, ...newItem } : i);
+      }
+
       queryClient.setQueryData([queryKeys.grocery], updatedGroceries);
 
       return { previousGroceries };
