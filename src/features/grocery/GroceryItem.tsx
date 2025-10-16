@@ -51,7 +51,7 @@ const GroceryItem: React.FC<GroceryItemProps> = React.memo(({
 
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const status = event.target.checked ? eGroceryItemStatus.Done : eGroceryItemStatus.Undone;
-        onItemUpdate({ status, version: item.version, id: item.id  });
+        onItemUpdate({ status, version: item.version, id: item.id, inFridge: item.inFridge });
     };
 
     const handleMoveItem = () => {
