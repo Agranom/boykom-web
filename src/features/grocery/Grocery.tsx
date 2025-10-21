@@ -33,7 +33,7 @@ const Grocery = () => {
       <GroceryForm onSubmit={addItemHandler} />
       <LoaderLayout isLoading={isLoading}>
         {!data || Object.keys(groupedByCategory).length === 0 ? (
-          <NoData message="No grocery items available" />
+          <NoData message="Список покупок пуст" />
         ) : (
           <GroceryCategory data={groupedByCategory} />
         )}

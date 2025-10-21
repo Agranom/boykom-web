@@ -1,28 +1,17 @@
-import React, { ReactNode, useState, useContext, useEffect } from 'react';
+import React, { Component, ReactNode, useContext } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { AlertContext } from '../contexts/AlertContext';
 
 interface ErrorBoundaryProps {
     children: ReactNode;
-    fallback?: ReactNode;
 }
 
-// This component is used internally by ErrorBoundary
-const ErrorFallback = ({ 
-    error, 
-    resetErrorBoundary 
-}: { 
-    error: Error | null; 
-    resetErrorBoundary: () => void;
-}) => {
-    const { showError } = useContext(AlertContext);
-    
-    useEffect(() => {
-        if (error && showError) {
-            showError(`An error occurred: ${error.message}`);
-        }
-    }, [error, showError]);
-    
+interface ErrorBoundaryState {
+    error: Error | null;
+}
+
+// Separate functional component for the error UI
+const ErrorFallback = ({ onReset }: { onReset: () => void }) => {
     return (
         <Box 
             sx={{
@@ -38,13 +27,10 @@ const ErrorFallback = ({
             <Typography variant="h4" component="h1" gutterBottom>
                 Something went wrong
             </Typography>
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-                {error?.message || 'An unexpected error occurred'}
-            </Typography>
             <Button 
                 variant="contained" 
                 color="primary" 
-                onClick={resetErrorBoundary}
+                onClick={onReset}
             >
                 Try again
             </Button>
@@ -52,59 +38,44 @@ const ErrorFallback = ({
     );
 };
 
-// Custom hook to create an error boundary 
-export function useErrorBoundary() {
-    const [error, setError] = useState<Error | null>(null);
+// Wrapper component to handle alert context
+const ErrorBoundaryWithAlert = ({ children }: ErrorBoundaryProps) => {
+    const { showError } = useContext(AlertContext);
     
-    const resetBoundary = () => setError(null);
-    
-    return {
-        error,
-        resetBoundary,
-        errorHandler: (e: Error) => {
-            console.error('Error caught by ErrorBoundary:', e);
-            setError(e);
-        }
+    return (
+        <ErrorBoundaryInternal showError={showError}>
+            {children}
+        </ErrorBoundaryInternal>
+    );
+};
+
+// Internal class component for error boundary functionality
+class ErrorBoundaryInternal extends Component<ErrorBoundaryProps & { showError: (message: string) => void }> {
+    state: ErrorBoundaryState = {
+        error: null
     };
+
+    static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+        return { error };
+    }
+
+    componentDidCatch(error: Error) {
+        console.error('Error caught by ErrorBoundary:', error);
+        this.props.showError(error.message);
+    }
+
+    handleReset = () => {
+        this.setState({ error: null });
+    };
+
+    render() {
+        if (this.state.error) {
+            return <ErrorFallback onReset={this.handleReset} />;
+        }
+
+        return this.props.children;
+    }
 }
 
-export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children, fallback }) => {
-    const { error, resetBoundary, errorHandler } = useErrorBoundary();
-    
-    useEffect(() => {
-        // This will catch errors in lifecycle methods and hooks
-        const errorListener = (event: ErrorEvent) => {
-            event.preventDefault();
-            errorHandler(event.error);
-        };
-        
-        // This will catch promises rejection errors
-        const rejectionListener = (event: PromiseRejectionEvent) => {
-            event.preventDefault();
-            errorHandler(new Error(event.reason?.message || 'Promise rejected'));
-        };
-        
-        window.addEventListener('error', errorListener);
-        window.addEventListener('unhandledrejection', rejectionListener);
-        
-        return () => {
-            window.removeEventListener('error', errorListener);
-            window.removeEventListener('unhandledrejection', rejectionListener);
-        };
-    }, [errorHandler]);
-    
-    if (error) {
-        if (fallback) {
-            return <>{fallback}</>;
-        }
-        
-        return <ErrorFallback error={error} resetErrorBoundary={resetBoundary} />;
-    }
-    
-    try {
-        return <>{children}</>;
-    } catch (e) {
-        errorHandler(e instanceof Error ? e : new Error(String(e)));
-        return <ErrorFallback error={error} resetErrorBoundary={resetBoundary} />;
-    }
-}; 
+// Export the wrapper component as the main ErrorBoundary
+export const ErrorBoundary = ErrorBoundaryWithAlert;
