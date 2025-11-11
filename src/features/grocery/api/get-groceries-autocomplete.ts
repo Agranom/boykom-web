@@ -2,14 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../../../const/query-keys';
 import httpClient from '../../../services/http-client';
 
-export const getGroceriesAutocomplete = async (query: string): Promise<string[]> => {
-    return await httpClient.get(`groceries/autocomplete?query=${query}`).json();
+export const getGroceriesAutocomplete = async (): Promise<string[]> => {
+    return await httpClient.get(`groceries/autocomplete`).json();
 };
 
-export const useGroceriesAutocomplete = (query: string) => {
+export const useGroceriesAutocomplete = () => {
     return useQuery({ 
-        queryKey: [queryKeys.groceryAutocomplete, query], 
-        queryFn: () => getGroceriesAutocomplete(query),
-        enabled: query.length > 0
+        queryKey: [queryKeys.groceryAutocomplete], 
+        queryFn: () => getGroceriesAutocomplete(),
     });
 };
