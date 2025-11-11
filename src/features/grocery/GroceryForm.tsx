@@ -8,7 +8,16 @@ import { useGroceriesAutocomplete } from './api/get-groceries-autocomplete';
 const GroceryForm: React.FC<{item?: INewGroceryItem, onSubmit: (item: INewGroceryItem) => void}> = ({ item, onSubmit }) => {
     const [form] = Form.useForm();
     const [searchQuery, setSearchQuery] = React.useState('');
-    const { data: autocompleteOptions } = useGroceriesAutocomplete(searchQuery);
+    const { data: allAutocompleteOptions } = useGroceriesAutocomplete();
+
+    const filteredOptions = React.useMemo(() => {
+        if (!allAutocompleteOptions || !searchQuery) {
+            return allAutocompleteOptions || [];
+        }
+        return allAutocompleteOptions.filter(option => 
+            option.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [allAutocompleteOptions, searchQuery]);
 
     const handleSubmit = (values: INewGroceryItem) => {
         onSubmit(values);
@@ -46,7 +55,7 @@ const GroceryForm: React.FC<{item?: INewGroceryItem, onSubmit: (item: INewGrocer
                     variant="underlined"
                     className={styles.groceryFormProductName}
                     placeholder="Введите название продукта"
-                    options={autocompleteOptions?.map(option => ({ label: option, value: option }))}
+                    options={filteredOptions.map(option => ({ label: option, value: option }))}
                     onSearch={handleSearch}
                     onSelect={handleSelect}
                 />
