@@ -20,7 +20,7 @@ type UpsertRecipeFormProps = {
 export interface RecipeFormValue {
   title: string;
   description: string;
-  ingredients: IRecipeIngredient[];
+  ingredients: Pick<IRecipeIngredient, 'name' | 'amount'>[];
   portionsCount?: number;
 }
 
