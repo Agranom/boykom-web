@@ -1,5 +1,6 @@
 import { DefaultOptions, QueryClient, Query, QueryCache, MutationCache } from '@tanstack/react-query';
 import { getAlertUtils } from '../utils/alert-utils';
+import { HTTPError } from 'ky';
 
 const getErrorMessage = (error: unknown): string => {
     if (error instanceof Error) {
@@ -20,7 +21,9 @@ const queryConfig: DefaultOptions = {
     },
     mutations: {
         useErrorBoundary: false, 
-        retry: 1,
+        retry: (failureCount: number, error: unknown) => {
+            return failureCount < 2 && error instanceof HTTPError && error.response.status !== 400 && error.response.status !== 401;
+        },
     },
 };
 
