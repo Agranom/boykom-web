@@ -50,6 +50,7 @@ export interface IGroceryItem {
     category: eGroceryCategory;
     version: number;
     inFridge: boolean;
+    recipeId?: string;
 }
 
 export interface INewGroceryItem {
