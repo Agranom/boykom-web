@@ -9,8 +9,11 @@ export const addIngredientsToGrocery = ({ recipeId, ingredientIds }: { recipeId:
         .json();
 };
 
-export const useAddIngredientsToGrocery = () => {
+export const useAddIngredientsToGrocery = ({ onSuccess }: { onSuccess: () => void }) => {
     return useMutation({
+        onSuccess: () => {
+            onSuccess();
+        },
         mutationFn: addIngredientsToGrocery,
     });
 };
