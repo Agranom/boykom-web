@@ -9,7 +9,7 @@ export interface IRecipeInstruction {
   text: string;
   videoStartTime?: string;
   videoEndTime?: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface IRecipe {

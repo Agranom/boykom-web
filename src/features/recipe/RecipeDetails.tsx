@@ -86,7 +86,7 @@ const RecipeDetails = () => {
               <li
                 key={index}
               >
-                {instruction.text}
+               <strong>{`Шаг ${instruction.step}:`}</strong> {instruction.text}
               </li>
             ))}
           </ol>}
