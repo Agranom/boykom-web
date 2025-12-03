@@ -8,6 +8,7 @@
     display: block;
     width: 20rem;
     height: 3rem;
+    padding: 0 1rem;
     border-radius: 10px 10px 0 0;
     text-align: center;
     line-height: 3rem;
@@ -18,5 +19,8 @@
     font-weight: bold;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 10;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }

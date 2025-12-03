@@ -27,5 +27,6 @@ export const groceryCategories: Record<eSystemLanguages, Record<GroceryCategory,
     [GroceryCategory.Nuts]: 'Орехи',
     [GroceryCategory.SemiProducts]: 'Полуфабрикаты',
     [GroceryCategory.Unknown]: 'Разное',
+    [GroceryCategory.Recipe]: 'Рецепт',
   },
 };

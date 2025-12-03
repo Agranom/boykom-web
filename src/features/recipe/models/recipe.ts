@@ -1,4 +1,5 @@
 export interface IRecipeIngredient {
+  id: number;
   name: string;
   amount: string;
 }
@@ -8,7 +9,7 @@ export interface IRecipeInstruction {
   text: string;
   videoStartTime?: string;
   videoEndTime?: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface IRecipe {
@@ -23,4 +24,8 @@ export interface IRecipe {
 }
 
 export interface IUserRecipe extends Omit<IRecipe, 'ingredients' | 'instructions'> {
+}
+
+export interface IUpsertRecipe extends Omit<IRecipe, 'ingredients'> {
+  ingredients: Pick<IRecipeIngredient, 'name' | 'amount'>[];
 }

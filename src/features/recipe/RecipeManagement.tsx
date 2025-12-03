@@ -82,7 +82,7 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
          aria-controls={open ? 'recipe-management-menu' : undefined}
          aria-haspopup="true"
          aria-expanded={open ? 'true' : undefined}
-         sx={{ alignSelf: 'flex-end', flexShrink: 0, marginTop: 'auto', zIndex: 1 }}>
+         sx={{ alignSelf: 'flex-end', flexShrink: 0, marginTop: 'auto', zIndex: 100, position: 'fixed', bottom: '100px' }}>
       {!recipe?.id ? <Add fontSize="large"/> : <Edit fontSize="large"/>}
     </Fab>
     <Menu
@@ -91,7 +91,7 @@ const RecipeManagement = ({ data }: RecipeManagementProps) => {
       open={open}
       onClose={handleMenuClose}
     >
-      {/*<MenuItem onClick={openUpsertModal}>Вручную</MenuItem>*/}
+      <MenuItem onClick={openUpsertModal}>Вручную</MenuItem>
       <MenuItem onClick={openGenerateModal}>Из инстаграма</MenuItem>
     </Menu>
     {isUpsertModalOpened && <UpsertRecipeModal recipe={recipe} onClose={closeUpsertModal}/>}

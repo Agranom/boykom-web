@@ -8,5 +8,5 @@ export const getRecipeById = (id: string): Promise<IRecipe> => {
 }
 
 export const useRecipeById = (id: string) => {
-  return useQuery({ queryKey: [queryKeys.recipes, id], queryFn: () => getRecipeById(id) });
+  return useQuery({ queryKey: [queryKeys.recipes, id], queryFn: () => getRecipeById(id), enabled: !!id });
 };
