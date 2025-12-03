@@ -13,6 +13,7 @@ import { IRecipeIngredient } from './models/recipe';
 import IngredientsModal from './IngredientsModal';
 import { useAddIngredientsToGrocery } from './api/add-ingredients-to-grocery';
 import { useAlert } from '../../hooks/use-alert';
+import RecipeDetailsView from './RecipeDetailsView';
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -51,46 +52,7 @@ const RecipeDetails = () => {
           <ArrowBack fontSize="large" />
         </IconButton>
       </div>
-      <h2>{title}</h2>
-      <div className={styles.recipeDetailsHoryzontal}>
-        <RecipeImage imageUrl={imageUrl} />
-        <div>
-          <p>{description}</p>
-          <div className={styles.recipeDetailsHoryzontal} style={{ alignItems: 'baseline', gap: '1rem' }}>
-            <h4>Количество порций:</h4>
-            <p>{portionsCount}</p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h4>Ингредиенты:</h4>
-        <ul>
-          {ingredients?.map(({ name, amount }, i) => (
-            <li key={i}>{name} - {amount}</li>
-          ))}
-        </ul>
-        <Button
-          type="primary"
-          onClick={openModal}
-          style={{ marginTop: '1rem' }}
-        >
-          Добавить в покупки
-        </Button>
-      </div>
-      <div style={{ marginBottom: '2rem' }}>
-        <h4>Способ приготовления:</h4>
-        {videoUrl
-          ? <RecipeVideo videoUrl={videoUrl} instructions={instructions || []} />
-          : <ol>
-            {instructions?.map((instruction, index) => (
-              <li
-                key={index}
-              >
-               <strong>{`Шаг ${instruction.step}:`}</strong> {instruction.text}
-              </li>
-            ))}
-          </ol>}
-      </div>
+      {recipe && <RecipeDetailsView recipe={recipe} openIngredientsModal={openModal} />}
       <RecipeManagement data={recipe} />
 
       <IngredientsModal
