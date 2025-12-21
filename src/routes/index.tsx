@@ -14,7 +14,7 @@ import RecipeDetails from '../features/recipe/RecipeDetails';
 const GroceryManager = React.lazy(() => import('../features/grocery/GroceryManager'));
 const FamilyGroup = React.lazy(() => import('../features/family-group/components/FamilyGroup'));
 const Recipe = React.lazy(() => import('../features/recipe/Recipe'));
-const Analytics = React.lazy(() => import('../features/analytics/Analytics'));
+const Nutrition = React.lazy(() => import('../features/nutrition/Nutrition'));
 
 const MainContent = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,7 +45,7 @@ export const routes = [
       { path: `/${eAppRoutes.Groups}`, element: <FamilyGroup/> },
       { path: `/${eAppRoutes.Recipes}`, element: <Recipe/> },
       { path: `/${eAppRoutes.Recipes}/:id`, element: <RecipeDetails/> },
-      { path: `/${eAppRoutes.Analytics}`, element: <Analytics/> },
+      { path: `/${eAppRoutes.Nutrition}`, element: <Nutrition/> },
       // Will be developed in the future
       // { path: `/${eAppRoutes.Profile}/*`, element: <UserProfileRoutes/> },
     ],

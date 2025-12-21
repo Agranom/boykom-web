@@ -6,4 +6,5 @@ export const queryKeys = {
     userRecipe: 'user-recipes',
     recipes: 'recipes',
     analytics: 'analytics',
+    nutritionAutocomplete: 'nutrition-autocomplete',
 }
