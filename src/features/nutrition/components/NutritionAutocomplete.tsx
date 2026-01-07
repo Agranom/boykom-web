@@ -52,7 +52,7 @@ export const NutritionAutocomplete: React.FC<NutritionAutocompleteProps> = ({
               ? 'No products found' 
               : null
       }
-      placeholder="Search for food products"
+      placeholder="Поиск продуктов"
     >
       <Input prefix={<SearchOutlined />} />
     </AutoComplete>

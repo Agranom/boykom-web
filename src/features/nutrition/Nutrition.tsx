@@ -2,13 +2,14 @@ import React, { useMemo, useState } from 'react';
 import { Button, Card, Dropdown, MenuProps, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { AddNutritionEntryModal } from './components/AddNutritionEntryModal';
+import { Meals } from './components/Meals';
 import { useCreateMeal } from './api/create-meal';
 import { CreateMealPayload } from './models/nutrition.interface';
 import { useAlert } from '../../hooks/use-alert';
 import { MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from './const/meal-type-options';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Nutrition: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -16,11 +17,11 @@ const Nutrition: React.FC = () => {
   const { showError, showSuccess } = useAlert();
   const { mutate: submitMeal, isLoading: isSubmitting } = useCreateMeal({
     onSuccess: () => {
-      showSuccess('Meal saved successfully');
+      showSuccess('Приём пищи добавлен');
       handleCloseModal();
     },
     onError: () => {
-      showError('Failed to save meal');
+      showError('не удалось добавить приём пищи');
     },
   });
   const menuItems = useMemo<MenuProps['items']>(() => {
@@ -45,10 +46,10 @@ const Nutrition: React.FC = () => {
     <div>
       <Card>
         <Space direction="vertical" size="small">
-          <Title level={3}>Nutrition</Title>
-          <Text type="secondary">Add your meals to track nutrients.</Text>
+          <Title level={3}>Питание</Title>
         </Space>
       </Card>
+      <Meals />
       <Dropdown
         menu={{ items: menuItems, onClick: handleMenuClick }}
         trigger={['click']}

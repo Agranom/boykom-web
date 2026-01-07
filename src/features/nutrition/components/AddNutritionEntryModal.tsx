@@ -6,6 +6,7 @@ import { MealItemForm } from './MealItemForm';
 import { CreateMealPayload, CreateMealItemPayload } from '../models/nutrition.interface';
 import { MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
+import { validationMessages } from '../../../translations/validation-messages.translations';
 
 interface MealFormValues {
   title: string;
@@ -89,7 +90,7 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
 
   return (
     <Modal
-      title={selectedType !== null ? `Add ${mealTypeOptions.find((option) => option.value === selectedType)?.label}` : 'Add meal'}
+      title={selectedType !== null ? `Добавить ${mealTypeOptions.find((option) => option.value === selectedType)?.label}` : 'Add meal'}
       open={true}
       onCancel={handleClose}
       footer={
@@ -112,16 +113,16 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
         onFinish={handleSubmit}
       >
         <Form.Item
-          label="Title"
+          label="Заголовок"
           name="title"
-          rules={[{ required: true, message: 'Please enter a title' }]}
+          rules={[{ required: true, message: validationMessages.required }]}
         >
           <Input placeholder="Enter title"/>
         </Form.Item>
         <Form.Item
-          label="Date & Time"
+          label="Дата и время"
           name="datetime"
-          rules={[{ required: true, message: 'Please select date and time' }]}
+          rules={[{ required: true, message: validationMessages.required }]}
         >
           <DatePicker
             showTime

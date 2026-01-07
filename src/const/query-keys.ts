@@ -8,4 +8,5 @@ export const queryKeys = {
     analytics: 'analytics',
     foodsAutocomplete: 'foods-autocomplete',
     foodNutrients: 'food-nutrients',
+    meals: 'meals',
 }

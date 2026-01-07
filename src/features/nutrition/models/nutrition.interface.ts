@@ -26,3 +26,13 @@ export interface CreateMealPayload {
   datetime: Date;
   items: CreateMealItemPayload[];
 }
+
+/**
+ * Meal entity from the API
+ */
+export interface Meal {
+  id: string;
+  title: string;
+  type: MealType;
+  datetime: string;
+}

@@ -5,6 +5,7 @@ import { NutritionAutocomplete } from './NutritionAutocomplete';
 import { FoodAutocomplete } from '../models/nutrition.interface';
 import { useGetNutrients } from '../api/get-nutrients';
 import MealItemNutrients from './MealItemNutrients';
+import { validationMessages } from '../../../translations/validation-messages.translations';
 
 interface PortionOption {
   label: string;
@@ -65,7 +66,7 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
     <Card
       size="small"
       style={{ marginBottom: 16 }}
-      title={`Item ${field.name + 1}`}
+      title={`Продукт №${field.name + 1}`}
       extra={
         !isFirstItem && (
           <Button
@@ -74,29 +75,28 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
             icon={<MinusCircleOutlined />}
             onClick={() => remove(field.name)}
           >
-            Remove
+            Удалить
           </Button>
         )
       }
     >
       <Form.Item
-        label="Product"
         name={[field.name, 'foodId']}
         hidden
       >
         <input type="hidden" />
       </Form.Item>
       <Form.Item
-        label="Product"
+        label="Название"
         name={[field.name, 'name']}
-        rules={[{ required: true, message: 'Please select a product' }]}
+        rules={[{ required: true, message: validationMessages.required }]}
       >
         <NutritionAutocomplete onSelect={handleSelectProduct} />
       </Form.Item>
       <Form.Item
-        label="Portion size"
+        label="Порция"
         name={[field.name, 'portionSize']}
-        rules={[{ required: true, message: 'Please choose a portion size' }]}
+        rules={[{ required: true, message: validationMessages.required }]}
         initialValue={DEFAULT_PORTION_SIZE}
       >
         <Space direction="vertical" style={{ width: '100%' }}>

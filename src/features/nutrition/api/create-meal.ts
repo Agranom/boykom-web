@@ -1,6 +1,8 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import httpClient from '../../../services/http-client';
 import { CreateMealPayload } from '../models/nutrition.interface';
+import { queryClient } from '../../../config/react-query';
+import { queryKeys } from '../../../const/query-keys';
 
 /**
  * Creates a new meal entry
@@ -18,7 +20,10 @@ export const useCreateMeal = ({
 }): UseMutationResult<unknown, unknown, CreateMealPayload> => {
   return useMutation({
     mutationFn: createMeal,
-    onSuccess,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: [queryKeys.meals]});
+      onSuccess();
+    },
     onError,
   });
 };
