@@ -1,3 +1,3 @@
 export { NutritionAutocomplete } from './components/NutritionAutocomplete';
-export * from './api/nutrition-api';
+export * from './api/foods-autocompletei';
 export * from './models/nutrition.interface';

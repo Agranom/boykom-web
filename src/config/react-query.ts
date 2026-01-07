@@ -16,7 +16,9 @@ const queryConfig: DefaultOptions = {
     queries: {
         useErrorBoundary: false,
         refetchOnWindowFocus: false,
-        retry: 3,
+        retry: (failureCount: number, error: unknown) => {
+            return failureCount < 3 && error instanceof HTTPError && error.response.status >= 500;
+        },
         networkMode: 'offlineFirst',
     },
     mutations: {

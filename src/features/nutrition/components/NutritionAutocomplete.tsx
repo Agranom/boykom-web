@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { AutoComplete, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useNutritionAutocomplete } from '../api/nutrition-api';
-import { NutritionProduct } from '../models/nutrition.interface';
+import { useFoodsAutocomplete } from '../api/foods-autocompletei';
+import { FoodAutocomplete } from '../models/nutrition.interface';
 import { useDebounce } from '../../../hooks/useDebounce';
 
 interface NutritionAutocompleteProps {
-  onSelect?: (product: NutritionProduct) => void;
+  onSelect?: (product: FoodAutocomplete) => void;
 }
 
 export const NutritionAutocomplete: React.FC<NutritionAutocompleteProps> = ({ 
@@ -16,7 +16,7 @@ export const NutritionAutocomplete: React.FC<NutritionAutocompleteProps> = ({
   const debouncedSearch = useDebounce(searchValue, 300);
   
   // Use React Query to fetch autocomplete options
-  const { data, isLoading, isError } = useNutritionAutocomplete(debouncedSearch);
+  const { data, isLoading, isError } = useFoodsAutocomplete(debouncedSearch);
   
   // Transform API response to AutoComplete options format
   const options = useMemo(() => {

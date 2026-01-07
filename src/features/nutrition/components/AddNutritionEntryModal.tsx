@@ -1,0 +1,161 @@
+import React, { useEffect } from 'react';
+import { Button, DatePicker, Form, Input, Modal, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import dayjs, { Dayjs } from 'dayjs';
+import { MealItemForm } from './MealItemForm';
+import { CreateMealPayload, CreateMealItemPayload } from '../models/nutrition.interface';
+import { MealType } from '@agranom/boykom-common';
+import { mealTypeOptions } from '../const/meal-type-options';
+
+interface MealFormValues {
+  title: string;
+  datetime: Dayjs;
+  items: Array<{
+    foodId: string;
+    name: string;
+    portionSize: number;
+  }>;
+}
+
+
+
+const DEFAULT_PORTION_SIZE = 250;
+
+interface AddNutritionEntryModalProps {
+  selectedType: MealType | null;
+  isSubmitting: boolean;
+  onClose: () => void;
+  onSubmit: (payload: CreateMealPayload) => void;
+}
+
+const formatDefaultTitle = (entryType: MealType | null, datetime: Dayjs | null): string => {
+  if (entryType == null || !datetime) {
+    return '';
+  }
+  const typeLabel = mealTypeOptions.find((option) => option.value === entryType)?.label || '';
+  const formattedDate = datetime.format('DD.MM.YYYY HH:mm');
+  return `${typeLabel} в ${formattedDate}`;
+};
+
+export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
+                                                                                selectedType,
+                                                                                isSubmitting,
+                                                                                onClose,
+                                                                                onSubmit,
+                                                                              }) => {
+  const [form] = Form.useForm<MealFormValues>();
+  useEffect(() => {
+      const defaultDatetime = dayjs();
+      const defaultTitle = formatDefaultTitle(selectedType, defaultDatetime);
+      form.setFieldsValue({
+        datetime: defaultDatetime,
+        title: defaultTitle,
+        items: [{ foodId: '', name: '', portionSize: 250 }],
+      });
+  }, [selectedType, form]);
+  const handleDatetimeChange = (date: Dayjs | null): void => {
+    if (date) {
+      form.setFieldsValue({
+        datetime: date,
+        title: formatDefaultTitle(selectedType, date),
+      });
+    }
+  };
+  const handleSubmit = async (): Promise<void> => {
+    if (selectedType == null) {
+      return;
+    }
+    const formValues = form.getFieldsValue();
+    if (!formValues.items || formValues.items.length === 0) {
+      return;
+    }
+    const items: CreateMealItemPayload[] = formValues.items.map(item => ({
+      foodId: item.foodId,
+      foodName: item.name,
+      gram: Number(item.portionSize),
+    }));
+
+    onSubmit({
+      title: formValues.title,
+      type: selectedType,
+      datetime: formValues.datetime.toDate(),
+      items,
+    });
+  };
+  const handleClose = (): void => {
+    form.resetFields();
+    onClose();
+  };
+
+  return (
+    <Modal
+      title={selectedType !== null ? `Add ${mealTypeOptions.find((option) => option.value === selectedType)?.label}` : 'Add meal'}
+      open={true}
+      onCancel={handleClose}
+      footer={
+        <Space>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            type="primary"
+            onClick={() => form.submit()}
+            loading={isSubmitting}
+          >
+            Submit
+          </Button>
+        </Space>
+      }
+    >
+      <Form
+        layout="vertical"
+        form={form}
+        initialValues={{ portionSize: DEFAULT_PORTION_SIZE, datetime: dayjs() }}
+        onFinish={handleSubmit}
+      >
+        <Form.Item
+          label="Title"
+          name="title"
+          rules={[{ required: true, message: 'Please enter a title' }]}
+        >
+          <Input placeholder="Enter title"/>
+        </Form.Item>
+        <Form.Item
+          label="Date & Time"
+          name="datetime"
+          rules={[{ required: true, message: 'Please select date and time' }]}
+        >
+          <DatePicker
+            showTime
+            format="DD.MM.YYYY HH:mm"
+            style={{ width: '100%' }}
+            onChange={handleDatetimeChange}
+          />
+        </Form.Item>
+        <Form.List name="items">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field) => (
+                <MealItemForm
+                  key={field.key}
+                  field={field}
+                  remove={remove}
+                  isFirstItem={field.name === 0}
+                />
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add({ foodId: '', name: '', portionSize: 250 })}
+                  block
+                  icon={<PlusOutlined/>}
+                >
+                  Добавить продукт
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+      </Form>
+    </Modal>
+  );
+};
+
