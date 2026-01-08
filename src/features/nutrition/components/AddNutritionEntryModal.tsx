@@ -51,7 +51,7 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
       form.setFieldsValue({
         datetime: defaultDatetime,
         title: defaultTitle,
-        items: [{ foodId: '', name: '', portionSize: 250 }],
+        items: [{ foodId: '', name: '', portionSize: DEFAULT_PORTION_SIZE }],
       });
   }, [selectedType, form]);
   const handleDatetimeChange = (date: Dayjs | null): void => {
@@ -109,7 +109,6 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
       <Form
         layout="vertical"
         form={form}
-        initialValues={{ portionSize: DEFAULT_PORTION_SIZE, datetime: dayjs() }}
         onFinish={handleSubmit}
       >
         <Form.Item
@@ -145,7 +144,7 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => add({ foodId: '', name: '', portionSize: 250 })}
+                  onClick={() => add({ foodId: '', name: '', portionSize: DEFAULT_PORTION_SIZE })}
                   block
                   icon={<PlusOutlined/>}
                 >

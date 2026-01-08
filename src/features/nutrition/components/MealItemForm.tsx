@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space, Spin, Typography } from 'antd';
+import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { NutritionAutocomplete } from './NutritionAutocomplete';
 import { FoodAutocomplete } from '../models/nutrition.interface';
@@ -18,8 +18,6 @@ const portionOptions: PortionOption[] = [
   { label: 'Large (350г)', value: 350 },
 ];
 
-const DEFAULT_PORTION_SIZE = 250;
-
 interface MealItemFormProps {
   field: { name: number; key: number };
   remove: (index: number) => void;
@@ -30,10 +28,10 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
   const form = Form.useFormInstance();
   const formItemValue = Form.useWatch(['items', field.name], form);
   const [selectedOption, setSelectedOption] = React.useState<FoodAutocomplete | null>(null);
-  const portionSize = formItemValue?.portionSize ?? DEFAULT_PORTION_SIZE;
+  const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const foodId = formItemValue?.foodId;
-  const { data: nutrients, isFetching: isCalcLoading } = useGetNutrients(
+  const { data: nutrients } = useGetNutrients(
     foodId,
     portionSize,
   );
@@ -97,9 +95,8 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
         label="Порция"
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
-        initialValue={DEFAULT_PORTION_SIZE}
       >
-        <Space direction="vertical" style={{ width: '100%' }}>
+        {/*<Space direction="vertical" style={{ width: '100%' }}>*/}
           <Radio.Group onChange={handlePortionChange}>
             <Space>
               {portionOptions.map((option) => (
@@ -109,24 +106,25 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
               ))}
             </Space>
           </Radio.Group>
-          <Slider
-            min={1}
-            max={1000}
-            value={sliderValue}
-            onChange={handleSliderChange}
-            onChangeComplete={handleSliderComplete}
-            marks={{
-              1: '1г',
-              100: '100г',
-              250: '250г',
-              500: '500г',
-              750: '750г',
-              1000: '1000г',
-            }}
-          />
-        </Space>
+
+        {/*</Space>*/}
       </Form.Item>
-      <MealItemNutrients isLoading={isCalcLoading} portionSize={portionSize} data={nutrients} />
+      <Slider
+        min={1}
+        max={1000}
+        value={sliderValue}
+        onChange={handleSliderChange}
+        onChangeComplete={handleSliderComplete}
+        marks={{
+          1: '1г',
+          100: '100г',
+          250: '250г',
+          500: '500г',
+          750: '750г',
+          1000: '1000г',
+        }}
+      />
+      {nutrients && <MealItemNutrients portionSize={portionSize} data={nutrients} />}
     </Card>
   );
 };
