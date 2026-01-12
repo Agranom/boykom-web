@@ -1,20 +1,22 @@
-import { MealType } from '@agranom/boykom-common';
+import { MealItemSourceType, MealType, Nutrients } from '@agranom/boykom-common';
 
 /**
  * Interface for nutrition product data from autocomplete
  */
 export interface FoodAutocomplete {
-  foodId: string;
-  name: string;
+  key: string;
+  value: string;
+  isUserDish: boolean;
 }
 
 /**
  * Meal item payload
  */
 export interface CreateMealItemPayload {
-  foodId: string;
-  foodName: string;
-  gram: number;
+  sourceKey: string;
+  sourceType: MealItemSourceType;
+  name: string;
+  grams: number;
 }
 
 /**
@@ -23,7 +25,7 @@ export interface CreateMealItemPayload {
 export interface CreateMealPayload {
   title: string;
   type: MealType;
-  datetime: Date;
+  eatenAt: Date;
   items: CreateMealItemPayload[];
 }
 
@@ -34,5 +36,10 @@ export interface Meal {
   id: string;
   title: string;
   type: MealType;
-  datetime: string;
+  eatenAt: string;
+}
+
+export interface FoodNutrients {
+  key: string;
+  nutrients: Nutrients;
 }

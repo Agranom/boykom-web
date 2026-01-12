@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { NutritionAutocomplete } from './NutritionAutocomplete';
+import { FoodsAutocomplete } from './FoodsAutocomplete';
 import { FoodAutocomplete } from '../models/nutrition.interface';
 import { useGetNutrients } from '../api/get-nutrients';
 import MealItemNutrients from './MealItemNutrients';
@@ -13,9 +13,9 @@ interface PortionOption {
 }
 
 const portionOptions: PortionOption[] = [
-  { label: 'Small (100г)', value: 100 },
-  { label: 'Medium (250г)', value: 250 },
-  { label: 'Large (350г)', value: 350 },
+  { label: 'Маленькая (100г)', value: 100 },
+  { label: 'Средняя (250г)', value: 250 },
+  { label: 'Большая (350г)', value: 350 },
 ];
 
 interface MealItemFormProps {
@@ -30,24 +30,25 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
   const [selectedOption, setSelectedOption] = React.useState<FoodAutocomplete | null>(null);
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
-  const foodId = formItemValue?.foodId;
-  const { data: nutrients } = useGetNutrients(
-    foodId,
+  const productKey = formItemValue?.key;
+  const { data: foodNutrients } = useGetNutrients(
+    productKey,
     portionSize,
   );
   useEffect(() => {
-    if (foodId && !selectedOption) {
-      setSelectedOption({ foodId, name: formItemValue?.name || '' });
+    if (productKey && !selectedOption) {
+      setSelectedOption({ key: productKey, value: formItemValue?.value || '', isUserDish: !!formItemValue?.isUserDish });
     }
-  }, [foodId, formItemValue?.name, selectedOption]);
+  }, [productKey, formItemValue?.value, selectedOption, formItemValue?.isUserDish]);
   useEffect(() => {
     setSliderValue(portionSize);
   }, [portionSize]);
 
   const handleSelectProduct = (product: FoodAutocomplete): void => {
     setSelectedOption(product);
-    form.setFieldValue(['items', field.name, 'foodId'], product.foodId);
-    form.setFieldValue(['items', field.name, 'name'], product.name);
+    form.setFieldValue(['items', field.name, 'key'], product.key);
+    form.setFieldValue(['items', field.name, 'value'], product.value);
+    form.setFieldValue(['items', field.name, 'isUserDish'], product.isUserDish);
   };
   const handlePortionChange = (event: RadioChangeEvent): void => {
     const value = event.target.value;
@@ -70,7 +71,7 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
           <Button
             type="text"
             danger
-            icon={<MinusCircleOutlined />}
+            icon={<MinusCircleOutlined/>}
             onClick={() => remove(field.name)}
           >
             Удалить
@@ -79,35 +80,33 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
       }
     >
       <Form.Item
-        name={[field.name, 'foodId']}
+        name={[field.name, 'key']}
         hidden
       >
-        <input type="hidden" />
+        <input type="hidden"/>
       </Form.Item>
       <Form.Item
         label="Название"
-        name={[field.name, 'name']}
+        name={[field.name, 'value']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <NutritionAutocomplete onSelect={handleSelectProduct} />
+        <FoodsAutocomplete onSelect={handleSelectProduct}/>
       </Form.Item>
       <Form.Item
         label="Порция"
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        {/*<Space direction="vertical" style={{ width: '100%' }}>*/}
-          <Radio.Group onChange={handlePortionChange}>
-            <Space>
-              {portionOptions.map((option) => (
-                <Radio key={option.value} value={option.value}>
-                  {option.label}
-                </Radio>
-              ))}
-            </Space>
-          </Radio.Group>
+        <Radio.Group onChange={handlePortionChange}>
+          <Space>
+            {portionOptions.map((option) => (
+              <Radio key={option.value} value={option.value}>
+                {option.label}
+              </Radio>
+            ))}
+          </Space>
+        </Radio.Group>
 
-        {/*</Space>*/}
       </Form.Item>
       <Slider
         min={1}
@@ -124,7 +123,7 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
           1000: '1000г',
         }}
       />
-      {nutrients && <MealItemNutrients portionSize={portionSize} data={nutrients} />}
+      {foodNutrients && <MealItemNutrients portionSize={portionSize} data={foodNutrients.nutrients}/>}
     </Card>
   );
 };

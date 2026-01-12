@@ -15,7 +15,7 @@ interface MealCardProps {
 export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   const { mutate: deleteMeal } = useDeleteMeal()
   const mealTypeLabel = mealTypeOptions.find((option) => option.value === meal.type)?.label || '';
-  const formattedDatetime = dayjs(meal.datetime).format('DD.MM.YYYY HH:mm');
+  const formattedDatetime = dayjs(meal.eatenAt).format('DD.MM.YYYY HH:mm');
   const menuItems: MenuProps['items'] = [
     {
       key: 'edit',

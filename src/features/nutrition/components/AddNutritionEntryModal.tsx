@@ -3,8 +3,8 @@ import { Button, DatePicker, Form, Input, Modal, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { MealItemForm } from './MealItemForm';
-import { CreateMealPayload, CreateMealItemPayload } from '../models/nutrition.interface';
-import { MealType } from '@agranom/boykom-common';
+import { CreateMealItemPayload, CreateMealPayload } from '../models/nutrition.interface';
+import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 
@@ -12,9 +12,10 @@ interface MealFormValues {
   title: string;
   datetime: Dayjs;
   items: Array<{
-    foodId: string;
-    name: string;
+    key: string;
+    value: string;
     portionSize: number;
+    isUserDish: boolean;
   }>;
 }
 
@@ -51,7 +52,7 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
       form.setFieldsValue({
         datetime: defaultDatetime,
         title: defaultTitle,
-        items: [{ foodId: '', name: '', portionSize: DEFAULT_PORTION_SIZE }],
+        items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
       });
   }, [selectedType, form]);
   const handleDatetimeChange = (date: Dayjs | null): void => {
@@ -71,15 +72,16 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
       return;
     }
     const items: CreateMealItemPayload[] = formValues.items.map(item => ({
-      foodId: item.foodId,
-      foodName: item.name,
-      gram: Number(item.portionSize),
+      sourceKey: item.key,
+      sourceType: item.isUserDish ? MealItemSourceType.UserDish : MealItemSourceType.FoodProduct,
+      name: item.value,
+      grams: Number(item.portionSize),
     }));
 
     onSubmit({
       title: formValues.title,
       type: selectedType,
-      datetime: formValues.datetime.toDate(),
+      eatenAt: formValues.datetime.toDate(),
       items,
     });
   };
