@@ -1,54 +1,30 @@
-import React, { useEffect } from 'react';
 import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space } from 'antd';
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { FoodsAutocomplete } from './FoodsAutocomplete';
+import React, { useEffect } from 'react';
 import { FoodAutocomplete } from '../models/nutrition.interface';
-import { useGetNutrients } from '../api/get-nutrients';
-import MealItemNutrients from './MealItemNutrients';
+import { MinusCircleOutlined } from '@ant-design/icons';
 import { validationMessages } from '../../../translations/validation-messages.translations';
+import { FoodsAutocomplete } from './FoodsAutocomplete';
+import { portionOptions } from '../const/portion-options';
 
-interface PortionOption {
-  label: string;
-  value: number;
-}
-
-const portionOptions: PortionOption[] = [
-  { label: 'Маленькая (100г)', value: 100 },
-  { label: 'Средняя (250г)', value: 250 },
-  { label: 'Большая (350г)', value: 350 },
-];
-
-interface MealItemFormProps {
+interface UserDishItemProps {
   field: { name: number; key: number };
   remove: (index: number) => void;
   isFirstItem: boolean;
+  enableCreateDish?: boolean;
 }
 
-export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFirstItem }) => {
+export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstItem, remove}) => {
   const form = Form.useFormInstance();
   const formItemValue = Form.useWatch(['items', field.name], form);
-  const [selectedOption, setSelectedOption] = React.useState<FoodAutocomplete | null>(null);
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
-  const productKey = formItemValue?.key;
-  const { data: foodNutrients } = useGetNutrients(
-    productKey,
-    portionSize,
-  );
-  useEffect(() => {
-    if (productKey && !selectedOption) {
-      setSelectedOption({ key: productKey, value: formItemValue?.value || '', isUserDish: !!formItemValue?.isUserDish });
-    }
-  }, [productKey, formItemValue?.value, selectedOption, formItemValue?.isUserDish]);
   useEffect(() => {
     setSliderValue(portionSize);
   }, [portionSize]);
 
   const handleSelectProduct = (product: FoodAutocomplete): void => {
-    setSelectedOption(product);
     form.setFieldValue(['items', field.name, 'key'], product.key);
     form.setFieldValue(['items', field.name, 'value'], product.value);
-    form.setFieldValue(['items', field.name, 'isUserDish'], product.isUserDish);
   };
   const handlePortionChange = (event: RadioChangeEvent): void => {
     const value = event.target.value;
@@ -90,7 +66,10 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
         name={[field.name, 'value']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <FoodsAutocomplete onSelect={handleSelectProduct}/>
+        <FoodsAutocomplete
+          enableCreateDish={false}
+          onSelect={handleSelectProduct}
+        />
       </Form.Item>
       <Form.Item
         label="Порция"
@@ -123,8 +102,6 @@ export const MealItemForm: React.FC<MealItemFormProps> = ({ field, remove, isFir
           1000: '1000г',
         }}
       />
-      {foodNutrients && <MealItemNutrients portionSize={portionSize} data={foodNutrients.nutrients}/>}
     </Card>
   );
-};
-
+}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AutoComplete, Input } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { useFoodsAutocomplete } from '../api/foods-autocomplete';
@@ -6,54 +6,68 @@ import { FoodAutocomplete } from '../models/nutrition.interface';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { autocompleteConfig } from '../const/autocomplete-config';
 
-interface FoodsAutocompleteProps {
-  onSelect?: (product: FoodAutocomplete) => void;
-  onCreateFood?: () => void;
+enum Actions {
+  CreateDish = 'createDish',
 }
 
-export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({ 
-  onSelect,
-  onCreateFood
-}) => {
+interface FoodsAutocompleteProps {
+  enableCreateDish: boolean;
+  onCreateDish?: () => void;
+  onSelect?: (product: FoodAutocomplete) => void;
+  value?: string;
+}
+
+export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
+                                                                      enableCreateDish,
+                                                                      onCreateDish,
+                                                                      onSelect,
+                                                                      value,
+                                                                    }) => {
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearch = useDebounce(searchValue, 300);
-  
+
   // Use React Query to fetch autocomplete options
   const { data, isLoading, isError } = useFoodsAutocomplete(debouncedSearch);
-  
+
+  useEffect(() => {
+    if (value) {
+      setSearchValue(value);
+    }
+  }, [value]);
+
   // Transform API response to AutoComplete options format
   const options = useMemo(() => {
     const foodOptions = data ? data.map((product) => ({
       value: product.value,
       label: product.value,
-      data: product
+      data: product,
     })) : [];
-    if (searchValue.length >= autocompleteConfig.minQueryLength) {
+    if (enableCreateDish && searchValue.length >= autocompleteConfig.minQueryLength) {
       const createFoodOption = {
-        value: '__create_food__',
+        value: Actions.CreateDish,
         label: (
           <span>
-            <PlusOutlined className='mr-4' />
+            <PlusOutlined className="mr-4"/>
             Добавить блюдо
           </span>
         ),
-        data: null
+        data: null,
       };
       const separatorOption = {
         value: '__separator__',
         label: '------',
         disabled: true,
-        data: null
+        data: null,
       };
       return [createFoodOption, separatorOption, ...foodOptions];
     }
     return foodOptions;
-  }, [data, searchValue]);
+  }, [data, searchValue, enableCreateDish]);
 
   const handleSelect = (value: string, option: any) => {
-    if (value === '__create_food__') {
-      if (onCreateFood) {
-        onCreateFood();
+    if (value === Actions.CreateDish) {
+      if (enableCreateDish && onCreateDish) {
+        onCreateDish();
       }
       setSearchValue('');
       return;
@@ -72,17 +86,17 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
       onChange={setSearchValue}
       onSelect={handleSelect}
       notFoundContent={
-        isLoading 
-          ? 'Пиши название...' 
-          : isError 
-            ? 'Error loading suggestions' 
-            : options.length === 0 
-              ? 'No products found' 
+        isLoading
+          ? 'Пиши название...'
+          : isError
+            ? 'Error loading suggestions'
+            : options.length === 0
+              ? 'No products found'
               : null
       }
       placeholder="Поиск продуктов"
     >
-      <Input prefix={<SearchOutlined />} />
+      <Input prefix={<SearchOutlined/>}/>
     </AutoComplete>
   );
 };

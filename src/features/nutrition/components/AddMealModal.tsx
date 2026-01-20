@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { Button, DatePicker, Form, Input, Modal, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
-import { MealItemForm } from './MealItemForm';
 import { CreateMealItemPayload, CreateMealPayload } from '../models/nutrition.interface';
 import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
+import MenuItemForm from './MenuItemForm';
 
 interface MealFormValues {
   title: string;
@@ -23,7 +23,7 @@ interface MealFormValues {
 
 const DEFAULT_PORTION_SIZE = 250;
 
-interface AddNutritionEntryModalProps {
+interface AddMealModalProps {
   selectedType: MealType | null;
   isSubmitting: boolean;
   onClose: () => void;
@@ -39,7 +39,7 @@ const formatDefaultTitle = (entryType: MealType | null, datetime: Dayjs | null):
   return `${typeLabel} в ${formattedDate}`;
 };
 
-export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
+export const AddMealModal: React.FC<AddMealModalProps> = ({
                                                                                 selectedType,
                                                                                 isSubmitting,
                                                                                 onClose,
@@ -136,7 +136,7 @@ export const AddNutritionEntryModal: React.FC<AddNutritionEntryModalProps> = ({
           {(fields, { add, remove }) => (
             <>
               {fields.map((field) => (
-                <MealItemForm
+                <MenuItemForm
                   key={field.key}
                   field={field}
                   remove={remove}

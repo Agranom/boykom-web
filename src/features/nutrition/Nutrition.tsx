@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Button, Card, Dropdown, MenuProps, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { AddNutritionEntryModal } from './components/AddNutritionEntryModal';
+import { AddMealModal } from './components/AddMealModal';
 import { Meals } from './components/Meals';
 import { useCreateMeal } from './api/create-meal';
 import { CreateMealPayload } from './models/nutrition.interface';
@@ -63,7 +63,7 @@ const Nutrition: React.FC = () => {
           style={{ position: 'fixed', right: 24, bottom: 24 }}
         />
       </Dropdown>
-      {isModalOpen && <AddNutritionEntryModal
+      {isModalOpen && <AddMealModal
         selectedType={selectedType}
         isSubmitting={isSubmitting}
         onClose={handleCloseModal}

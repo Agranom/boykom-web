@@ -1,4 +1,4 @@
-import { DefaultOptions, QueryClient, Query, QueryCache, MutationCache } from '@tanstack/react-query';
+import { DefaultOptions, MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import { getAlertUtils } from '../utils/alert-utils';
 import { HTTPError } from 'ky';
 
@@ -24,7 +24,7 @@ const queryConfig: DefaultOptions = {
     mutations: {
         useErrorBoundary: false, 
         retry: (failureCount: number, error: unknown) => {
-            return failureCount < 2 && error instanceof HTTPError && error.response.status !== 400 && error.response.status !== 401;
+            return failureCount < 2 && error instanceof HTTPError && error.response.status >= 500;
         },
     },
 };
