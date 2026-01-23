@@ -44,7 +44,8 @@ export const useDeleteMeal = ({
       return { previousMealsData };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKeys.meals], refetchType: 'none' });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.meals] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.nutritionSummary] });
       onSuccess?.();
     },
     onError: (error, _, context) => {

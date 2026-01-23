@@ -9,4 +9,5 @@ export const queryKeys = {
     foodsAutocomplete: 'foods-autocomplete',
     foodNutrients: 'food-nutrients',
     meals: 'meals',
+    nutritionSummary: 'nutrition-summary',
 }

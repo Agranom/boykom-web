@@ -3,11 +3,14 @@ import { Button, Card, Dropdown, MenuProps, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { AddMealModal } from './components/AddMealModal';
 import { Meals } from './components/Meals';
+import { NutritionDashboard } from './components/NutritionDashboard';
 import { useCreateMeal } from './api/create-meal';
 import { CreateMealPayload } from './models/nutrition.interface';
 import { useAlert } from '../../hooks/use-alert';
 import { MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from './const/meal-type-options';
+import { queryClient } from '../../config/react-query';
+import { queryKeys } from '../../const/query-keys';
 
 const { Title } = Typography;
 
@@ -17,8 +20,10 @@ const Nutrition: React.FC = () => {
   const { showError, showSuccess } = useAlert();
   const { mutate: submitMeal, isLoading: isSubmitting } = useCreateMeal({
     onSuccess: () => {
-      showSuccess('Приём пищи добавлен');
       handleCloseModal();
+      showSuccess('Приём пищи добавлен');
+      queryClient.invalidateQueries({queryKey: [queryKeys.meals]});
+      queryClient.invalidateQueries({queryKey: [queryKeys.nutritionSummary]});
     },
     onError: () => {
       showError('не удалось добавить приём пищи');
@@ -38,18 +43,17 @@ const Nutrition: React.FC = () => {
     setIsModalOpen(false);
     setSelectedType(null);
   };
-  const handleSubmit = (payload: CreateMealPayload): void => {
+  const createMeal = (payload: CreateMealPayload): void => {
     submitMeal(payload);
   };
 
   return (
     <div>
-      <Card>
-        <Space direction="vertical" size="small">
-          <Title level={3}>Питание</Title>
-        </Space>
-      </Card>
-      <Meals />
+      <Title level={3}>Питание</Title>
+      <div style={{ marginBottom: 16 }}>
+        <NutritionDashboard/>
+      </div>
+      <Meals/>
       <Dropdown
         menu={{ items: menuItems, onClick: handleMenuClick }}
         trigger={['click']}
@@ -58,7 +62,7 @@ const Nutrition: React.FC = () => {
         <Button
           type="primary"
           shape="circle"
-          icon={<PlusOutlined />}
+          icon={<PlusOutlined/>}
           size="large"
           style={{ position: 'fixed', right: 24, bottom: 24 }}
         />
@@ -67,7 +71,7 @@ const Nutrition: React.FC = () => {
         selectedType={selectedType}
         isSubmitting={isSubmitting}
         onClose={handleCloseModal}
-        onSubmit={handleSubmit}
+        onSubmit={createMeal}
       />}
     </div>
   );

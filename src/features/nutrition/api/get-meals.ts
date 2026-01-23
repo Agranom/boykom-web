@@ -29,9 +29,8 @@ export const getMeals = async (params?: GetMealsParams): Promise<Meal[]> => {
  */
 export const useGetMeals = (params?: GetMealsParams): UseQueryResult<Meal[], unknown> => {
   return useQuery({
-    queryKey: [queryKeys.meals, params?.from, params?.to],
+    queryKey: [queryKeys.meals],
     queryFn: () => getMeals(params),
-    staleTime: 30 * 1000,
   });
 };
 

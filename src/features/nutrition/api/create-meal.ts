@@ -22,6 +22,7 @@ export const useCreateMeal = ({
     mutationFn: createMeal,
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: [queryKeys.meals]});
+      queryClient.invalidateQueries({queryKey: [queryKeys.nutritionSummary]});
       onSuccess();
     },
     onError,
