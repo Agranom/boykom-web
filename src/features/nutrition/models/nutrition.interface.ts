@@ -29,14 +29,20 @@ export interface CreateMealPayload {
   items: CreateMealItemPayload[];
 }
 
-/**
- * Meal entity from the API
- */
+
+export interface MealItem {
+  name: string;
+  grams: number;
+  sourceKey: string;
+  sourceType: MealItemSourceType;
+}
+
 export interface Meal {
   id: string;
   title: string;
   type: MealType;
   eatenAt: string;
+  items?: MealItem[];
 }
 
 export interface FoodNutrients {

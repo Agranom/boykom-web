@@ -1,37 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Dropdown, MenuProps, Tag, Typography } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import { Meal } from '../models/nutrition.interface';
 import { mealTypeOptions } from '../const/meal-type-options';
 import dayjs from 'dayjs';
 import { useDeleteMeal } from '../api/delete-meal';
+import { AddMealModal } from './AddMealModal';
 
 const { Text } = Typography;
+
+enum MenuActions {
+  Edit = 'edit',
+  Delete = 'delete',
+  Repeate = 'repeate',
+}
 
 interface MealCardProps {
   meal: Meal;
 }
 
+const menuItems: MenuProps['items'] = [
+  {
+    key: MenuActions.Repeate,
+    label: 'Повторить',
+  },
+  {
+    key: MenuActions.Delete,
+    label: 'Удалить',
+  },
+];
+
 export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   const { mutate: deleteMeal } = useDeleteMeal()
+  const [isAddMealModalOpen, setIsAddMealModalOpen] = useState<boolean>(false);
   const mealTypeLabel = mealTypeOptions.find((option) => option.value === meal.type)?.label || '';
   const formattedDatetime = dayjs(meal.eatenAt).format('DD.MM.YYYY HH:mm');
-  const menuItems: MenuProps['items'] = [
-    {
-      key: 'edit',
-      label: 'Edit',
-    },
-    {
-      key: 'delete',
-      label: 'Delete',
-    },
-  ];
+
   const handleMenuClick: MenuProps['onClick'] = (info): void => {
-    if (info.key === 'edit') {
+    if (info.key === MenuActions.Edit) {
       // TODO: Implement edit functionality
     }
-    if (info.key === 'delete') {
+    if (info.key === MenuActions.Delete) {
       deleteMeal(meal.id);
+    }
+    if (info.key === MenuActions.Repeate) {
+      setIsAddMealModalOpen(true);
     }
   };
 
@@ -56,6 +69,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
         </div>
         <Text type="secondary">{formattedDatetime}</Text>
       </div>
+      {isAddMealModalOpen && <AddMealModal meal={meal} onClose={() => setIsAddMealModalOpen(false)} />}
     </Card>
   );
 };

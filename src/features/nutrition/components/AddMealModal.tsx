@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Form, Input, Modal, Space } from 'antd';
+import { Button, DatePicker, Form, Input, Modal, Select, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
-import { CreateMealItemPayload, CreateMealPayload } from '../models/nutrition.interface';
+import { CreateMealItemPayload, Meal } from '../models/nutrition.interface';
 import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import MenuItemForm from './MenuItemForm';
+import { useAlert } from '../../../hooks/use-alert';
+import { useCreateMeal } from '../api/create-meal';
 
 interface MealFormValues {
   title: string;
   datetime: Dayjs;
+  type: MealType;
   items: Array<{
     key: string;
     value: string;
@@ -20,17 +23,15 @@ interface MealFormValues {
 }
 
 
-
 const DEFAULT_PORTION_SIZE = 250;
 
 interface AddMealModalProps {
-  selectedType: MealType | null;
-  isSubmitting: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateMealPayload) => void;
+  selectedType?: MealType;
+  meal?: Meal;
 }
 
-const formatDefaultTitle = (entryType: MealType | null, datetime: Dayjs | null): string => {
+const formatDefaultTitle = (entryType?: MealType, datetime?: Dayjs | null): string => {
   if (entryType == null || !datetime) {
     return '';
   }
@@ -40,24 +41,47 @@ const formatDefaultTitle = (entryType: MealType | null, datetime: Dayjs | null):
 };
 
 export const AddMealModal: React.FC<AddMealModalProps> = ({
-  selectedType,
-  isSubmitting,
-  onClose,
-  onSubmit,
-}) => {
+                                                            selectedType,
+                                                            onClose,
+                                                            meal,
+                                                          }) => {
   const [form] = Form.useForm<MealFormValues>();
   const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState(false);
+  const { showError, showSuccess } = useAlert();
+  const { mutate: submitMeal, isLoading: isSubmitting } = useCreateMeal({
+    onSuccess: () => {
+      onClose();
+      showSuccess('Приём пищи добавлен');
+    },
+    onError: () => {
+      showError('не удалось добавить приём пищи');
+    },
+  });
 
   useEffect(() => {
     const defaultDatetime = dayjs();
     const defaultTitle = formatDefaultTitle(selectedType, defaultDatetime);
-    form.setFieldsValue({
-      datetime: defaultDatetime,
-      title: defaultTitle,
-      items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
-    });
+    form.setFieldsValue(
+      meal
+        ? {
+          datetime: defaultDatetime,
+          title: meal.title,
+          type: meal.type,
+          items: (meal.items || []).map(item => ({
+            key: item.sourceKey,
+            value: item.name,
+            portionSize: item.grams,
+            isUserDish: item.sourceType === MealItemSourceType.UserDish,
+          })),
+        }
+        : {
+          datetime: defaultDatetime,
+          title: defaultTitle,
+          type: selectedType,
+          items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
+        });
     setIsTitleManuallyEdited(false); // Reset when selectedType changes
-  }, [selectedType, form]);
+  }, [selectedType, form, meal]);
 
   const handleDatetimeChange = (date: Dayjs | null): void => {
     if (date) {
@@ -75,9 +99,6 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
 
   // Rest of your component code...
   const handleSubmit = async (): Promise<void> => {
-    if (selectedType == null) {
-      return;
-    }
     const formValues = form.getFieldsValue();
     if (!formValues.items || formValues.items.length === 0) {
       return;
@@ -89,9 +110,9 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       grams: Number(item.portionSize),
     }));
 
-    onSubmit({
+    submitMeal({
       title: formValues.title,
-      type: selectedType,
+      type: formValues.type,
       eatenAt: formValues.datetime.toDate(),
       items,
     });
@@ -130,7 +151,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           rules={[{ required: true, message: validationMessages.required }]}
         >
           <Input
-            placeholder="Enter title"
+            placeholder="Введите заголовок"
             onChange={handleTitleChange}
           />
         </Form.Item>
@@ -145,6 +166,13 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
             style={{ width: '100%' }}
             onChange={handleDatetimeChange}
           />
+        </Form.Item>
+        <Form.Item
+          label="Тип"
+          name="type"
+          rules={[{ required: true, message: validationMessages.required }]}
+        >
+          <Select options={mealTypeOptions}></Select>
         </Form.Item>
         <Form.List name="items">
           {(fields, { add, remove }) => (
