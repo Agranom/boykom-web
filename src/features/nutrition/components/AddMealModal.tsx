@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, DatePicker, Form, Input, Modal, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
@@ -40,29 +40,40 @@ const formatDefaultTitle = (entryType: MealType | null, datetime: Dayjs | null):
 };
 
 export const AddMealModal: React.FC<AddMealModalProps> = ({
-                                                                                selectedType,
-                                                                                isSubmitting,
-                                                                                onClose,
-                                                                                onSubmit,
-                                                                              }) => {
+  selectedType,
+  isSubmitting,
+  onClose,
+  onSubmit,
+}) => {
   const [form] = Form.useForm<MealFormValues>();
+  const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState(false);
+
   useEffect(() => {
-      const defaultDatetime = dayjs();
-      const defaultTitle = formatDefaultTitle(selectedType, defaultDatetime);
-      form.setFieldsValue({
-        datetime: defaultDatetime,
-        title: defaultTitle,
-        items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
-      });
+    const defaultDatetime = dayjs();
+    const defaultTitle = formatDefaultTitle(selectedType, defaultDatetime);
+    form.setFieldsValue({
+      datetime: defaultDatetime,
+      title: defaultTitle,
+      items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
+    });
+    setIsTitleManuallyEdited(false); // Reset when selectedType changes
   }, [selectedType, form]);
+
   const handleDatetimeChange = (date: Dayjs | null): void => {
     if (date) {
       form.setFieldsValue({
         datetime: date,
-        title: formatDefaultTitle(selectedType, date),
+        // Only update title if it hasn't been manually edited
+        ...(isTitleManuallyEdited ? {} : { title: formatDefaultTitle(selectedType, date) }),
       });
     }
   };
+
+  const handleTitleChange = (): void => {
+    setIsTitleManuallyEdited(true);
+  };
+
+  // Rest of your component code...
   const handleSubmit = async (): Promise<void> => {
     if (selectedType == null) {
       return;
@@ -118,7 +129,10 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           name="title"
           rules={[{ required: true, message: validationMessages.required }]}
         >
-          <Input placeholder="Enter title"/>
+          <Input
+            placeholder="Enter title"
+            onChange={handleTitleChange}
+          />
         </Form.Item>
         <Form.Item
           label="Дата и время"
@@ -160,4 +174,3 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
     </Modal>
   );
 };
-

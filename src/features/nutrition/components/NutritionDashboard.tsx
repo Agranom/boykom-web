@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, DatePicker, Space, Typography, Spin, Row, Col, Statistic, Collapse, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { Nutrients } from '@agranom/boykom-common';
+import { useSearchParams } from 'react-router-dom';
 
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
+
+const urlDateFormat = 'DDMMYYYY';
 
 const formatNutrientValue = (value: number | null | undefined): string => {
   if (value == null) {
@@ -15,17 +18,35 @@ const formatNutrientValue = (value: number | null | undefined): string => {
   return `~${value.toFixed(2)}`;
 };
 
-const NutritionDashboard: React.FC = () => {
+const getDefaultRanges = (searchParams: URLSearchParams): [Dayjs, Dayjs] => {
   const today = dayjs();
-  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([today.startOf('day'), today.endOf('day')]);
-  const { data, isLoading } = useGetNutritionSummary({
+
+  return searchParams.get('from') && searchParams.get('to')
+    ? [dayjs(searchParams.get('from'), urlDateFormat), dayjs(searchParams.get('to'), urlDateFormat)]
+    : [today.startOf('day'), today.endOf('day')]
+}
+
+const NutritionDashboard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>(getDefaultRanges(searchParams));
+  const { data, isLoading, refetch } = useGetNutritionSummary({
     from: dateRange[0].toDate(),
     to: dateRange[1].toDate(),
   });
 
+  useEffect(() => {
+    void refetch()
+  }, [searchParams])
+
+
+
   const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null): void => {
     if (dates && dates[0] && dates[1]) {
-      setDateRange([dates[0].startOf('day'), dates[1].endOf('day')]);
+      const from = dates[0].startOf('day');
+      const to = dates[1].endOf('day');
+
+      setDateRange([from, to]);
+      setSearchParams({from: from.format(urlDateFormat).toString(), to: to.format(urlDateFormat).toString()})
     }
   };
 

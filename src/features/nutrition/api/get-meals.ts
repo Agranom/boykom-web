@@ -13,6 +13,8 @@ interface GetMealsParams {
  */
 export const getMeals = async (params?: GetMealsParams): Promise<Meal[]> => {
   const searchParams = new URLSearchParams();
+  searchParams.append('fields', 'items.name');
+
   if (params?.from) {
     searchParams.append('from', params.from.toISOString());
   }
