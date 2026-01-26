@@ -2,8 +2,10 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../../const/query-keys';
 import httpClient from '../../../services/http-client';
 import { Meal } from '../models/nutrition.interface';
+import { PaginatedResponse } from '../../../models/paginated-response.interface';
+import { PaginationQuery } from '../../../models/pagination-query.interface';
 
-interface GetMealsParams {
+interface GetMealsParams extends PaginationQuery {
   from?: Date;
   to?: Date;
 }
@@ -11,16 +13,24 @@ interface GetMealsParams {
 /**
  * Fetches meals from the API
  */
-export const getMeals = async (params?: GetMealsParams): Promise<Meal[]> => {
+export const getMeals = async (params?: GetMealsParams): Promise<PaginatedResponse<Meal>> => {
   const searchParams = new URLSearchParams();
   const itemFields = ['items.name', 'items.grams', 'items.sourceKey', 'items.sourceType'];
   itemFields.forEach(field => searchParams.append('fields', field));
+  const {from, to, page, limit} = params || {};
 
-  if (params?.from) {
-    searchParams.append('from', params.from.toISOString());
+  if (from) {
+    searchParams.append('from', from.toISOString());
   }
-  if (params?.to) {
-    searchParams.append('to', params.to.toISOString());
+  if (to) {
+    searchParams.append('to', to.toISOString());
+  }
+  if (page) {
+    searchParams.append('page', page.toString());
+  }
+
+  if (limit) {
+    searchParams.append('limit', limit.toString());
   }
   const queryString = searchParams.toString();
   const url = queryString ? `meals?${queryString}` : 'meals';
@@ -30,7 +40,7 @@ export const getMeals = async (params?: GetMealsParams): Promise<Meal[]> => {
 /**
  * React Query hook to fetch meals
  */
-export const useGetMeals = (params?: GetMealsParams): UseQueryResult<Meal[], unknown> => {
+export const useGetMeals = (params?: GetMealsParams): UseQueryResult<PaginatedResponse<Meal>, unknown> => {
   return useQuery({
     queryKey: [queryKeys.meals],
     queryFn: () => getMeals(params),
