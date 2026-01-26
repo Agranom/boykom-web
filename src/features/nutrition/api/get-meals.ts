@@ -15,7 +15,7 @@ interface GetMealsParams extends PaginationQuery {
  */
 export const getMeals = async (params?: GetMealsParams): Promise<PaginatedResponse<Meal>> => {
   const searchParams = new URLSearchParams();
-  const itemFields = ['items.name', 'items.grams', 'items.sourceKey', 'items.sourceType'];
+  const itemFields = ['items.name', 'items.grams', 'items.sourceKey', 'items.sourceType', 'items.id'];
   itemFields.forEach(field => searchParams.append('fields', field));
   const {from, to, page, limit} = params || {};
 

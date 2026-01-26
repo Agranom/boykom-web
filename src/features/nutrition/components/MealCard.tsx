@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Dropdown, MenuProps, Tag, Typography } from 'antd';
+import { Card, Collapse, Dropdown, MenuProps, Tag, Typography } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import { Meal } from '../models/nutrition.interface';
 import { mealTypeOptions } from '../const/meal-type-options';
@@ -69,6 +69,29 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
         </div>
         <Text type="secondary">{formattedDatetime}</Text>
       </div>
+      
+      {meal.items && meal.items.length > 0 && (
+        <div className='mt-3'>
+          <Collapse
+            size="small"
+            items={[
+              {
+                key: '1',
+                label: `Продукты (${meal.items.length})`,
+                children: (
+                  <ul className="list-disc pl-5">
+                    {meal.items.map((item, index) => (
+                      <li key={index} className="mb-1">
+                        {item.name}
+                      </li>
+                    ))}
+                  </ul>
+                ),
+              },
+            ]}
+          />
+        </div>
+      )}
       {isAddMealModalOpen && <AddMealModal meal={meal} onClose={() => setIsAddMealModalOpen(false)} />}
     </Card>
   );
