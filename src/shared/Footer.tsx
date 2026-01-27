@@ -1,4 +1,4 @@
-import { Groups, LocalGroceryStore, MenuBook, BarChart, LunchDining } from '@mui/icons-material';
+import { Groups, LocalGroceryStore, MenuBook, LunchDining } from '@mui/icons-material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const Footer = () => {
                 value={value}
                 onChange={handleChange}
             >
-                <BottomNavigationAction value={eAppRoutes.Home} label="Главная" icon={<LocalGroceryStore fontSize={'large'}/>}/>
+                <BottomNavigationAction value={eAppRoutes.Home} label="Покупки" icon={<LocalGroceryStore fontSize={'large'}/>}/>
                 <BottomNavigationAction value={eAppRoutes.Recipes} label="Рецепты" icon={<MenuBook fontSize={'large'}/>}/>
                 <BottomNavigationAction value={eAppRoutes.Groups} label="Группы" icon={<Groups fontSize={'large'}/>}/>
                 <BottomNavigationAction value={eAppRoutes.Nutrition} label="Питание" icon={<LunchDining fontSize={'large'}/>}/>
