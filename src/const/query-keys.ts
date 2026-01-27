@@ -6,4 +6,10 @@ export const queryKeys = {
     userRecipe: 'user-recipes',
     recipes: 'recipes',
     analytics: 'analytics',
+    foodsAutocomplete: 'foods-autocomplete',
+    foodNutrients: 'food-nutrients',
+    meals: 'meals',
+    mealDetails: 'meal-details',
+    mealTemplates: 'meal-templates',
+    nutritionSummary: 'nutrition-summary',
 }

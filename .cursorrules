@@ -24,6 +24,7 @@
   - Use Ant Design, Material UI  and Tailwind Aria for components and styling.
   - Use mobile-first approach for responsive design.  
   - Implement responsive design with Tailwind CSS.
+  - Prefere Tailwind class names over inline styling
   
   React
   - Use functional components and TypeScript interfaces.
