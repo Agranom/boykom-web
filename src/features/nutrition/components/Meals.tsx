@@ -10,13 +10,13 @@ export const Meals: React.FC = () => {
     return <div>Загрузка...</div>;
   }
 
-  if (!meals || meals.data.length === 0) {
+  if (!meals || meals.length === 0) {
     return <div>Добавьте блюдо</div>;
   }
 
   return (
     <List
-      dataSource={meals.data}
+      dataSource={meals}
       renderItem={(meal) => (
         <List.Item>
           <MealCard meal={meal}/>

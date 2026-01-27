@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import httpClient from '../../../services/http-client';
-import { CreateMealPayload } from '../models/nutrition.interface';
+import { CreateMealPayload } from '../models/meal.interface';
 import { queryClient } from '../../../config/react-query';
 import { queryKeys } from '../../../const/query-keys';
 

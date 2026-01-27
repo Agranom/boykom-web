@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Collapse, Dropdown, MenuProps, Tag, Typography } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
-import { Meal } from '../models/nutrition.interface';
+import { Meal } from '../models/meal.interface';
 import { mealTypeOptions } from '../const/meal-type-options';
 import dayjs from 'dayjs';
 import { useDeleteMeal } from '../api/delete-meal';
@@ -92,7 +92,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
           />
         </div>
       )}
-      {isAddMealModalOpen && <AddMealModal meal={meal} onClose={() => setIsAddMealModalOpen(false)} />}
+      {isAddMealModalOpen && <AddMealModal currentMeal={meal} onClose={() => setIsAddMealModalOpen(false)} />}
     </Card>
   );
 };

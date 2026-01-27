@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Form, Input, Modal, Select, Space } from 'antd';
+import { Button, Checkbox, DatePicker, Form, Input, Modal, Select, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
-import { CreateMealItemPayload, Meal } from '../models/nutrition.interface';
+import { CreateMealItemPayload, Meal } from '../models/meal.interface';
 import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import MenuItemForm from './MenuItemForm';
 import { useAlert } from '../../../hooks/use-alert';
 import { useCreateMeal } from '../api/create-meal';
+import { MealTemplates } from './MealTemplates';
+import { useGetMealById } from '../api/get-meal';
 
 interface MealFormValues {
   title: string;
@@ -20,6 +22,7 @@ interface MealFormValues {
     portionSize: number;
     isUserDish: boolean;
   }>;
+  isTemplate: boolean;
 }
 
 
@@ -28,7 +31,8 @@ const DEFAULT_PORTION_SIZE = 250;
 interface AddMealModalProps {
   onClose: () => void;
   selectedType?: MealType;
-  meal?: Meal;
+  currentMeal?: Meal;
+  isFirstCreate?: boolean;
 }
 
 const formatDefaultTitle = (entryType?: MealType, datetime?: Dayjs | null): string => {
@@ -43,10 +47,13 @@ const formatDefaultTitle = (entryType?: MealType, datetime?: Dayjs | null): stri
 export const AddMealModal: React.FC<AddMealModalProps> = ({
                                                             selectedType,
                                                             onClose,
-                                                            meal,
+                                                            currentMeal,
+                                                            isFirstCreate = false,
                                                           }) => {
   const [form] = Form.useForm<MealFormValues>();
   const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState(false);
+  const [mealTemplateId, setMealTemplateId] = useState<string>();
+  const [meal, setMeal] = useState<Meal | undefined>(currentMeal);
   const { showError, showSuccess } = useAlert();
   const { mutate: submitMeal, isLoading: isSubmitting } = useCreateMeal({
     onSuccess: () => {
@@ -57,6 +64,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       showError('не удалось добавить приём пищи');
     },
   });
+  const { data: mealData, isFetching: isMealLoading } = useGetMealById(mealTemplateId);
 
   useEffect(() => {
     const defaultDatetime = dayjs();
@@ -73,15 +81,24 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
             portionSize: item.grams,
             isUserDish: item.sourceType === MealItemSourceType.UserDish,
           })),
+          isTemplate: false,
         }
         : {
           datetime: defaultDatetime,
           title: defaultTitle,
           type: selectedType,
           items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
+          isTemplate: false,
         });
     setIsTitleManuallyEdited(false); // Reset when selectedType changes
-  }, [selectedType, form, meal]);
+  }, [selectedType, meal]);
+
+  useEffect(() => {
+    if (mealData) {
+      setMeal(mealData);
+    }
+  }, [mealData]);
+
 
   const handleDatetimeChange = (date: Dayjs | null): void => {
     if (date) {
@@ -99,11 +116,11 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
 
   // Rest of your component code...
   const handleSubmit = async (): Promise<void> => {
-    const formValues = form.getFieldsValue();
-    if (!formValues.items || formValues.items.length === 0) {
+    const { items, datetime, title, type, isTemplate } = form.getFieldsValue();
+    if (!items || items.length === 0) {
       return;
     }
-    const items: CreateMealItemPayload[] = formValues.items.map(item => ({
+    const mealItems: CreateMealItemPayload[] = items.map(item => ({
       sourceKey: item.key,
       sourceType: item.isUserDish ? MealItemSourceType.UserDish : MealItemSourceType.FoodProduct,
       name: item.value,
@@ -111,15 +128,19 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
     }));
 
     submitMeal({
-      title: formValues.title,
-      type: formValues.type,
-      eatenAt: formValues.datetime.toDate(),
-      items,
+      title,
+      type,
+      eatenAt: datetime.toDate(),
+      items: mealItems,
+      isTemplate,
     });
   };
   const handleClose = (): void => {
     form.resetFields();
     onClose();
+  };
+  const handleSelectTemplate = (templateId: string) => {
+    setMealTemplateId(templateId);
   };
 
   return (
@@ -144,7 +165,11 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
+        disabled={isMealLoading || isSubmitting}
       >
+        {isFirstCreate && <div className="my-6">
+          <MealTemplates onSelect={handleSelectTemplate}/>
+        </div>}
         <Form.Item
           label="Заголовок"
           name="title"
@@ -198,6 +223,12 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
             </>
           )}
         </Form.List>
+        <Form.Item
+          name="isTemplate"
+          valuePropName="checked"
+        >
+          <Checkbox>Сохранить как шаблон</Checkbox>
+        </Form.Item>
       </Form>
     </Modal>
   );

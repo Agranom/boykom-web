@@ -2,7 +2,7 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { queryClient } from '../../../config/react-query';
 import { queryKeys } from '../../../const/query-keys';
 import httpClient from '../../../services/http-client';
-import { Meal } from '../models/nutrition.interface';
+import { Meal } from '../models/meal.interface';
 
 /**
  * Deletes a meal by ID

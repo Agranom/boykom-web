@@ -52,6 +52,7 @@ const Nutrition: React.FC = () => {
       {isModalOpen && <AddMealModal
         selectedType={selectedType}
         onClose={handleCloseModal}
+        isFirstCreate={true}
       />}
     </div>
   );
