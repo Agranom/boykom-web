@@ -46,7 +46,7 @@ const Nutrition: React.FC = () => {
           shape="circle"
           icon={<PlusOutlined/>}
           size="large"
-          style={{ position: 'fixed', right: 24, bottom: 24 }}
+          style={{ position: 'fixed', right: 24, bottom: 74 }}
         />
       </Dropdown>
       {isModalOpen && <AddMealModal
