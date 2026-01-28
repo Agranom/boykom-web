@@ -6,16 +6,13 @@ import { Nutrients } from '@agranom/boykom-common';
 import { useSearchParams } from 'react-router-dom';
 
 const { RangePicker } = DatePicker;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Panel } = Collapse;
 
 const urlDateFormat = 'DDMMYYYY';
 
 const formatNutrientValue = (value: number | null | undefined): string => {
-  if (value == null) {
-    return '—';
-  }
-  return `~${value.toFixed(2)}`;
+  return `~${(value ?? 0).toFixed(2)}`;
 };
 
 const getDefaultRanges = (searchParams: URLSearchParams): [Dayjs, Dayjs] => {
@@ -64,59 +61,61 @@ const NutritionDashboard: React.FC = () => {
         />
         {isLoading ? (
           <Spin size="large"/>
-        ) : Object.keys(nutrients).length ? (
+        ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row gutter={16}>
-              <Col span={6}>
+              <Col span={24} className="text-center">
                 <Tooltip title={nutrients.kj ? `${formatNutrientValue(nutrients.kj)} (кДж)` : ''}>
-                  <Statistic title="Энергия (кКал)" value={formatNutrientValue(nutrients.kcal)}/>
+                  <Statistic title="Энергия" value={formatNutrientValue(nutrients.kcal)} suffix="кКал"/>
                 </Tooltip>
               </Col>
-              <Col span={6}>
-                <Statistic title="Белки (г)" value={formatNutrientValue(nutrients.prot)} suffix="г"/>
+            </Row>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic title="Белки" value={formatNutrientValue(nutrients.prot)} suffix="г"/>
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Tooltip title={
                   <>
                     <p>Насыщенные жиры: {formatNutrientValue(nutrients.fatSaturated)} г</p>
                     <p>Ненасыщенные жиры: {formatNutrientValue((nutrients.fatMono || 0) + (nutrients.fatPoly || 0))} г</p>
                   </>
                 }>
-                  <Statistic title="Жиры (г)" value={formatNutrientValue(nutrients.fat)} suffix="г"/>
+                  <Statistic title="Жиры" value={formatNutrientValue(nutrients.fat)} suffix="г"/>
                 </Tooltip>
               </Col>
-              <Col span={6}>
-                <Statistic title="Углеводы (г)" value={formatNutrientValue(nutrients.carbo)} suffix="г"/>
+              <Col span={8}>
+                <Statistic title="Углеводы" value={formatNutrientValue(nutrients.carbo)} suffix="г"/>
               </Col>
             </Row>
             <Row gutter={16}>
-              <Col span={6}>
-                <Statistic title="Сахар (г)" value={formatNutrientValue(nutrients.sug)} suffix="г"/>
+              <Col span={8}>
+                <Statistic title="Сахар" value={formatNutrientValue(nutrients.sug)} suffix="г"/>
               </Col>
-              <Col span={6}>
-                <Statistic title="Холестерин (мг)" value={formatNutrientValue(nutrients.chol)} suffix="мг"/>
+              <Col span={8}>
+                <Statistic title="Холестерин" value={formatNutrientValue(nutrients.chol)} suffix="мг"/>
               </Col>
-              <Col span={6}>
-                <Statistic title="Соль (г)" value={formatNutrientValue(nutrients.salt)} suffix="г"/>
+              <Col span={8}>
+                <Statistic title="Соль" value={formatNutrientValue(nutrients.salt)} suffix="г"/>
               </Col>
             </Row>
             <Collapse>
               <Panel key="1" header="Минералы">
                 <Row gutter={16}>
-                  <Col span={6}>
-                    <Statistic title="Кальций (мг)" value={formatNutrientValue(nutrients.cal)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Кальций" value={formatNutrientValue(nutrients.cal)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Железо (мг)" value={formatNutrientValue(nutrients.iron)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Железо" value={formatNutrientValue(nutrients.iron)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Магний (мг)" value={formatNutrientValue(nutrients.mag)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Магний" value={formatNutrientValue(nutrients.mag)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Йод (мкг)" value={formatNutrientValue(nutrients.iod)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Йод" value={formatNutrientValue(nutrients.iod)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Цинк (мг)" value={formatNutrientValue(nutrients.zinc)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Цинк" value={formatNutrientValue(nutrients.zinc)} suffix="мг"/>
                   </Col>
                 </Row>
               </Panel>
@@ -124,52 +123,50 @@ const NutritionDashboard: React.FC = () => {
             <Collapse>
               <Panel header="Витамины" key="2">
                 <Row gutter={16}>
-                  <Col span={6}>
-                    <Statistic title="Витамин A (мкг)" value={formatNutrientValue(nutrients.vA)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин A" value={formatNutrientValue(nutrients.vA)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин D3 (мкг)" value={formatNutrientValue(nutrients.vD3)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин D3" value={formatNutrientValue(nutrients.vD3)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин E (мг)" value={formatNutrientValue(nutrients.vE)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин E" value={formatNutrientValue(nutrients.vE)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин C (мг)" value={formatNutrientValue(nutrients.vC)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин C" value={formatNutrientValue(nutrients.vC)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин K1 (мкг)" value={formatNutrientValue(nutrients.vK1)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин K1" value={formatNutrientValue(nutrients.vK1)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин K2 (мкг)" value={formatNutrientValue(nutrients.vK2)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин K2" value={formatNutrientValue(nutrients.vK2)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B1 (мг)" value={formatNutrientValue(nutrients.vB1)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B1" value={formatNutrientValue(nutrients.vB1)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B2 (мг)" value={formatNutrientValue(nutrients.vB2)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B2" value={formatNutrientValue(nutrients.vB2)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B3 (мг)" value={formatNutrientValue(nutrients.vB3)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B3" value={formatNutrientValue(nutrients.vB3)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B5 (мг)" value={formatNutrientValue(nutrients.vB5)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B5" value={formatNutrientValue(nutrients.vB5)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B6 (мг)" value={formatNutrientValue(nutrients.vB6)} suffix="мг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B6" value={formatNutrientValue(nutrients.vB6)} suffix="мг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B9 (мкг)" value={formatNutrientValue(nutrients.vB9)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B9" value={formatNutrientValue(nutrients.vB9)} suffix="мкг"/>
                   </Col>
-                  <Col span={6}>
-                    <Statistic title="Витамин B12 (мкг)" value={formatNutrientValue(nutrients.vB12)} suffix="мкг"/>
+                  <Col span={8}>
+                    <Statistic title="Витамин B12" value={formatNutrientValue(nutrients.vB12)} suffix="мкг"/>
                   </Col>
                 </Row>
               </Panel>
             </Collapse>
 
           </Space>
-        ) : (
-          <Text>Нет данных за выбранный период</Text>
         )}
       </Space>
     </Card>
