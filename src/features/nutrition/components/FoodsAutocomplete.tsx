@@ -38,7 +38,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   // Transform API response to AutoComplete options format
   const options = useMemo(() => {
     const foodOptions = data ? data.map((product) => ({
-      value: product.value,
+      value: product.key,
       label: product.value,
       data: product,
     })) : [];
