@@ -5,7 +5,7 @@ import { MinusCircleOutlined } from '@ant-design/icons';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import { FoodsAutocomplete } from './FoodsAutocomplete';
 import { portionOptions } from '../const/portion-options';
-import { PortionSizeSlider } from './portion-size-slider';
+import { PortionSizeSlider } from './PortionSizeSlider';
 
 interface UserDishItemProps {
   field: { name: number; key: number };

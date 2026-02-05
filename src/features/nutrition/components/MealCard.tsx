@@ -82,7 +82,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
                   <ul className="list-disc pl-5">
                     {meal.items.map((item, index) => (
                       <li key={index} className="mb-1">
-                        {item.name}
+                        {item.name} ({item.grams}г) - {item.kcal} ккал
                       </li>
                     ))}
                   </ul>

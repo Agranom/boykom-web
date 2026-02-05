@@ -7,7 +7,9 @@ import { validationMessages } from '../../../translations/validation-messages.tr
 import AddUserDishModal from './AddUserDishModal';
 import { UserDish } from '../models/user-dish.interface';
 import { portionOptions } from '../const/portion-options';
-import { PortionSizeSlider } from './portion-size-slider';
+import { PortionSizeSlider } from './PortionSizeSlider';
+import { useGetNutrients } from '../api/get-nutrients';
+import MealItemNutrients from './MealItemNutrients';
 
 interface FoodItemFormProps {
   field: { name: number; key: number };
@@ -22,6 +24,8 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
+  const { data: foodNutrients } = useGetNutrients(selectedOption?.key, portionSize);
+
   useEffect(() => {
     setSliderValue(portionSize);
   }, [portionSize]);
@@ -107,6 +111,7 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         onChange={handleSliderChange}
         onChangeComplete={handleSliderComplete}
       />
+      {foodNutrients && <MealItemNutrients data={foodNutrients.nutrients} portionSize={portionSize} />}
       {isAddDishModalOpen && <AddUserDishModal
         onCreateSuccess={handleDishCreateSuccess}
         onClose={handleCloseDishModal} />}
