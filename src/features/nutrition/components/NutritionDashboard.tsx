@@ -15,6 +15,13 @@ const formatNutrientValue = (value: number | null | undefined): string => {
   return `~${(value ?? 0).toFixed(2)}`;
 };
 
+const sumValues = (...values: (number | null | undefined)[]): number => {
+  if (!Array.isArray(values) || !values.length) {
+    return 0;
+  }
+  return values.reduce((acc: number, value) => acc + (value ?? 0), 0);
+};
+
 const getDefaultRanges = (searchParams: URLSearchParams): [Dayjs, Dayjs] => {
   const today = dayjs();
 
@@ -131,6 +138,9 @@ const NutritionDashboard: React.FC = () => {
                       <Statistic title="Натрий" value={formatNutrientValue(nutrients.sod)} suffix="мг" />
                     </Tooltip>
                   </Col>
+                  <Col span={8}>
+                    <Statistic title="Омега-3" value={formatNutrientValue(sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) * 1000)} suffix="мг" />
+                  </Col>
                 </Row>
               </Panel>
             </Collapse>
@@ -141,7 +151,9 @@ const NutritionDashboard: React.FC = () => {
                     <Statistic title="Витамин A" value={formatNutrientValue(nutrients.vA)} suffix="мкг" />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин D3" value={formatNutrientValue(nutrients.vD3)} suffix="мкг" />
+                    <Tooltip title="D3 + D2">
+                      <Statistic title="Витамин D" value={formatNutrientValue(nutrients.vD)} suffix="мкг" />
+                    </Tooltip>
                   </Col>
                   <Col span={8}>
                     <Statistic title="Витамин E" value={formatNutrientValue(nutrients.vE)} suffix="мг" />
