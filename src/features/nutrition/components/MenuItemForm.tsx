@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space } from 'antd';
+import { Button, Card, Form, Radio, Space } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { FoodsAutocomplete } from './FoodsAutocomplete';
 import { FoodAutocomplete } from '../models/nutrition.interface';
@@ -7,6 +7,7 @@ import { validationMessages } from '../../../translations/validation-messages.tr
 import AddUserDishModal from './AddUserDishModal';
 import { UserDish } from '../models/user-dish.interface';
 import { portionOptions } from '../const/portion-options';
+import { PortionSizeSlider } from './portion-size-slider';
 
 interface FoodItemFormProps {
   field: { name: number; key: number };
@@ -21,15 +22,6 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
-  // useEffect(() => {
-  //   if (productKey && !selectedOption) {
-  //     setSelectedOption({
-  //       key: productKey,
-  //       value: formItemValue?.value || '',
-  //       isUserDish: !!formItemValue?.isUserDish,
-  //     });
-  //   }
-  // }, [productKey, formItemValue?.value, selectedOption, formItemValue?.isUserDish]);
   useEffect(() => {
     setSliderValue(portionSize);
   }, [portionSize]);
@@ -39,10 +31,6 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
     form.setFieldValue(['items', field.name, 'key'], product.key);
     form.setFieldValue(['items', field.name, 'value'], product.value);
     form.setFieldValue(['items', field.name, 'isUserDish'], product.isUserDish);
-  };
-  const handlePortionChange = (event: RadioChangeEvent): void => {
-    const value = event.target.value;
-    form.setFieldValue(['items', field.name, 'portionSize'], value);
   };
   const handleSliderChange = (value: number): void => {
     setSliderValue(value);
@@ -72,7 +60,7 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
           <Button
             type="text"
             danger
-            icon={<MinusCircleOutlined/>}
+            icon={<MinusCircleOutlined />}
             onClick={() => remove(field.name)}
           >
             Удалить
@@ -84,7 +72,7 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         name={[field.name, 'key']}
         hidden
       >
-        <input type="hidden"/>
+        <input type="hidden" />
       </Form.Item>
       <Form.Item
         label="Название"
@@ -103,7 +91,7 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <Radio.Group onChange={handlePortionChange}>
+        <Radio.Group>
           <Space>
             {portionOptions.map((option) => (
               <Radio key={option.value} value={option.value}>
@@ -114,24 +102,14 @@ const MenuItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         </Radio.Group>
 
       </Form.Item>
-      <Slider
-        min={1}
-        max={1000}
+      <PortionSizeSlider
         value={sliderValue}
         onChange={handleSliderChange}
         onChangeComplete={handleSliderComplete}
-        marks={{
-          1: '1г',
-          100: '100г',
-          250: '250г',
-          500: '500г',
-          750: '750г',
-          1000: '1000г',
-        }}
       />
       {isAddDishModalOpen && <AddUserDishModal
         onCreateSuccess={handleDishCreateSuccess}
-        onClose={handleCloseDishModal}/>}
+        onClose={handleCloseDishModal} />}
     </Card>
   );
 };
