@@ -38,7 +38,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   // Transform API response to AutoComplete options format
   const options = useMemo(() => {
     const foodOptions = data ? data.map((product) => ({
-      value: product.value,
+      value: product.key,
       label: product.value,
       data: product,
     })) : [];
@@ -80,7 +80,8 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
 
   return (
     <AutoComplete
-      style={{ width: '100%' }}
+      className="w-full"
+      allowClear
       options={options}
       value={searchValue}
       onChange={setSearchValue}
@@ -89,9 +90,9 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
         isLoading
           ? 'Пиши название...'
           : isError
-            ? 'Error loading suggestions'
+            ? 'Ошибка загрузки продуктов'
             : options.length === 0
-              ? 'No products found'
+              ? 'Продукты не найдены'
               : null
       }
       placeholder="Поиск продуктов"

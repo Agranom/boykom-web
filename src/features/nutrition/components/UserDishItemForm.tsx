@@ -1,10 +1,11 @@
-import { Button, Card, Form, Radio, RadioChangeEvent, Slider, Space } from 'antd';
+import { Button, Card, Form, Radio, Space } from 'antd';
 import React, { useEffect } from 'react';
 import { FoodAutocomplete } from '../models/nutrition.interface';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import { FoodsAutocomplete } from './FoodsAutocomplete';
 import { portionOptions } from '../const/portion-options';
+import { PortionSizeSlider } from './PortionSizeSlider';
 
 interface UserDishItemProps {
   field: { name: number; key: number };
@@ -25,10 +26,6 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
   const handleSelectProduct = (product: FoodAutocomplete): void => {
     form.setFieldValue(['items', field.name, 'key'], product.key);
     form.setFieldValue(['items', field.name, 'value'], product.value);
-  };
-  const handlePortionChange = (event: RadioChangeEvent): void => {
-    const value = event.target.value;
-    form.setFieldValue(['items', field.name, 'portionSize'], value);
   };
   const handleSliderChange = (value: number): void => {
     setSliderValue(value);
@@ -76,7 +73,7 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <Radio.Group onChange={handlePortionChange}>
+        <Radio.Group>
           <Space>
             {portionOptions.map((option) => (
               <Radio key={option.value} value={option.value}>
@@ -87,21 +84,10 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
         </Radio.Group>
 
       </Form.Item>
-      <Slider
-        min={1}
-        max={1000}
+      <PortionSizeSlider
         value={sliderValue}
         onChange={handleSliderChange}
-        onChangeComplete={handleSliderComplete}
-        marks={{
-          1: '1г',
-          100: '100г',
-          250: '250г',
-          500: '500г',
-          750: '750г',
-          1000: '1000г',
-        }}
-      />
+        onChangeComplete={handleSliderComplete} />
     </Card>
   );
 }

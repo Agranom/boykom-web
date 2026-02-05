@@ -90,7 +90,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
           isTemplate: false,
         });
-    setIsTitleManuallyEdited(false); // Reset when selectedType changes
+    setIsTitleManuallyEdited(!!meal);
   }, [selectedType, meal]);
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
 
   return (
     <Modal
-      title={selectedType !== null ? `Добавить ${mealTypeOptions.find((option) => option.value === selectedType)?.label}` : 'Add meal'}
+      title={`Добавить приём пищи`}
       open={true}
       onCancel={handleClose}
       footer={

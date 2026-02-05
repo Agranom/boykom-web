@@ -27,6 +27,10 @@ export interface MealItem {
   grams: number;
   sourceKey: string;
   sourceType: MealItemSourceType;
+  kcal: number | null;
+  prot: number | null;
+  carbo: number | null;
+  fat: number | null;
 }
 
 export interface Meal {

@@ -37,12 +37,14 @@ const AddUserDishModal: React.FC<AddUserDishModalProps> = ({
       // Error handling can be added here
     },
   });
+  
   useEffect(() => {
     form.setFieldsValue({
       name: '',
       items: [{ key: '', value: '', portionSize: DEFAULT_PORTION_SIZE }],
     });
   }, [form]);
+
   const handleSubmit = async (): Promise<void> => {
     const formValues = form.getFieldsValue();
     if (!formValues.items || formValues.items.length === 0) {
