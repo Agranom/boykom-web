@@ -23,8 +23,8 @@ export const PortionSizeSlider = ({ value, onChange, onChangeComplete }: Portion
                 1000: '1000г',
             }}
             tooltip={{
-                open: true,
-                placement: 'bottom',
+                formatter: (value) => `${value}г`,
+                placement: 'top',
             }}
         />
     );

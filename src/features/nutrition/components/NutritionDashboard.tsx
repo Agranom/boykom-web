@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, DatePicker, Space, Typography, Spin, Row, Col, Statistic, Collapse, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { Nutrients } from '@agranom/boykom-common';
@@ -74,9 +75,11 @@ const NutritionDashboard: React.FC = () => {
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row gutter={16}>
               <Col span={24} className="text-center">
-                <Tooltip title={nutrients.kj ? `${formatNutrientValue(nutrients.kj)} (кДж)` : ''}>
-                  <Statistic title="Энергия" value={formatNutrientValue(nutrients.kcal)} suffix="кКал" />
-                </Tooltip>
+                <Statistic 
+                  title="Энергия" 
+                  value={formatNutrientValue(nutrients.kcal)} 
+                  suffix="кКал" 
+                />
               </Col>
             </Row>
             <Row gutter={16}>
@@ -84,15 +87,23 @@ const NutritionDashboard: React.FC = () => {
                 <Statistic title="Белки" value={formatNutrientValue(nutrients.prot)} suffix="г" />
               </Col>
               <Col span={8}>
-                <Tooltip title={
-                  <>
-                    <p>Насыщенные жиры: {formatNutrientValue(nutrients.fatSaturated)} г</p>
-                    <p>Ненасыщенные
-                      жиры: {formatNutrientValue((nutrients.fatMono || 0) + (nutrients.fatPoly || 0))} г</p>
-                  </>
-                }>
-                  <Statistic title="Жиры" value={formatNutrientValue(nutrients.fat)} suffix="г" />
-                </Tooltip>
+                <Statistic 
+                  title={
+                    <Space>
+                      Жиры
+                      <Tooltip title={
+                        <>
+                          <p>Насыщенные жиры: {formatNutrientValue(nutrients.fatSaturated)} г</p>
+                          <p>Ненасыщенные жиры: {formatNutrientValue((nutrients.fatMono || 0) + (nutrients.fatPoly || 0))} г</p>
+                        </>
+                      }>
+                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
+                      </Tooltip>
+                    </Space>
+                  } 
+                  value={formatNutrientValue(nutrients.fat)} 
+                  suffix="г" 
+                />
               </Col>
               <Col span={8}>
                 <Statistic title="Углеводы" value={formatNutrientValue(nutrients.carbo)} suffix="г" />
@@ -100,14 +111,32 @@ const NutritionDashboard: React.FC = () => {
             </Row>
             <Row gutter={16}>
               <Col span={8}>
-                <Tooltip title="Основной показатель для здоровья">
-                  <Statistic title="Сахара (добавленые)" value={formatNutrientValue(nutrients.sugAdded)} suffix="г" />
-                </Tooltip>
+                <Statistic 
+                  title={
+                    <Space>
+                      Сахара (добавленые)
+                      <Tooltip title="Основной показатель для здоровья">
+                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
+                      </Tooltip>
+                    </Space>
+                  } 
+                  value={formatNutrientValue(nutrients.sugAdded)} 
+                  suffix="г" 
+                />
               </Col>
               <Col span={8}>
-                <Tooltip title="Холестерин из пищи — не то же самое, что ‘плохой’ холестерин в крови">
-                  <Statistic title="Холестерин" value={formatNutrientValue(nutrients.chol)} suffix="мг" />
-                </Tooltip>
+                <Statistic 
+                  title={
+                    <Space>
+                      Холестерин
+                      <Tooltip title="Холестерин из пищи — не то же самое, что 'плохой' холестерин в крови">
+                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
+                      </Tooltip>
+                    </Space>
+                  } 
+                  value={formatNutrientValue(nutrients.chol)} 
+                  suffix="мг" 
+                />
               </Col>
               <Col span={8}>
                 <Statistic title="Клетчатка" value={formatNutrientValue(nutrients.fiber)} suffix="г" />
@@ -132,11 +161,18 @@ const NutritionDashboard: React.FC = () => {
                     <Statistic title="Цинк" value={formatNutrientValue(nutrients.zinc)} suffix="мг" />
                   </Col>
                   <Col span={8}>
-                    <Tooltip title={
-                      <p>Соль: {formatNutrientValue(nutrients.salt)} мг</p>
-                    }>
-                      <Statistic title="Натрий" value={formatNutrientValue(nutrients.sod)} suffix="мг" />
-                    </Tooltip>
+                    <Statistic 
+                      title={
+                        <Space>
+                          Натрий
+                          <Tooltip title={<p>Соль: {formatNutrientValue(nutrients.salt)} мг</p>}>
+                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
+                          </Tooltip>
+                        </Space>
+                      } 
+                      value={formatNutrientValue(nutrients.sod)} 
+                      suffix="мг" 
+                    />
                   </Col>
                   <Col span={8}>
                     <Statistic title="Омега-3" value={formatNutrientValue(sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) * 1000)} suffix="мг" />
@@ -151,9 +187,18 @@ const NutritionDashboard: React.FC = () => {
                     <Statistic title="Витамин A" value={formatNutrientValue(nutrients.vA)} suffix="мкг" />
                   </Col>
                   <Col span={8}>
-                    <Tooltip title="D3 + D2">
-                      <Statistic title="Витамин D" value={formatNutrientValue(nutrients.vD)} suffix="мкг" />
-                    </Tooltip>
+                    <Statistic 
+                      title={
+                        <Space>
+                          Витамин D
+                          <Tooltip title="D3 + D2">
+                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
+                          </Tooltip>
+                        </Space>
+                      } 
+                      value={formatNutrientValue(nutrients.vD)} 
+                      suffix="мкг" 
+                    />
                   </Col>
                   <Col span={8}>
                     <Statistic title="Витамин E" value={formatNutrientValue(nutrients.vE)} suffix="мг" />
