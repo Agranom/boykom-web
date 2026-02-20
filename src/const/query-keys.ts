@@ -12,4 +12,5 @@ export const queryKeys = {
     mealDetails: 'meal-details',
     mealTemplates: 'meal-templates',
     nutritionSummary: 'nutrition-summary',
+    productByBarcode: 'product-by-barcode',
 }

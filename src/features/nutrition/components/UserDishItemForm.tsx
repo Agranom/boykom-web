@@ -1,5 +1,5 @@
 import { Button, Card, Form, Radio, Space } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FoodAutocomplete } from '../models/nutrition.interface';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { validationMessages } from '../../../translations/validation-messages.translations';
@@ -19,9 +19,6 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
   const formItemValue = Form.useWatch(['items', field.name], form);
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
-  useEffect(() => {
-    setSliderValue(portionSize);
-  }, [portionSize]);
 
   const handleSelectProduct = (product: FoodAutocomplete): void => {
     form.setFieldValue(['items', field.name, 'key'], product.key);
@@ -33,7 +30,9 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
   const handleSliderComplete = (value: number): void => {
     form.setFieldValue(['items', field.name, 'portionSize'], value);
   };
-
+  const handlePortionSizeChange = (value: number) => {
+    setSliderValue(value);
+  };
   return (
     <Card
       size="small"
@@ -73,7 +72,7 @@ export const UserDishItemForm: React.FC<UserDishItemProps> = ({field, isFirstIte
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <Radio.Group>
+        <Radio.Group onChange={(e) => handlePortionSizeChange(e.target.value)}>
           <Space>
             {portionOptions.map((option) => (
               <Radio key={option.value} value={option.value}>

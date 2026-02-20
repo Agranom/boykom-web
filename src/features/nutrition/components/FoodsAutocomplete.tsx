@@ -24,6 +24,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   value,
 }) => {
   const [searchValue, setSearchValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(value || '');
   const debouncedSearch = useDebounce(searchValue, 300);
 
   // Use React Query to fetch autocomplete options
@@ -32,6 +33,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   useEffect(() => {
     if (value) {
       setSearchValue(value);
+      setSelectedValue(value);
     }
   }, [value]);
 
@@ -74,6 +76,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
     }
     if (onSelect && option.data) {
       onSelect(option.data);
+      setSelectedValue(option.label);
     }
     setSearchValue('');
   };
@@ -105,9 +108,9 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
       >
         <Input prefix={<SearchOutlined />} />
       </AutoComplete>
-      {searchValue.length > 0 && (
+      {selectedValue.length > 0 && (
         <div className="text-base text-gray-500 mt-2">
-          {searchValue}
+          {selectedValue}
         </div>
       )}
     </>
