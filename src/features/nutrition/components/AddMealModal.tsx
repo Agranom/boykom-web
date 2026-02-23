@@ -6,7 +6,7 @@ import { CreateMealItemPayload, Meal } from '../models/meal.interface';
 import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
-import MenuItemForm from './MenuItemForm';
+import MealItemForm from './MealItemForm';
 import { useAlert } from '../../../hooks/use-alert';
 import { useCreateMeal } from '../api/create-meal';
 import { MealTemplates } from './MealTemplates';
@@ -203,7 +203,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           {(fields, { add, remove }) => (
             <>
               {fields.map((field) => (
-                <MenuItemForm
+                <MealItemForm
                   key={field.key}
                   field={field}
                   remove={remove}

@@ -1,6 +1,5 @@
 import { HTTPError, KyResponse } from 'ky';
 import tokenStorage from '../utils/token-storage';
-import { eAlertType } from '../models/alert.interface';
 
 export interface HttpErrorHandlerOptions {
     showError: (message: string) => void;

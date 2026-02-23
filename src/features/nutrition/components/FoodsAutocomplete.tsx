@@ -18,12 +18,13 @@ interface FoodsAutocompleteProps {
 }
 
 export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
-                                                                      enableCreateDish,
-                                                                      onCreateDish,
-                                                                      onSelect,
-                                                                      value,
-                                                                    }) => {
+  enableCreateDish,
+  onCreateDish,
+  onSelect,
+  value,
+}) => {
   const [searchValue, setSearchValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(value || '');
   const debouncedSearch = useDebounce(searchValue, 300);
 
   // Use React Query to fetch autocomplete options
@@ -32,6 +33,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   useEffect(() => {
     if (value) {
       setSearchValue(value);
+      setSelectedValue(value);
     }
   }, [value]);
 
@@ -47,7 +49,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
         value: Actions.CreateDish,
         label: (
           <span>
-            <PlusOutlined className="mr-4"/>
+            <PlusOutlined className="mr-4" />
             Добавить блюдо
           </span>
         ),
@@ -74,30 +76,43 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
     }
     if (onSelect && option.data) {
       onSelect(option.data);
+      setSelectedValue(option.label);
     }
-    setSearchValue(value);
+    setSearchValue('');
   };
 
   return (
-    <AutoComplete
-      className="w-full"
-      allowClear
-      options={options}
-      value={searchValue}
-      onChange={setSearchValue}
-      onSelect={handleSelect}
-      notFoundContent={
-        isLoading
-          ? 'Пиши название...'
-          : isError
-            ? 'Ошибка загрузки продуктов'
-            : options.length === 0
-              ? 'Продукты не найдены'
-              : null
-      }
-      placeholder="Поиск продуктов"
-    >
-      <Input prefix={<SearchOutlined/>}/>
-    </AutoComplete>
+    <>
+      <AutoComplete
+        className="w-full"
+        allowClear
+        options={options}
+        value={searchValue}
+        onChange={setSearchValue}
+        onSelect={handleSelect}
+        classNames={{
+          popup: {
+            root: 'foods-autocomplete-popup',
+          },
+        }}
+        notFoundContent={
+          isLoading
+            ? 'Пиши название...'
+            : isError
+              ? 'Ошибка загрузки продуктов'
+              : options.length === 0
+                ? 'Продукты не найдены'
+                : null
+        }
+        placeholder="Поиск продуктов"
+      >
+        <Input prefix={<SearchOutlined />} />
+      </AutoComplete>
+      {selectedValue.length > 0 && (
+        <div className="text-base text-gray-500 mt-2">
+          {selectedValue}
+        </div>
+      )}
+    </>
   );
 };

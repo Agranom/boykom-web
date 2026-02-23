@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useCreateDish } from '../api/create-dish';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import { UserDish } from '../models/user-dish.interface';
-import { UserDishItemForm } from './UserDishItemForm';
+import MealItemForm from './MealItemForm';
 
 interface DishFormValues {
   name: string;
@@ -100,11 +100,12 @@ const AddUserDishModal: React.FC<AddUserDishModalProps> = ({
           {(fields, { add, remove }) => (
             <>
               {fields.map((field) => (
-                <UserDishItemForm
+                <MealItemForm
                   key={field.key}
                   field={field}
                   remove={remove}
                   isFirstItem={field.name === 0}
+                  enableCreateDish={false}
                 />
               ))}
               <Form.Item>
