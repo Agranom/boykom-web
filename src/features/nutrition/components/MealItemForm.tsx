@@ -16,17 +16,17 @@ interface FoodItemFormProps {
   field: { name: number; key: number };
   remove: (index: number) => void;
   isFirstItem: boolean;
+  enableCreateDish?: boolean;
 }
 
-const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem }) => {
+const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem, enableCreateDish = true }) => {
   const form = Form.useFormInstance();
   const formItemValue = Form.useWatch(['items', field.name], form);
-  const [selectedOption, setSelectedOption] = React.useState<FoodAutocomplete | null>(null);
   const portionSize = formItemValue?.portionSize;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
   const [isBarcodeScanerOpen, setIsBarcodeScanerOpen] = useState<boolean>(false);
-  const { data: foodNutrients } = useGetNutrients(selectedOption?.key, portionSize);
+  const { data: foodNutrients } = useGetNutrients(formItemValue?.key, portionSize);
 
   useEffect(() => {
     if (!sliderValue) {
@@ -36,7 +36,6 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
 
 
   const handleSelectProduct = (product: FoodAutocomplete): void => {
-    setSelectedOption(product);
     form.setFieldValue(['items', field.name, 'key'], product.key);
     form.setFieldValue(['items', field.name, 'value'], product.value);
     form.setFieldValue(['items', field.name, 'isUserDish'], product.isUserDish);
@@ -49,7 +48,7 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
   };
   const handleCreateDish = () => {
     setIsAddDishModalOpen(true);
-  }
+  };
   const handleCloseDishModal = () => {
     setIsAddDishModalOpen(false);
   };
@@ -103,10 +102,10 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         rules={[{ required: true, message: validationMessages.required }]}
       >
         <FoodsAutocomplete
-          enableCreateDish={true}
+          enableCreateDish={enableCreateDish}
           onSelect={handleSelectProduct}
-          onCreateDish={handleCreateDish}
-          value={selectedOption?.value}
+          onCreateDish={enableCreateDish ? handleCreateDish : undefined}
+          value={formItemValue?.value}
         />
       </Form.Item>
       <Button className='w-full' onClick={handleScanBarcode}><BarcodeOutlined /> Поиск по штрихкоду</Button>
@@ -132,7 +131,7 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem 
         onChangeComplete={handleSliderComplete}
       />
       {foodNutrients && <MealItemNutrients data={foodNutrients.nutrients} portionSize={portionSize} />}
-      {isAddDishModalOpen && <AddUserDishModal
+      {enableCreateDish && isAddDishModalOpen && <AddUserDishModal
         onCreateSuccess={handleDishCreateSuccess}
         onClose={handleCloseDishModal} />}
       {isBarcodeScanerOpen && <BarcodeProduct
