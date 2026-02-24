@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Card, DatePicker, Space, Typography, Spin, Row, Col, Statistic, Collapse, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Card, DatePicker, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { Nutrients } from '@agranom/boykom-common';
 import { useSearchParams } from 'react-router-dom';
+import { Nutrient } from './Nutrient';
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
 const { Panel } = Collapse;
 
 const urlDateFormat = 'DDMMYYYY';
-
-const formatNutrientValue = (value: number | null | undefined): string => {
-  return `~${(value ?? 0).toFixed(2)}`;
-};
 
 const sumValues = (...values: (number | null | undefined)[]): number => {
   if (!Array.isArray(values) || !values.length) {
@@ -44,7 +40,7 @@ const NutritionDashboard: React.FC = () => {
 
   useEffect(() => {
     void refetch();
-  }, [searchParams]);
+  }, [searchParams, refetch]);
 
 
   const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null): void => {
@@ -75,107 +71,126 @@ const NutritionDashboard: React.FC = () => {
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row gutter={16}>
               <Col span={24} className="text-center">
-                <Statistic 
-                  title="Энергия" 
-                  value={formatNutrientValue(nutrients.kcal)} 
-                  suffix="кКал" 
+                <Nutrient 
+                  currentValue={nutrients.kcal ?? 0}
+                  desiredValue={2800}
+                  unit="ккал"
+                  name="Энергия"
                 />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="Белки" value={formatNutrientValue(nutrients.prot)} suffix="г" />
-              </Col>
-              <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Жиры
-                      <Tooltip title={
-                        <>
-                          <p>Насыщенные жиры: {formatNutrientValue(nutrients.fatSaturated)} г</p>
-                          <p>Ненасыщенные жиры: {formatNutrientValue((nutrients.fatMono || 0) + (nutrients.fatPoly || 0))} г</p>
-                        </>
-                      }>
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.fat)} 
-                  suffix="г" 
+                <Nutrient 
+                  currentValue={nutrients.prot ?? 0}
+                  desiredValue={140}
+                  unit="г"
+                  name="Белки"
                 />
               </Col>
               <Col span={8}>
-                <Statistic title="Углеводы" value={formatNutrientValue(nutrients.carbo)} suffix="г" />
+                <Nutrient 
+                  currentValue={nutrients.fat ?? 0}
+                  desiredValue={85}
+                  unit="г"
+                  name="Жиры"
+                />
+              </Col>
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={nutrients.carbo ?? 0}
+                  desiredValue={370}
+                  unit="г"
+                  name="Углеводы"
+                />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Сахара (добавленые)
-                      <Tooltip title="Основной показатель для здоровья">
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.sugAdded)} 
-                  suffix="г" 
+                <Nutrient 
+                  currentValue={nutrients.sugAdded ?? 0}
+                  desiredValue={30}
+                  unit="г"
+                  name="Сахар"
+                  reverseProgress={true}
                 />
               </Col>
               <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Холестерин
-                      <Tooltip title="Холестерин из пищи — не то же самое, что 'плохой' холестерин в крови">
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.chol)} 
-                  suffix="мг" 
+                <Nutrient 
+                  currentValue={nutrients.chol ?? 0}
+                  desiredValue={0}
+                  unit="мг"
+                  name="Холестерин"
                 />
               </Col>
               <Col span={8}>
-                <Statistic title="Клетчатка" value={formatNutrientValue(nutrients.fiber)} suffix="г" />
+                <Nutrient 
+                  currentValue={nutrients.fiber ?? 0}
+                  desiredValue={30}
+                  unit="г"
+                  name="Клетчатка"
+                />
               </Col>
             </Row>
             <Collapse>
               <Panel key="1" header="Минералы">
                 <Row gutter={16}>
                   <Col span={8}>
-                    <Statistic title="Кальций" value={formatNutrientValue(nutrients.cal)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Железо" value={formatNutrientValue(nutrients.iron)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Магний" value={formatNutrientValue(nutrients.mag)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Йод" value={formatNutrientValue(nutrients.iod)} suffix="мкг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Цинк" value={formatNutrientValue(nutrients.zinc)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic 
-                      title={
-                        <Space>
-                          Натрий
-                          <Tooltip title={<p>Соль: {formatNutrientValue(nutrients.salt)} мг</p>}>
-                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                          </Tooltip>
-                        </Space>
-                      } 
-                      value={formatNutrientValue(nutrients.sod)} 
-                      suffix="мг" 
+                    <Nutrient 
+                      currentValue={nutrients.cal ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Кальций"
                     />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Омега-3" value={formatNutrientValue(sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) * 1000)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.iron ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Железо"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.mag ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Магний"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.iod ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="Йод"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.zinc ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Цинк"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient     
+                      currentValue={nutrients.sod ?? 0}
+                      desiredValue={2000}
+                      unit="мг"
+                      name="Натрий"
+                      reverseProgress={true}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Омега-3"
+                    />
                   </Col>
                 </Row>
               </Panel>
@@ -184,54 +199,108 @@ const NutritionDashboard: React.FC = () => {
               <Panel header="Витамины" key="2">
                 <Row gutter={16}>
                   <Col span={8}>
-                    <Statistic title="Витамин A" value={formatNutrientValue(nutrients.vA)} suffix="мкг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic 
-                      title={
-                        <Space>
-                          Витамин D
-                          <Tooltip title="D3 + D2">
-                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                          </Tooltip>
-                        </Space>
-                      } 
-                      value={formatNutrientValue(nutrients.vD)} 
-                      suffix="мкг" 
+                    <Nutrient 
+                      currentValue={nutrients.vA ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="A"
                     />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин E" value={formatNutrientValue(nutrients.vE)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vD ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="D"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин C" value={formatNutrientValue(nutrients.vC)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vE ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="E"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин K1" value={formatNutrientValue(nutrients.vK1)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vC ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="C"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин K2" value={formatNutrientValue(nutrients.vK2)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vK1 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="K1"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B1" value={formatNutrientValue(nutrients.vB1)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vK2 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="K2"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B2" value={formatNutrientValue(nutrients.vB2)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB1 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B1"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B3" value={formatNutrientValue(nutrients.vB3)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB2 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B2"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B5" value={formatNutrientValue(nutrients.vB5)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB3 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B3"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B6" value={formatNutrientValue(nutrients.vB6)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB5 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B5"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B9" value={formatNutrientValue(nutrients.vB9)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB6 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B6"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B12" value={formatNutrientValue(nutrients.vB12)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB9 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="B9"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.vB12 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="B12"
+                    />
                   </Col>
                 </Row>
               </Panel>

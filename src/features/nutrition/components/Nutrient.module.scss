@@ -1,0 +1,127 @@
+@import "../../../styles/colors";
+
+.nutrientContainer {
+  position: relative;
+  display: inline-block;
+  margin: 0.8rem;
+}
+
+.circleChart {
+  transform: rotate(0deg);
+  
+  .backgroundCircle {
+    opacity: 0.3;
+  }
+  
+  .progressCircle {
+    transition: stroke-dashoffset 0.6s ease-in-out, stroke 0.3s ease-in-out;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+}
+
+.centerContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  
+  .currentValue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+  
+  .valueText {
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2;
+    color: #262626 !important;
+  }
+  
+  .unitText {
+    font-size: 1.2rem !important;
+    margin-top: 0.2rem;
+    color: #8c8c8c !important;
+  }
+  
+  .nutrientName {
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.4rem;
+    color: #595959 !important;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .nutrientContainer {
+    margin: 0.4rem;
+  }
+  
+  .centerContent {
+    .valueText {
+      font-size: 1.4rem !important;
+    }
+    
+    .unitText {
+      font-size: 1.0rem !important;
+    }
+    
+    .nutrientName {
+      font-size: 0.9rem !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .centerContent {
+    .valueText {
+      font-size: 1.4rem !important;
+    }
+    
+    .unitText {
+      font-size: 1.0rem !important;
+    }
+    
+    .nutrientName {
+      font-size: 0.9rem !important;
+    }
+  }
+}
+
+// Animation for when component first loads
+.nutrientContainer {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Hover effects for better interactivity
+.nutrientContainer:hover {
+  .progressCircle {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  }
+  
+  .centerContent {
+    .valueText {
+      transform: scale(1.05);
+      transition: transform 0.2s ease-in-out;
+    }
+  }
+}
