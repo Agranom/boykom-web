@@ -16,6 +16,8 @@ interface NutrientProps {
   /** Size of the circle in pixels */
   size?: number;
   reverseProgress?: boolean;
+  /** Click handler for the nutrient */
+  onClick?: () => void;
 }
 
 /**
@@ -89,6 +91,7 @@ export const Nutrient: React.FC<NutrientProps> = ({
   name,
   size = 120,
   reverseProgress = false,
+  onClick,
 }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
@@ -128,8 +131,21 @@ export const Nutrient: React.FC<NutrientProps> = ({
   );
 
   return (
-    <Tooltip title={tooltipTitle} placement="top">
-      <div className={styles.nutrientContainer} style={{ width: responsiveSize, height: responsiveSize }}>
+    <Tooltip 
+      title={tooltipTitle} 
+      placement="top"
+      mouseLeaveDelay={0}
+      zIndex={999} // Lower z-index than modal (default modal z-index is 1000)
+    >
+      <div 
+        className={styles.nutrientContainer} 
+        style={{ 
+          width: responsiveSize, 
+          height: responsiveSize,
+          cursor: onClick ? 'pointer' : 'default'
+        }}
+        onClick={onClick}
+      >
         <svg width={responsiveSize} height={responsiveSize} className={styles.circleChart}>
           {/* Background circle */}
           <circle
