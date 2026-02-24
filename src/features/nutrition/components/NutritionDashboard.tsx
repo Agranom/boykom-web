@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Card, DatePicker, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import React, { useMemo } from 'react';
+import { Card, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
+import { Dayjs } from 'dayjs';
 import { useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { Nutrients } from '@agranom/boykom-common';
-import { useSearchParams } from 'react-router-dom';
 import { Nutrient } from './Nutrient';
+import { dateFormat } from '../const/date-format';
 
-const { RangePicker } = DatePicker;
 const { Title } = Typography;
 const { Panel } = Collapse;
-
-const urlDateFormat = 'DDMMYYYY';
 
 const sumValues = (...values: (number | null | undefined)[]): number => {
   if (!Array.isArray(values) || !values.length) {
@@ -19,52 +16,26 @@ const sumValues = (...values: (number | null | undefined)[]): number => {
   return values.reduce((acc: number, value) => acc + (value ?? 0), 0);
 };
 
-const getDefaultRanges = (searchParams: URLSearchParams): [Dayjs, Dayjs] => {
-  const today = dayjs();
+interface NutritionDashboardProps {
+  startDate: Dayjs;
+  endDate: Dayjs;
+}
 
-  return searchParams.get('from') && searchParams.get('to')
-    ? [
-      dayjs(searchParams.get('from'), urlDateFormat).startOf('day'),
-      dayjs(searchParams.get('to'), urlDateFormat).endOf('day'),
-    ]
-    : [today.startOf('day'), today.endOf('day')];
-};
-
-const NutritionDashboard: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>(getDefaultRanges(searchParams));
-  const { data, isLoading, refetch } = useGetNutritionSummary({
-    from: dateRange[0].toDate(),
-    to: dateRange[1].toDate(),
+const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endDate }) => {
+  const daysDiff = useMemo(() => endDate.diff(startDate, 'days') + 1, [startDate, endDate]);
+  const { data, isLoading } = useGetNutritionSummary({
+    from: startDate.toDate(),
+    to: endDate.toDate(),
   });
 
-  useEffect(() => {
-    void refetch();
-  }, [searchParams, refetch]);
-
-
-  const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null): void => {
-    if (dates && dates[0] && dates[1]) {
-      const from = dates[0].startOf('day');
-      const to = dates[1].endOf('day');
-
-      setDateRange([from, to]);
-      setSearchParams({ from: from.format(urlDateFormat).toString(), to: to.format(urlDateFormat).toString() });
-    }
-  };
-
   const nutrients: Nutrients = data?.nutrients || {} as Nutrients;
+  const selectedDateRange = useMemo(() => daysDiff > 1 ?
+   `${startDate.format(dateFormat)} - ${endDate.format(dateFormat)}` : startDate.format(dateFormat), [daysDiff, startDate, endDate]);
 
   return (
     <Card>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <Title level={4}>Сводка по питанию</Title>
-        <RangePicker
-          value={dateRange}
-          onChange={handleDateRangeChange}
-          format="DD.MM.YYYY"
-          style={{ width: '100%' }}
-        />
+        <Title level={4}>Сводка по питанию за {selectedDateRange}</Title>
         {isLoading ? (
           <Spin size="large" />
         ) : (
@@ -73,7 +44,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={24} className="text-center">
                 <Nutrient 
                   currentValue={nutrients.kcal ?? 0}
-                  desiredValue={2800}
+                  desiredValue={2800 * daysDiff}
                   unit="ккал"
                   name="Энергия"
                 />
@@ -83,7 +54,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients.prot ?? 0}
-                  desiredValue={140}
+                  desiredValue={140 * daysDiff}
                   unit="г"
                   name="Белки"
                 />
@@ -91,7 +62,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients.fat ?? 0}
-                  desiredValue={85}
+                  desiredValue={85 * daysDiff}
                   unit="г"
                   name="Жиры"
                 />
@@ -99,7 +70,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients.carbo ?? 0}
-                  desiredValue={370}
+                  desiredValue={370 * daysDiff}
                   unit="г"
                   name="Углеводы"
                 />
@@ -109,7 +80,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients.sugAdded ?? 0}
-                  desiredValue={30}
+                  desiredValue={30 * daysDiff}
                   unit="г"
                   name="Сахар"
                   reverseProgress={true}
@@ -126,7 +97,7 @@ const NutritionDashboard: React.FC = () => {
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients.fiber ?? 0}
-                  desiredValue={30}
+                  desiredValue={30 * daysDiff}
                   unit="г"
                   name="Клетчатка"
                 />
@@ -178,7 +149,7 @@ const NutritionDashboard: React.FC = () => {
                   <Col span={8}>
                     <Nutrient     
                       currentValue={nutrients.sod ?? 0}
-                      desiredValue={2000}
+                      desiredValue={2000 * daysDiff}
                       unit="мг"
                       name="Натрий"
                       reverseProgress={true}
