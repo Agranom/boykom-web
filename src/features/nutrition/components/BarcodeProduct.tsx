@@ -236,6 +236,47 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
             <Input value={productLabel} disabled size="large" />
           </div>
           <div className="space-y-2">
+            <Text strong>Пищевая ценность на 100г:</Text>
+            {hasProduct && product.nutrientsPer100g && (
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span>Калории:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.kcal ?? '-'} ккал</span>
+                    </div>
+                    <div className="flex justify-between">  
+                      <span>Белки:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.prot ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Углеводы:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.carbo ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Жиры:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.fat ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Клетчатка:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.fiber ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Сахар:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.sug ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Соль:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.salt ?? '-'}г</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Натрий:</span>
+                      <span className="font-medium">{product.nutrientsPer100g.sod ?? '-'}мг</span>
+                    </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2">
             <Text strong>Название для поиска:</Text>
             <Input
               required
