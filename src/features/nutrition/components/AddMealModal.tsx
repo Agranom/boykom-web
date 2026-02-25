@@ -133,6 +133,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       eatenAt: datetime.toDate(),
       items: mealItems,
       isTemplate,
+      previousTemplateId: mealTemplateId,
     });
   };
   const handleClose = (): void => {
@@ -227,7 +228,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           name="isTemplate"
           valuePropName="checked"
         >
-          <Checkbox>Сохранить как шаблон</Checkbox>
+          <Checkbox>{mealTemplateId ? 'Обновить' : 'Сохранить как'} шаблон</Checkbox>
         </Form.Item>
       </Form>
     </Modal>

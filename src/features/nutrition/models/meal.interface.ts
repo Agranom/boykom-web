@@ -19,6 +19,7 @@ export interface CreateMealPayload {
   eatenAt: Date;
   items: CreateMealItemPayload[];
   isTemplate: boolean;
+  previousTemplateId?: string;
 }
 
 
