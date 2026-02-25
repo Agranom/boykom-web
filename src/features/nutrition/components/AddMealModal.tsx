@@ -74,7 +74,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
         ? {
           datetime: defaultDatetime,
           title: meal.title,
-          type: meal.type,
+          type: selectedType ?? meal.type,
           items: (meal.items || []).map(item => ({
             key: item.sourceKey,
             value: item.name,
