@@ -78,7 +78,7 @@ const calculateReverseColor = (progress: number): string => {
     return `rgb(${red}, ${green}, 0)`;
   } else {
      // Red to Orange (90% to 100%)
-     const ratio = (clampedProgress - 0.75) * 4; // 0 to 1
+     const ratio = (clampedProgress - 0.9) * 4; // 0 to 1
      const red = 255;
      const green = Math.round(165 * ratio); // 0 to 165 (orange)
      return `rgb(${red}, ${green}, 0)`;
