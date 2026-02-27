@@ -8,8 +8,13 @@ export const getProductByBarcode = async (barcode: string): Promise<ExternalProd
   return httpClient.get(`food-products/external/${barcode}`).json();
 };
 
+interface UseGetProductByBarcodeOptions {
+  onError?: (error: unknown) => void;
+}
+
 export const useGetProductByBarcode = (
   barcode: string | null,
+  options?: UseGetProductByBarcodeOptions,
 ): UseQueryResult<ExternalProduct, unknown> => {
   const { showError } = useAlert();
   return useQuery({
@@ -24,8 +29,9 @@ export const useGetProductByBarcode = (
     enabled: !!barcode,
     staleTime: 60000, // 1 minute
     retry: false,
-    onError: () => {
+    onError: (error) => {
       showError('Не удалось найти продукт по штрихкоду');
+      options?.onError?.(error);
     },
   });
 };

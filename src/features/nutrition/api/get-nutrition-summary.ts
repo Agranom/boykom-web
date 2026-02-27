@@ -27,7 +27,7 @@ export const getNutritionSummary = async (params: GetNutritionSummaryParams): Pr
  */
 export const useGetNutritionSummary = (params: GetNutritionSummaryParams): UseQueryResult<NutritionSummaryResponse, unknown> => {
   return useQuery({
-    queryKey: [queryKeys.nutritionSummary],
+    queryKey: [queryKeys.nutritionSummary, params],
     queryFn: () => getNutritionSummary(params),
   });
 };

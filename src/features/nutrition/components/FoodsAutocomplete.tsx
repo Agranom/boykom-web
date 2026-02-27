@@ -31,7 +31,7 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
   const { data, isLoading, isError } = useFoodsAutocomplete(debouncedSearch);
 
   useEffect(() => {
-    if (value) {
+    if (value !== undefined) {
       setSearchValue(value);
       setSelectedValue(value);
     }
@@ -39,7 +39,9 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
 
   // Transform API response to AutoComplete options format
   const options = useMemo(() => {
-    const foodOptions = data ? data.map((product) => ({
+    const foodOptions = data ? data
+    .filter((product) => enableCreateDish || !product.isUserDish)
+    .map((product) => ({
       value: product.key,
       label: product.value,
       data: product,
@@ -72,13 +74,14 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
         onCreateDish();
       }
       setSearchValue('');
+      setSelectedValue('');
       return;
     }
     if (onSelect && option.data) {
       onSelect(option.data);
       setSelectedValue(option.label);
+      setSearchValue(option.label);
     }
-    setSearchValue('');
   };
 
   return (
@@ -90,6 +93,10 @@ export const FoodsAutocomplete: React.FC<FoodsAutocompleteProps> = ({
         value={searchValue}
         onChange={setSearchValue}
         onSelect={handleSelect}
+        onClear={() => {
+          setSearchValue('');
+          setSelectedValue('');
+        }}
         classNames={{
           popup: {
             root: 'foods-autocomplete-popup',

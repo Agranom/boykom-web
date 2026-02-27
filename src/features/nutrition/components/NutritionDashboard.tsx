@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Card, DatePicker, Space, Typography, Spin, Row, Col, Statistic, Collapse, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import dayjs, { Dayjs } from 'dayjs';
+import React, { useMemo, useState } from 'react';
+import { Card, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
+import { Dayjs } from 'dayjs';
 import { useGetNutritionSummary } from '../api/get-nutrition-summary';
+import { useGetMeals } from '../api/get-meals';
 import { Nutrients } from '@agranom/boykom-common';
-import { useSearchParams } from 'react-router-dom';
+import { Nutrient } from './Nutrient';
+import { NutrientModal } from './NutrientModal';
+import { dateFormat } from '../const/date-format';
 
-const { RangePicker } = DatePicker;
 const { Title } = Typography;
 const { Panel } = Collapse;
-
-const urlDateFormat = 'DDMMYYYY';
-
-const formatNutrientValue = (value: number | null | undefined): string => {
-  return `~${(value ?? 0).toFixed(2)}`;
-};
 
 const sumValues = (...values: (number | null | undefined)[]): number => {
   if (!Array.isArray(values) || !values.length) {
@@ -23,159 +18,211 @@ const sumValues = (...values: (number | null | undefined)[]): number => {
   return values.reduce((acc: number, value) => acc + (value ?? 0), 0);
 };
 
-const getDefaultRanges = (searchParams: URLSearchParams): [Dayjs, Dayjs] => {
-  const today = dayjs();
+interface NutritionDashboardProps {
+  startDate: Dayjs;
+  endDate: Dayjs;
+}
 
-  return searchParams.get('from') && searchParams.get('to')
-    ? [
-      dayjs(searchParams.get('from'), urlDateFormat).startOf('day'),
-      dayjs(searchParams.get('to'), urlDateFormat).endOf('day'),
-    ]
-    : [today.startOf('day'), today.endOf('day')];
-};
+const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endDate }) => {
+  const daysDiff = useMemo(() => endDate.diff(startDate, 'days') + 1, [startDate, endDate]);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    nutrientName: string;
+    nutrientUnit: string;
+    nutrientKeys: Array<keyof Nutrients>;
+  } | null>(null);
 
-const NutritionDashboard: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>(getDefaultRanges(searchParams));
-  const { data, isLoading, refetch } = useGetNutritionSummary({
-    from: dateRange[0].toDate(),
-    to: dateRange[1].toDate(),
+  const { data, isLoading } = useGetNutritionSummary({
+    from: startDate.toDate(),
+    to: endDate.toDate(),
   });
 
-  useEffect(() => {
-    void refetch();
-  }, [searchParams]);
-
-
-  const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null): void => {
-    if (dates && dates[0] && dates[1]) {
-      const from = dates[0].startOf('day');
-      const to = dates[1].endOf('day');
-
-      setDateRange([from, to]);
-      setSearchParams({ from: from.format(urlDateFormat).toString(), to: to.format(urlDateFormat).toString() });
-    }
-  };
+  const { data: meals = [] } = useGetMeals({
+    page: 1,
+    limit: 100, // Get more meals to show comprehensive data
+    from: startDate.toDate(),
+    to: endDate.toDate(),
+  });
 
   const nutrients: Nutrients = data?.nutrients || {} as Nutrients;
+  const selectedDateRange = useMemo(() => daysDiff > 1 ?
+   `${startDate.format(dateFormat)} - ${endDate.format(dateFormat)}` : startDate.format(dateFormat), [daysDiff, startDate, endDate]);
+
+  /**
+   * Handles nutrient click to open modal with meal items
+   */
+  const handleNutrientClick = (nutrientKeys: Array<keyof Nutrients>, nutrientName: string, nutrientUnit: string): void => {
+    setModalState({
+      isOpen: true,
+      nutrientName,
+      nutrientUnit,
+      nutrientKeys
+    });
+  };
+
+  /**
+   * Closes the nutrient modal
+   */
+  const handleCloseModal = (): void => {
+    setModalState(null);
+  };
 
   return (
     <Card>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <Title level={4}>Сводка по питанию</Title>
-        <RangePicker
-          value={dateRange}
-          onChange={handleDateRangeChange}
-          format="DD.MM.YYYY"
-          style={{ width: '100%' }}
-        />
+        <Title level={4}>Сводка по питанию за {selectedDateRange}</Title>
         {isLoading ? (
           <Spin size="large" />
         ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row gutter={16}>
-              <Col span={24} className="text-center">
-                <Statistic 
-                  title="Энергия" 
-                  value={formatNutrientValue(nutrients.kcal)} 
-                  suffix="кКал" 
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={nutrients.kcal ?? 0}
+                  desiredValue={2800 * daysDiff}
+                  unit="ккал"
+                  name="Энергия"
+                  onClick={() => handleNutrientClick(['kcal'], 'Энергия', 'ккал')}
+                />
+              </Col>
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={nutrients.prot ?? 0}
+                  desiredValue={140 * daysDiff}
+                  unit="г"
+                  name="Белки"
+                  onClick={() => handleNutrientClick(['prot'], 'Белки', 'г')}
+                />
+              </Col>
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={nutrients.carbo ?? 0}
+                  desiredValue={370 * daysDiff}
+                  unit="г"
+                  name="Углеводы"
+                  onClick={() => handleNutrientClick(['carbo'], 'Углеводы', 'г')}
                 />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="Белки" value={formatNutrientValue(nutrients.prot)} suffix="г" />
-              </Col>
-              <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Жиры
-                      <Tooltip title={
-                        <>
-                          <p>Насыщенные жиры: {formatNutrientValue(nutrients.fatSaturated)} г</p>
-                          <p>Ненасыщенные жиры: {formatNutrientValue((nutrients.fatMono || 0) + (nutrients.fatPoly || 0))} г</p>
-                        </>
-                      }>
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.fat)} 
-                  suffix="г" 
+                <Nutrient 
+                  currentValue={nutrients.fat ?? 0}
+                  desiredValue={85 * daysDiff}
+                  unit="г"
+                  name="Жиры"
+                  onClick={() => handleNutrientClick(['fat'], 'Жиры', 'г')}
                 />
               </Col>
               <Col span={8}>
-                <Statistic title="Углеводы" value={formatNutrientValue(nutrients.carbo)} suffix="г" />
+                <Nutrient 
+                  currentValue={nutrients.fatSaturated ?? 0}
+                  desiredValue={30 * daysDiff}
+                  unit="г"
+                  name="Насыщ. жиры"
+                  reverseProgress={true}
+                  onClick={() => handleNutrientClick(['fatSaturated'], 'Насыщенные жиры', 'г')}
+                />
+              </Col>
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={(nutrients.fatMono ?? 0) + (nutrients.fatPoly ?? 0)}
+                  desiredValue={60 * daysDiff}
+                  unit="г"
+                  name="Ненасыщ. жиры"
+                  onClick={() => handleNutrientClick(['fatMono', 'fatPoly'], 'Ненасыщенные жиры', 'г')}
+                />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Сахара (добавленые)
-                      <Tooltip title="Основной показатель для здоровья">
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.sugAdded)} 
-                  suffix="г" 
+                <Nutrient 
+                  currentValue={nutrients.sugAdded ?? 0}
+                  desiredValue={30 * daysDiff}
+                  unit="г"
+                  name="Сахар"
+                  reverseProgress={true}
+                  onClick={() => handleNutrientClick(['sugAdded'], 'Сахар', 'г')}
                 />
               </Col>
               <Col span={8}>
-                <Statistic 
-                  title={
-                    <Space>
-                      Холестерин
-                      <Tooltip title="Холестерин из пищи — не то же самое, что 'плохой' холестерин в крови">
-                        <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                      </Tooltip>
-                    </Space>
-                  } 
-                  value={formatNutrientValue(nutrients.chol)} 
-                  suffix="мг" 
+                <Nutrient 
+                  currentValue={nutrients.chol ?? 0}
+                  desiredValue={0}
+                  unit="мг"
+                  name="Холестерин"
                 />
               </Col>
               <Col span={8}>
-                <Statistic title="Клетчатка" value={formatNutrientValue(nutrients.fiber)} suffix="г" />
+                <Nutrient 
+                  currentValue={nutrients.fiber ?? 0}
+                  desiredValue={30 * daysDiff}
+                  unit="г"
+                  name="Клетчатка"
+                  onClick={() => handleNutrientClick(['fiber'], 'Клетчатка', 'г')}
+                />
               </Col>
             </Row>
             <Collapse>
               <Panel key="1" header="Минералы">
                 <Row gutter={16}>
                   <Col span={8}>
-                    <Statistic title="Кальций" value={formatNutrientValue(nutrients.cal)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Железо" value={formatNutrientValue(nutrients.iron)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Магний" value={formatNutrientValue(nutrients.mag)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Йод" value={formatNutrientValue(nutrients.iod)} suffix="мкг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic title="Цинк" value={formatNutrientValue(nutrients.zinc)} suffix="мг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic 
-                      title={
-                        <Space>
-                          Натрий
-                          <Tooltip title={<p>Соль: {formatNutrientValue(nutrients.salt)} мг</p>}>
-                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                          </Tooltip>
-                        </Space>
-                      } 
-                      value={formatNutrientValue(nutrients.sod)} 
-                      suffix="мг" 
+                    <Nutrient 
+                      currentValue={nutrients.cal ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Кальций"
                     />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Омега-3" value={formatNutrientValue(sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) * 1000)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.iron ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Железо"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.mag ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Магний"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.iod ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="Йод"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.zinc ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Цинк"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient     
+                      currentValue={nutrients.sod ?? 0}
+                      desiredValue={2000 * daysDiff}
+                      unit="мг"
+                      name="Натрий"
+                      reverseProgress={true}
+                      onClick={() => handleNutrientClick(['sod'], 'Натрий', 'мг')}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="Омега-3"
+                    />
                   </Col>
                 </Row>
               </Panel>
@@ -184,54 +231,108 @@ const NutritionDashboard: React.FC = () => {
               <Panel header="Витамины" key="2">
                 <Row gutter={16}>
                   <Col span={8}>
-                    <Statistic title="Витамин A" value={formatNutrientValue(nutrients.vA)} suffix="мкг" />
-                  </Col>
-                  <Col span={8}>
-                    <Statistic 
-                      title={
-                        <Space>
-                          Витамин D
-                          <Tooltip title="D3 + D2">
-                            <QuestionCircleOutlined style={{ color: '#1890ff' }} />
-                          </Tooltip>
-                        </Space>
-                      } 
-                      value={formatNutrientValue(nutrients.vD)} 
-                      suffix="мкг" 
+                    <Nutrient 
+                      currentValue={nutrients.vA ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="A"
                     />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин E" value={formatNutrientValue(nutrients.vE)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vD ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="D"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин C" value={formatNutrientValue(nutrients.vC)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vE ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="E"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин K1" value={formatNutrientValue(nutrients.vK1)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vC ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="C"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин K2" value={formatNutrientValue(nutrients.vK2)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vK1 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="K1"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B1" value={formatNutrientValue(nutrients.vB1)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vK2 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="K2"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B2" value={formatNutrientValue(nutrients.vB2)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB1 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B1"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B3" value={formatNutrientValue(nutrients.vB3)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB2 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B2"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B5" value={formatNutrientValue(nutrients.vB5)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB3 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B3"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B6" value={formatNutrientValue(nutrients.vB6)} suffix="мг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB5 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B5"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B9" value={formatNutrientValue(nutrients.vB9)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB6 ?? 0}
+                      desiredValue={0}
+                      unit="мг"
+                      name="B6"
+                    />
                   </Col>
                   <Col span={8}>
-                    <Statistic title="Витамин B12" value={formatNutrientValue(nutrients.vB12)} suffix="мкг" />
+                    <Nutrient 
+                      currentValue={nutrients.vB9 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="B9"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients.vB12 ?? 0}
+                      desiredValue={0}
+                      unit="мкг"
+                      name="B12"
+                    />
                   </Col>
                 </Row>
               </Panel>
@@ -240,6 +341,17 @@ const NutritionDashboard: React.FC = () => {
           </Space>
         )}
       </Space>
+      
+      {modalState && (
+        <NutrientModal
+          isOpen={modalState.isOpen}
+          onClose={handleCloseModal}
+          nutrientName={modalState.nutrientName}
+          nutrientUnit={modalState.nutrientUnit}
+          meals={meals}
+          nutrientKeys={modalState.nutrientKeys}
+        />
+      )}
     </Card>
   );
 };
