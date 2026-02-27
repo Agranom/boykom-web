@@ -34,7 +34,11 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
   const [isScannerEnabled, setIsScannerEnabled] = useState<boolean>(true);
   const [viewMode, setViewMode] = useState<ViewMode>('scanner');
   const [searchName, setSearchName] = useState<string>('');
-  const { data: product, isFetching } = useGetProductByBarcode(requestedBarcode);
+  const { data: product, isFetching } = useGetProductByBarcode(requestedBarcode, {
+    onError: () => {
+      setRequestedBarcode(null);
+    },
+  });
   const { isLoading: isUpserting, mutate: upsertProduct } = useUpsertFoodProduct();
   const { showError } = useAlert();
 
