@@ -6,7 +6,7 @@ import { useGetProductByBarcode } from '../api/get-product-by-barcode';
 import { ExternalProduct } from '../models/external-product.interface';
 import { useUpsertFoodProduct } from '../api/upsert-food-product';
 import { useAlert } from '../../../hooks/use-alert';
-import { FoodProductType } from '@agranom/boykom-common';
+import { FoodProductType, nutrientNumbers } from '@agranom/boykom-common';
 
 const { Text } = Typography;
 type ViewMode = 'scanner' | 'product';
@@ -106,7 +106,10 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
           name: formatProductName(product),
           type: FoodProductType.Barcode,
           searchName: finalSearchName,
-          nutrientsPer100g: product.nutrientsPer100g,
+          nutrientsPer100g: Object.entries(product.nutrientsPer100g).map(([nutrientNumber, amount]) => ({
+            nutrientNumber: Number(nutrientNumber),
+            amount: amount ?? 0,
+          })),
         },
       },
       {
@@ -246,35 +249,35 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                     <div className="flex justify-between">
                       <span>Калории:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.kcal ?? '-'} ккал</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.kcal] ?? '-'} ккал</span>
                     </div>
                     <div className="flex justify-between">  
                       <span>Белки:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.prot ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.prot] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Углеводы:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.carbo ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.carbo] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Жиры:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.fat ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.fat] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Клетчатка:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.fiber ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.fiber] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Сахар:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.sug ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.sug] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Соль:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.salt ?? '-'}г</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.salt] ?? '-'}г</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Натрий:</span>
-                      <span className="font-medium">{product.nutrientsPer100g.sod ?? '-'}мг</span>
+                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.sod] ?? '-'}мг</span>
                     </div>
                 </div>
               </div>

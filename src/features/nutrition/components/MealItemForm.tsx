@@ -8,7 +8,8 @@ import AddUserDishModal from './AddUserDishModal';
 import { UserDish } from '../models/user-dish.interface';
 import { portionOptions } from '../const/portion-options';
 import { PortionSizeSlider } from './PortionSizeSlider';
-import { useGetNutrients } from '../api/get-nutrients';
+import { useGetDishNutrients } from '../api/get-dish-nutrients';
+import { useGetFoodProductNutrients } from '../api/get-food-product-nutrients';
 import MealItemNutrients from './MealItemNutrients';
 import { BarcodeProduct } from './BarcodeProduct';
 
@@ -23,10 +24,23 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
   const form = Form.useFormInstance();
   const formItemValue = Form.useWatch(['items', field.name], form);
   const portionSize = formItemValue?.portionSize;
+  const isUserDish = formItemValue?.isUserDish;
   const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
   const [isBarcodeScanerOpen, setIsBarcodeScanerOpen] = useState<boolean>(false);
-  const { data: foodNutrients } = useGetNutrients(formItemValue?.key, portionSize);
+  
+  // Use appropriate API based on whether it's a user dish or food product
+  const { data: dishNutrients } = useGetDishNutrients(
+    isUserDish ? formItemValue?.key : undefined, 
+    isUserDish ? portionSize : undefined
+  );
+  const { data: foodProductNutrients } = useGetFoodProductNutrients(
+    !isUserDish ? formItemValue?.key : undefined, 
+    !isUserDish ? portionSize : undefined
+  );
+  
+  // Use the appropriate nutrients data
+  const foodNutrients = isUserDish ? dishNutrients : foodProductNutrients;
 
   useEffect(() => {
     if (!sliderValue) {
@@ -130,7 +144,7 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
         onChange={handleSliderChange}
         onChangeComplete={handleSliderComplete}
       />
-      {foodNutrients && <MealItemNutrients data={foodNutrients.nutrients} portionSize={portionSize} />}
+      {foodNutrients && <MealItemNutrients data={foodNutrients} portionSize={portionSize} />}
       {enableCreateDish && isAddDishModalOpen && <AddUserDishModal
         onCreateSuccess={handleDishCreateSuccess}
         onClose={handleCloseDishModal} />}

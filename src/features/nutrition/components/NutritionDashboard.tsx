@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { Card, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
 import { Dayjs } from 'dayjs';
-import { useGetNutritionSummary } from '../api/get-nutrition-summary';
+import { NutrientsSummary, useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { useGetMeals } from '../api/get-meals';
-import { Nutrients } from '@agranom/boykom-common';
 import { Nutrient } from './Nutrient';
 import { NutrientModal } from './NutrientModal';
 import { dateFormat } from '../const/date-format';
+import { nutrientNumbers } from '@agranom/boykom-common';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -29,7 +29,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     isOpen: boolean;
     nutrientName: string;
     nutrientUnit: string;
-    nutrientKeys: Array<keyof Nutrients>;
+    nutrientNumbers: Array<number>;
   } | null>(null);
 
   const { data, isLoading } = useGetNutritionSummary({
@@ -44,28 +44,28 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     to: endDate.toDate(),
   });
 
-  const nutrients: Nutrients = data?.nutrients || {} as Nutrients;
+  const nutrients: NutrientsSummary = data?.nutrients || {};
   const selectedDateRange = useMemo(() => daysDiff > 1 ?
    `${startDate.format(dateFormat)} - ${endDate.format(dateFormat)}` : startDate.format(dateFormat), [daysDiff, startDate, endDate]);
 
-  /**
+    /**
    * Handles nutrient click to open modal with meal items
    */
-  const handleNutrientClick = (nutrientKeys: Array<keyof Nutrients>, nutrientName: string, nutrientUnit: string): void => {
-    setModalState({
-      isOpen: true,
-      nutrientName,
-      nutrientUnit,
-      nutrientKeys
-    });
-  };
-
-  /**
-   * Closes the nutrient modal
-   */
-  const handleCloseModal = (): void => {
-    setModalState(null);
-  };
+    const handleNutrientClick = (nutrientNumbers: Array<number>, nutrientName: string, nutrientUnit: string): void => {
+      setModalState({
+        isOpen: true,
+        nutrientName,
+        nutrientUnit,
+        nutrientNumbers
+      });
+    };
+  
+    /**
+     * Closes the nutrient modal
+     */
+    const handleCloseModal = (): void => {
+      setModalState(null);
+    };
 
   return (
     <Card>
@@ -78,76 +78,76 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
             <Row gutter={16}>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.kcal ?? 0}
+                  currentValue={nutrients[nutrientNumbers.kcal] ?? 0}
                   desiredValue={2800 * daysDiff}
                   unit="ккал"
                   name="Энергия"
-                  onClick={() => handleNutrientClick(['kcal'], 'Энергия', 'ккал')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.kcal], 'Энергия', 'ккал')}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.prot ?? 0}
+                  currentValue={nutrients[nutrientNumbers.prot] ?? 0}
                   desiredValue={140 * daysDiff}
                   unit="г"
                   name="Белки"
-                  onClick={() => handleNutrientClick(['prot'], 'Белки', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.prot], 'Белки', 'г')}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.carbo ?? 0}
+                  currentValue={nutrients[nutrientNumbers.carbo] ?? 0}
                   desiredValue={370 * daysDiff}
                   unit="г"
                   name="Углеводы"
-                  onClick={() => handleNutrientClick(['carbo'], 'Углеводы', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.carbo], 'Углеводы', 'г')}
                 />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.fat ?? 0}
+                  currentValue={nutrients[nutrientNumbers.fat] ?? 0}
                   desiredValue={85 * daysDiff}
                   unit="г"
                   name="Жиры"
-                  onClick={() => handleNutrientClick(['fat'], 'Жиры', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.fat], 'Жиры', 'г')}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.fatSaturated ?? 0}
+                  currentValue={nutrients[nutrientNumbers.fatSaturated] ?? 0}
                   desiredValue={30 * daysDiff}
                   unit="г"
                   name="Насыщ. жиры"
                   reverseProgress={true}
-                  onClick={() => handleNutrientClick(['fatSaturated'], 'Насыщенные жиры', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.fatSaturated], 'Насыщ. жиры', 'г')}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={(nutrients.fatMono ?? 0) + (nutrients.fatPoly ?? 0)}
+                  currentValue={(nutrients[nutrientNumbers.fatMono] ?? 0) + (nutrients[nutrientNumbers.fatPoly] ?? 0)}
                   desiredValue={60 * daysDiff}
                   unit="г"
                   name="Ненасыщ. жиры"
-                  onClick={() => handleNutrientClick(['fatMono', 'fatPoly'], 'Ненасыщенные жиры', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.fatMono, nutrientNumbers.fatPoly], 'Ненасыщ. жиры', 'г')}
                 />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.sugAdded ?? 0}
+                  currentValue={nutrients[nutrientNumbers.sugAdded] ?? 0}
                   desiredValue={30 * daysDiff}
                   unit="г"
                   name="Сахар"
                   reverseProgress={true}
-                  onClick={() => handleNutrientClick(['sugAdded'], 'Сахар', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.sugAdded], 'Сахар', 'г')}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.chol ?? 0}
+                  currentValue={nutrients[nutrientNumbers.chol] ?? 0}
                   desiredValue={0}
                   unit="мг"
                   name="Холестерин"
@@ -155,11 +155,11 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
               </Col>
               <Col span={8}>
                 <Nutrient 
-                  currentValue={nutrients.fiber ?? 0}
+                  currentValue={nutrients[nutrientNumbers.fiber] ?? 0}
                   desiredValue={30 * daysDiff}
                   unit="г"
                   name="Клетчатка"
-                  onClick={() => handleNutrientClick(['fiber'], 'Клетчатка', 'г')}
+                  onClick={() => handleNutrientClick([nutrientNumbers.fiber], 'Клетчатка', 'г')}
                 />
               </Col>
             </Row>
@@ -168,7 +168,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                 <Row gutter={16}>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.cal ?? 0}
+                      currentValue={nutrients[nutrientNumbers.cal] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="Кальций"
@@ -176,7 +176,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.iron ?? 0}
+                      currentValue={nutrients[nutrientNumbers.iron] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="Железо"
@@ -184,7 +184,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.mag ?? 0}
+                      currentValue={nutrients[nutrientNumbers.mag] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="Магний"
@@ -192,7 +192,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.iod ?? 0}
+                      currentValue={nutrients[nutrientNumbers.iod] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="Йод"
@@ -200,7 +200,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.zinc ?? 0}
+                      currentValue={nutrients[nutrientNumbers.zinc] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="Цинк"
@@ -208,17 +208,17 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient     
-                      currentValue={nutrients.sod ?? 0}
+                      currentValue={nutrients[nutrientNumbers.sod] ?? 0}
                       desiredValue={2000 * daysDiff}
                       unit="мг"
                       name="Натрий"
                       reverseProgress={true}
-                      onClick={() => handleNutrientClick(['sod'], 'Натрий', 'мг')}
+                      onClick={() => handleNutrientClick([nutrientNumbers.sod], 'Натрий', 'мг')}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={sumValues(nutrients.epa, nutrients.dha, nutrients.dpa) ?? 0}
+                      currentValue={sumValues(nutrients[nutrientNumbers.epa] ?? 0, nutrients[nutrientNumbers.dha] ?? 0, nutrients[nutrientNumbers.dpa] ?? 0) ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="Омега-3"
@@ -232,7 +232,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                 <Row gutter={16}>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vA ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vA] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="A"
@@ -240,7 +240,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vD ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vD] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="D"
@@ -248,7 +248,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vE ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vE] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="E"
@@ -256,7 +256,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vC ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vC] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="C"
@@ -264,7 +264,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vK1 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vK1] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="K1"
@@ -272,7 +272,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vK2 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vK2] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="K2"
@@ -280,7 +280,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB1 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB1] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="B1"
@@ -288,7 +288,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB2 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB2] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="B2"
@@ -296,7 +296,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB3 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB3] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="B3"
@@ -304,7 +304,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB5 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB5] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="B5"
@@ -312,7 +312,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB6 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB6] ?? 0}
                       desiredValue={0}
                       unit="мг"
                       name="B6"
@@ -320,7 +320,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB9 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB9] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="B9"
@@ -328,7 +328,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                   </Col>
                   <Col span={8}>
                     <Nutrient 
-                      currentValue={nutrients.vB12 ?? 0}
+                      currentValue={nutrients[nutrientNumbers.vB12] ?? 0}
                       desiredValue={0}
                       unit="мкг"
                       name="B12"
@@ -349,7 +349,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
           nutrientName={modalState.nutrientName}
           nutrientUnit={modalState.nutrientUnit}
           meals={meals}
-          nutrientKeys={modalState.nutrientKeys}
+          nutrientNumbers={modalState.nutrientNumbers}
         />
       )}
     </Card>

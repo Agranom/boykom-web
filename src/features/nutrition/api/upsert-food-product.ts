@@ -1,12 +1,13 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import httpClient from '../../../services/http-client';
-import { FoodProductType, Nutrients } from '@agranom/boykom-common';
+import { FoodProductType } from '@agranom/boykom-common';
+import { FoodNutrient } from '../models/food-nutrient.interface';
 
 export interface UpsertFoodProductPayload {
   name: string;
   type: FoodProductType;
   searchName: string;
-  nutrientsPer100g: Nutrients;
+  nutrientsPer100g: FoodNutrient[];
 }
 
 export const upsertFoodProduct = async (

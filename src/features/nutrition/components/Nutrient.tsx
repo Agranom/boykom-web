@@ -189,6 +189,7 @@ export const Nutrient: React.FC<NutrientProps> = ({
           </div>
         </div>
       </div>
+      
     </Tooltip>
   );
 };
