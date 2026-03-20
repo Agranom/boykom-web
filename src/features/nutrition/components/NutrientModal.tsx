@@ -1,12 +1,8 @@
 import React from 'react';
 import { Modal, List, Typography } from 'antd';
 import { Meal, MealItem } from '../models/meal.interface';
-import { Nutrients } from '@agranom/boykom-common';
 
 const { Text } = Typography;
-
-type NutrientKey = keyof Pick<Nutrients, 'kcal' | 'prot' | 'carbo' | 'fat'>;
-type MicroNutrientKey = keyof Omit<Nutrients, 'kcal' | 'prot' | 'carbo' | 'fat'>;
 
 interface NutrientModalProps {
   isOpen: boolean;
@@ -14,7 +10,7 @@ interface NutrientModalProps {
   nutrientName: string;
   nutrientUnit: string;
   meals: Meal[];
-  nutrientKeys: Array<keyof Nutrients>;
+  nutrientNumbers: Array<number>;
 }
 
 interface MealItemWithNutrient {
@@ -26,22 +22,21 @@ interface MealItemWithNutrient {
 /**
  * Gets the nutrient value from a meal item
  */
-const getNutrientValue = (item: MealItem, nutrientKey: keyof Nutrients): number => {
-  const value = item[nutrientKey as NutrientKey] || item.microNutrients?.[nutrientKey as MicroNutrientKey];
-  return typeof value === 'number' ? value : 0;
+const getNutrientValue = (item: MealItem, nutrientNumber: number): number => {
+  return item.nutrients?.find(nutrient => nutrient.nutrientNumber === nutrientNumber)?.amount || 0;
 };
 
 /**
  * Filters meal items that have the specified nutrient value > 0
  */
-const getMealItemsWithNutrient = (meals: Meal[], nutrientKey: Array<keyof Nutrients>): Array<MealItemWithNutrient> => {
+const getMealItemsWithNutrient = (meals: Meal[], nutrientNumbers: Array<number>): Array<MealItemWithNutrient> => {
   const itemsWithNutrient: Array<MealItemWithNutrient> = [];
   
   meals.forEach(meal => {
     if (meal.items) {
       meal.items.forEach(item => {
-        nutrientKey.forEach(key => {
-          const nutrientValue = getNutrientValue(item, key);
+        nutrientNumbers.forEach(number => {
+          const nutrientValue = getNutrientValue(item, number);
           if (nutrientValue > 0) {
             itemsWithNutrient.push({
               mealItem: item,
@@ -63,9 +58,9 @@ export const NutrientModal: React.FC<NutrientModalProps> = ({
   nutrientName,
   nutrientUnit,
   meals,
-  nutrientKeys
+  nutrientNumbers
 }) => {
-  const itemsWithNutrient = getMealItemsWithNutrient(meals, nutrientKeys);
+  const itemsWithNutrient = getMealItemsWithNutrient(meals, nutrientNumbers);
 
 
   return (

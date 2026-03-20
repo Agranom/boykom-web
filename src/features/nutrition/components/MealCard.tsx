@@ -6,6 +6,7 @@ import { mealTypeOptions } from '../const/meal-type-options';
 import dayjs from 'dayjs';
 import { useDeleteMeal } from '../api/delete-meal';
 import { AddMealModal } from './AddMealModal';
+import { nutrientNumbers } from '@agranom/boykom-common';
 
 const { Text } = Typography;
 
@@ -82,7 +83,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
                   <ul className="list-disc pl-5">
                     {meal.items.map((item, index) => (
                       <li key={index} className="mb-1">
-                        {item.name} ({item.grams}г) - {item.kcal} ккал
+                        {item.name} ({item.grams}г) - {item.nutrients?.find((n) => n.nutrientNumber === nutrientNumbers.kcal)?.amount ?? '-'} ккал
                       </li>
                     ))}
                   </ul>
