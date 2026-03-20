@@ -7,9 +7,12 @@ export const queryKeys = {
     recipes: 'recipes',
     analytics: 'analytics',
     foodsAutocomplete: 'foods-autocomplete',
-    foodNutrients: 'food-nutrients',
+    nutrients: 'nutrients',
+    dishNutrients: 'dish-nutrients',
+    foodProductNutrients: 'food-product-nutrients',
     meals: 'meals',
     mealDetails: 'meal-details',
     mealTemplates: 'meal-templates',
     nutritionSummary: 'nutrition-summary',
+    productByBarcode: 'product-by-barcode',
 }

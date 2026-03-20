@@ -23,6 +23,7 @@ export const MealTemplates: React.FC<MealTemplateProps> = ({onSelect}) => {
   return (
     <Select
       showSearch
+      optionFilterProp='label'
       className="w-full"
       options={options}
       onSelect={onSelect}

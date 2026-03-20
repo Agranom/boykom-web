@@ -1,4 +1,5 @@
-import { MealItemSourceType, MealType } from '@agranom/boykom-common';
+import { MealItemSourceType, MealType, Nutrients } from '@agranom/boykom-common';
+import { FoodNutrient } from './food-nutrient.interface';
 
 /**
  * Meal item payload
@@ -19,6 +20,7 @@ export interface CreateMealPayload {
   eatenAt: Date;
   items: CreateMealItemPayload[];
   isTemplate: boolean;
+  previousTemplateId?: string;
 }
 
 
@@ -27,10 +29,7 @@ export interface MealItem {
   grams: number;
   sourceKey: string;
   sourceType: MealItemSourceType;
-  kcal: number | null;
-  prot: number | null;
-  carbo: number | null;
-  fat: number | null;
+  nutrients?: FoodNutrient[];
 }
 
 export interface Meal {

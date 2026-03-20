@@ -1,16 +1,17 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../../const/query-keys';
 import httpClient from '../../../services/http-client';
-import { Nutrients } from '@agranom/boykom-common';
 
+export type NutrientsSummary = Record<number, number>;
 interface GetNutritionSummaryParams {
   from: Date;
   to: Date;
 }
 
 interface NutritionSummaryResponse {
-  nutrients: Nutrients;
+  nutrients: NutrientsSummary;
 }
+
 
 /**
  * Fetches nutrition summary from the API
@@ -27,7 +28,7 @@ export const getNutritionSummary = async (params: GetNutritionSummaryParams): Pr
  */
 export const useGetNutritionSummary = (params: GetNutritionSummaryParams): UseQueryResult<NutritionSummaryResponse, unknown> => {
   return useQuery({
-    queryKey: [queryKeys.nutritionSummary],
+    queryKey: [queryKeys.nutritionSummary, params],
     queryFn: () => getNutritionSummary(params),
   });
 };

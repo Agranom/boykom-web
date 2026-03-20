@@ -6,7 +6,7 @@ import { CreateMealItemPayload, Meal } from '../models/meal.interface';
 import { MealItemSourceType, MealType } from '@agranom/boykom-common';
 import { mealTypeOptions } from '../const/meal-type-options';
 import { validationMessages } from '../../../translations/validation-messages.translations';
-import MenuItemForm from './MenuItemForm';
+import MealItemForm from './MealItemForm';
 import { useAlert } from '../../../hooks/use-alert';
 import { useCreateMeal } from '../api/create-meal';
 import { MealTemplates } from './MealTemplates';
@@ -74,7 +74,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
         ? {
           datetime: defaultDatetime,
           title: meal.title,
-          type: meal.type,
+          type: selectedType ?? meal.type,
           items: (meal.items || []).map(item => ({
             key: item.sourceKey,
             value: item.name,
@@ -133,6 +133,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       eatenAt: datetime.toDate(),
       items: mealItems,
       isTemplate,
+      previousTemplateId: mealTemplateId,
     });
   };
   const handleClose = (): void => {
@@ -203,7 +204,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           {(fields, { add, remove }) => (
             <>
               {fields.map((field) => (
-                <MenuItemForm
+                <MealItemForm
                   key={field.key}
                   field={field}
                   remove={remove}
@@ -227,7 +228,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
           name="isTemplate"
           valuePropName="checked"
         >
-          <Checkbox>Сохранить как шаблон</Checkbox>
+          <Checkbox>{mealTemplateId ? 'Обновить' : 'Сохранить как'} шаблон</Checkbox>
         </Form.Item>
       </Form>
     </Modal>
