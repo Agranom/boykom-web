@@ -127,6 +127,7 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
           controls={false}
           keyboard={true}
           stringMode={false}
+          type='number'
         />
       </Form.Item>
       {foodNutrients && <MealItemNutrients data={foodNutrients} portionSize={portionSize} />}
