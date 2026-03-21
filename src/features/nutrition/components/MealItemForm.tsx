@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Card, Form, Radio, Space } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Button, Card, Form, InputNumber } from 'antd';
 import { MinusCircleOutlined, BarcodeOutlined } from '@ant-design/icons';
 import { FoodsAutocomplete } from './FoodsAutocomplete';
 import { FoodAutocomplete } from '../models/nutrition.interface';
 import { validationMessages } from '../../../translations/validation-messages.translations';
 import AddUserDishModal from './AddUserDishModal';
 import { UserDish } from '../models/user-dish.interface';
-import { portionOptions } from '../const/portion-options';
-import { PortionSizeSlider } from './PortionSizeSlider';
 import { useGetDishNutrients } from '../api/get-dish-nutrients';
 import { useGetFoodProductNutrients } from '../api/get-food-product-nutrients';
 import MealItemNutrients from './MealItemNutrients';
@@ -25,9 +23,9 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
   const formItemValue = Form.useWatch(['items', field.name], form);
   const portionSize = formItemValue?.portionSize;
   const isUserDish = formItemValue?.isUserDish;
-  const [sliderValue, setSliderValue] = React.useState<number>(portionSize);
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
   const [isBarcodeScanerOpen, setIsBarcodeScanerOpen] = useState<boolean>(false);
+  const portionInputRef = useRef<HTMLInputElement>(null);
   
   // Use appropriate API based on whether it's a user dish or food product
   const { data: dishNutrients } = useGetDishNutrients(
@@ -42,23 +40,18 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
   // Use the appropriate nutrients data
   const foodNutrients = isUserDish ? dishNutrients : foodProductNutrients;
 
-  useEffect(() => {
-    if (!sliderValue) {
-      setSliderValue(portionSize);
-    }
-  }, [portionSize]);
-
-
   const handleSelectProduct = (product: FoodAutocomplete): void => {
     form.setFieldValue(['items', field.name, 'key'], product.key);
     form.setFieldValue(['items', field.name, 'value'], product.value);
     form.setFieldValue(['items', field.name, 'isUserDish'], product.isUserDish);
-  };
-  const handleSliderChange = (value: number): void => {
-    setSliderValue(value);
-  };
-  const handleSliderComplete = (value: number): void => {
-    form.setFieldValue(['items', field.name, 'portionSize'], value);
+    
+    // Focus and select the portion size input after product selection
+    setTimeout(() => {
+      if (portionInputRef.current) {
+        portionInputRef.current.focus();
+        portionInputRef.current.select();
+      }
+    }, 100);
   };
   const handleCreateDish = () => {
     setIsAddDishModalOpen(true);
@@ -81,9 +74,6 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
     if (product) {
       handleSelectProduct({ key: product.barcode, value: product.productName, isUserDish: false });
     }
-  };
-  const handlePortionSizeChange = (value: number) => {
-    setSliderValue(value);
   };
 
   return (
@@ -124,26 +114,21 @@ const MealItemForm: React.FC<FoodItemFormProps> = ({ field, remove, isFirstItem,
       </Form.Item>
       <Button className='w-full' onClick={handleScanBarcode}><BarcodeOutlined /> Поиск по штрихкоду</Button>
       <Form.Item
-        label="Порция"
+        label="Порция (г)"
         name={[field.name, 'portionSize']}
         rules={[{ required: true, message: validationMessages.required }]}
       >
-        <Radio.Group onChange={(e) => handlePortionSizeChange(e.target.value)}>
-          <Space>
-            {portionOptions.map((option) => (
-              <Radio key={option.value} value={option.value}>
-                {option.label}
-              </Radio>
-            ))}
-          </Space>
-        </Radio.Group>
-
+        <InputNumber
+          ref={portionInputRef}
+          min={1}
+          max={9999}
+          placeholder="Введите вес в граммах"
+          className="w-full"
+          controls={false}
+          keyboard={true}
+          stringMode={false}
+        />
       </Form.Item>
-      <PortionSizeSlider
-        value={sliderValue}
-        onChange={handleSliderChange}
-        onChangeComplete={handleSliderComplete}
-      />
       {foodNutrients && <MealItemNutrients data={foodNutrients} portionSize={portionSize} />}
       {enableCreateDish && isAddDishModalOpen && <AddUserDishModal
         onCreateSuccess={handleDishCreateSuccess}

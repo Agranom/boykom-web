@@ -26,7 +26,7 @@ interface MealFormValues {
 }
 
 
-const DEFAULT_PORTION_SIZE = 250;
+const DEFAULT_PORTION_SIZE = 100;
 
 interface AddMealModalProps {
   onClose: () => void;
