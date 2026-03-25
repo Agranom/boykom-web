@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Tooltip } from 'antd';
 import styles from './Nutrient.module.scss';
+import { NutrientsMetadata } from '../models/nutrients-metadata.interface';
 
 const { Text } = Typography;
 
@@ -9,10 +10,8 @@ interface NutrientProps {
   currentValue: number;
   /** Desired/target nutrient value */
   desiredValue: number;
-  /** Unit of measurement (e.g., 'kcal', 'g', 'mg') */
-  unit: string;
-  /** Name of the nutrient */
-  name: string;
+  /** Nutrient metadata */
+  metadata: NutrientsMetadata;
   /** Size of the circle in pixels */
   size?: number;
   reverseProgress?: boolean;
@@ -87,8 +86,7 @@ const calculateReverseColor = (progress: number): string => {
 export const Nutrient: React.FC<NutrientProps> = ({
   currentValue,
   desiredValue,
-  unit,
-  name,
+  metadata,
   size = 120,
   reverseProgress = false,
   onClick,
@@ -125,7 +123,7 @@ export const Nutrient: React.FC<NutrientProps> = ({
   const strokeWidth = isMobile ? 10 : 12; // Slightly thinner stroke on mobile
 
   const tooltipTitle = desiredValue > 0 ? (
-    <p>{Math.round(progressPercentage)}% из {desiredValue.toLocaleString()} {unit}</p>
+    <p>{Math.round(progressPercentage)}% из {desiredValue.toLocaleString()} {metadata.unit}</p>
   ) : (
     <p>Нет данных</p>
   );
@@ -178,13 +176,13 @@ export const Nutrient: React.FC<NutrientProps> = ({
         <div className={styles.centerContent}>
           <div className={styles.currentValue}>
             <Text type="secondary" className={styles.nutrientName}>
-              {name}
+              {metadata.name}
             </Text>
             <Text strong className={styles.valueText}>
               {currentValue.toLocaleString()}
             </Text>
             <Text type="secondary" className={styles.unitText}>
-              {unit}
+              {metadata.unit}
             </Text>
           </div>
         </div>
