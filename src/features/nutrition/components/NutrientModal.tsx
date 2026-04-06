@@ -10,7 +10,7 @@ interface NutrientModalProps {
   nutrientName: string;
   nutrientUnit: string;
   meals: Meal[];
-  nutrientNumbers: Array<number>;
+  nutrientNumber: number;
 }
 
 interface MealItemWithNutrient {
@@ -29,22 +29,20 @@ const getNutrientValue = (item: MealItem, nutrientNumber: number): number => {
 /**
  * Filters meal items that have the specified nutrient value > 0
  */
-const getMealItemsWithNutrient = (meals: Meal[], nutrientNumbers: Array<number>): Array<MealItemWithNutrient> => {
+const getMealItemsWithNutrient = (meals: Meal[], nutrientNumber: number): Array<MealItemWithNutrient> => {
   const itemsWithNutrient: Array<MealItemWithNutrient> = [];
   
   meals.forEach(meal => {
     if (meal.items) {
       meal.items.forEach(item => {
-        nutrientNumbers.forEach(number => {
-          const nutrientValue = getNutrientValue(item, number);
-          if (nutrientValue > 0) {
-            itemsWithNutrient.push({
-              mealItem: item,
-              mealTitle: meal.title,
-              nutrientValue: nutrientValue
-            });
-          }
-        });
+        const nutrientValue = getNutrientValue(item, nutrientNumber);
+        if (nutrientValue > 0) {
+          itemsWithNutrient.push({
+            mealItem: item,
+            mealTitle: meal.title,
+            nutrientValue: nutrientValue
+          });
+        }
       });
     }
   });
@@ -58,9 +56,9 @@ export const NutrientModal: React.FC<NutrientModalProps> = ({
   nutrientName,
   nutrientUnit,
   meals,
-  nutrientNumbers
+  nutrientNumber
 }) => {
-  const itemsWithNutrient = getMealItemsWithNutrient(meals, nutrientNumbers);
+  const itemsWithNutrient = getMealItemsWithNutrient(meals, nutrientNumber);
 
 
   return (

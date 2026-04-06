@@ -3,6 +3,7 @@ import { Card, Space, Typography, Spin, Row, Col, Collapse } from 'antd';
 import { Dayjs } from 'dayjs';
 import { NutrientsSummary, useGetNutritionSummary } from '../api/get-nutrition-summary';
 import { useGetMeals } from '../api/get-meals';
+import { useGetNutrientsMetadata } from '../api/get-nutrients-metadata';
 import { Nutrient } from './Nutrient';
 import { NutrientModal } from './NutrientModal';
 import { dateFormat } from '../const/date-format';
@@ -29,7 +30,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     isOpen: boolean;
     nutrientName: string;
     nutrientUnit: string;
-    nutrientNumbers: Array<number>;
+    nutrientNumber: number;
   } | null>(null);
 
   const { data, isLoading } = useGetNutritionSummary({
@@ -44,6 +45,8 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     to: endDate.toDate(),
   });
 
+  const { data: nutrientsMetadata = {}, isLoading: isMetadataLoading } = useGetNutrientsMetadata();
+
   const nutrients: NutrientsSummary = data?.nutrients || {};
   const selectedDateRange = useMemo(() => daysDiff > 1 ?
    `${startDate.format(dateFormat)} - ${endDate.format(dateFormat)}` : startDate.format(dateFormat), [daysDiff, startDate, endDate]);
@@ -51,12 +54,15 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     /**
    * Handles nutrient click to open modal with meal items
    */
-    const handleNutrientClick = (nutrientNumbers: Array<number>, nutrientName: string, nutrientUnit: string): void => {
+    const handleNutrientClick = (nutrientNumber: number): void => {
+      const metadata = nutrientsMetadata[nutrientNumber];
+      if (!metadata) return;
+      
       setModalState({
         isOpen: true,
-        nutrientName,
-        nutrientUnit,
-        nutrientNumbers
+        nutrientName: metadata.name,
+        nutrientUnit: metadata.unit,
+        nutrientNumber
       });
     };
   
@@ -71,98 +77,104 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
     <Card>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <Title level={4}>Сводка по питанию за {selectedDateRange}</Title>
-        {isLoading ? (
+        {isLoading || isMetadataLoading ? (
           <Spin size="large" />
         ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={24} style={{ textAlign: 'center' }}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.kcal] ?? 0}
                   desiredValue={2800 * daysDiff}
-                  unit="ккал"
-                  name="Энергия"
-                  onClick={() => handleNutrientClick([nutrientNumbers.kcal], 'Энергия', 'ккал')}
+                  metadata={nutrientsMetadata[nutrientNumbers.kcal]}
+                  onClick={() => handleNutrientClick(nutrientNumbers.kcal)}
                 />
               </Col>
+            </Row>
+            <Row gutter={16}>
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.prot] ?? 0}
                   desiredValue={140 * daysDiff}
-                  unit="г"
-                  name="Белки"
-                  onClick={() => handleNutrientClick([nutrientNumbers.prot], 'Белки', 'г')}
+                  metadata={nutrientsMetadata[nutrientNumbers.prot]}
+                  onClick={() => handleNutrientClick(nutrientNumbers.prot)}
+                />
+              </Col>
+              <Col span={8}>
+                <Nutrient 
+                  currentValue={nutrients[nutrientNumbers.fat] ?? 0}
+                  desiredValue={85 * daysDiff}
+                  metadata={nutrientsMetadata[nutrientNumbers.fat]}
+                  onClick={() => handleNutrientClick(nutrientNumbers.fat)}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.carbo] ?? 0}
                   desiredValue={370 * daysDiff}
-                  unit="г"
-                  name="Углеводы"
-                  onClick={() => handleNutrientClick([nutrientNumbers.carbo], 'Углеводы', 'г')}
+                  metadata={nutrientsMetadata[nutrientNumbers.carbo]}
+                  onClick={() => handleNutrientClick(nutrientNumbers.carbo)}
                 />
               </Col>
             </Row>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Nutrient 
-                  currentValue={nutrients[nutrientNumbers.fat] ?? 0}
-                  desiredValue={85 * daysDiff}
-                  unit="г"
-                  name="Жиры"
-                  onClick={() => handleNutrientClick([nutrientNumbers.fat], 'Жиры', 'г')}
-                />
-              </Col>
-              <Col span={8}>
-                <Nutrient 
-                  currentValue={nutrients[nutrientNumbers.fatSaturated] ?? 0}
-                  desiredValue={30 * daysDiff}
-                  unit="г"
-                  name="Насыщ. жиры"
-                  reverseProgress={true}
-                  onClick={() => handleNutrientClick([nutrientNumbers.fatSaturated], 'Насыщ. жиры', 'г')}
-                />
-              </Col>
-              <Col span={8}>
-                <Nutrient 
-                  currentValue={(nutrients[nutrientNumbers.fatMono] ?? 0) + (nutrients[nutrientNumbers.fatPoly] ?? 0)}
-                  desiredValue={60 * daysDiff}
-                  unit="г"
-                  name="Ненасыщ. жиры"
-                  onClick={() => handleNutrientClick([nutrientNumbers.fatMono, nutrientNumbers.fatPoly], 'Ненасыщ. жиры', 'г')}
-                />
-              </Col>
-            </Row>
+            
             <Row gutter={16}>
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.sugAdded] ?? 0}
                   desiredValue={30 * daysDiff}
-                  unit="г"
-                  name="Сахар"
+                  metadata={nutrientsMetadata[nutrientNumbers.sugAdded]}
                   reverseProgress={true}
-                  onClick={() => handleNutrientClick([nutrientNumbers.sugAdded], 'Сахар', 'г')}
+                  onClick={() => handleNutrientClick(nutrientNumbers.sugAdded)}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.chol] ?? 0}
                   desiredValue={0}
-                  unit="мг"
-                  name="Холестерин"
+                  metadata={nutrientsMetadata[nutrientNumbers.chol]}
                 />
               </Col>
               <Col span={8}>
                 <Nutrient 
                   currentValue={nutrients[nutrientNumbers.fiber] ?? 0}
                   desiredValue={30 * daysDiff}
-                  unit="г"
-                  name="Клетчатка"
-                  onClick={() => handleNutrientClick([nutrientNumbers.fiber], 'Клетчатка', 'г')}
+                  metadata={nutrientsMetadata[nutrientNumbers.fiber]}
+                  onClick={() => handleNutrientClick(nutrientNumbers.fiber)}
                 />
               </Col>
             </Row>
+            <Collapse>
+              <Panel key="fats" header="Жиры">
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients[nutrientNumbers.fatSaturated] ?? 0}
+                      desiredValue={30 * daysDiff}
+                      metadata={nutrientsMetadata[nutrientNumbers.fatSaturated]}
+                      reverseProgress={true}
+                      onClick={() => handleNutrientClick(nutrientNumbers.fatSaturated)}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients[nutrientNumbers.fatMono] ?? 0}
+                      desiredValue={0}
+                      metadata={nutrientsMetadata[nutrientNumbers.fatMono]}
+                      onClick={() => handleNutrientClick(nutrientNumbers.fatMono)}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Nutrient 
+                      currentValue={nutrients[nutrientNumbers.fatPoly] ?? 0}
+                      desiredValue={0}
+                      metadata={nutrientsMetadata[nutrientNumbers.fatPoly]}
+                      onClick={() => handleNutrientClick(nutrientNumbers.fatPoly)}
+                    />
+                  </Col>
+                </Row>
+              </Panel>
+            </Collapse>
             <Collapse>
               <Panel key="1" header="Минералы">
                 <Row gutter={16}>
@@ -170,58 +182,51 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.cal] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="Кальций"
+                      metadata={nutrientsMetadata[nutrientNumbers.cal]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.iron] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="Железо"
+                      metadata={nutrientsMetadata[nutrientNumbers.iron]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.mag] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="Магний"
+                      metadata={nutrientsMetadata[nutrientNumbers.mag]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.iod] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="Йод"
+                      metadata={nutrientsMetadata[nutrientNumbers.iod]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.zinc] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="Цинк"
+                      metadata={nutrientsMetadata[nutrientNumbers.zinc]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient     
                       currentValue={nutrients[nutrientNumbers.sod] ?? 0}
                       desiredValue={2000 * daysDiff}
-                      unit="мг"
-                      name="Натрий"
+                      metadata={nutrientsMetadata[nutrientNumbers.sod]}
                       reverseProgress={true}
-                      onClick={() => handleNutrientClick([nutrientNumbers.sod], 'Натрий', 'мг')}
+                      onClick={() => handleNutrientClick(nutrientNumbers.sod)}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={sumValues(nutrients[nutrientNumbers.epa] ?? 0, nutrients[nutrientNumbers.dha] ?? 0, nutrients[nutrientNumbers.dpa] ?? 0) ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="Омега-3"
+                      metadata={{ name: 'Омега-3', unit: 'мг', order: 999 }}
                     />
                   </Col>
                 </Row>
@@ -234,104 +239,91 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vA] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="A"
+                      metadata={nutrientsMetadata[nutrientNumbers.vA]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vD] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="D"
+                      metadata={nutrientsMetadata[nutrientNumbers.vD]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vE] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="E"
+                      metadata={nutrientsMetadata[nutrientNumbers.vE]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vC] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="C"
+                      metadata={nutrientsMetadata[nutrientNumbers.vC]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vK1] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="K1"
+                      metadata={nutrientsMetadata[nutrientNumbers.vK1]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vK2] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="K2"
+                      metadata={nutrientsMetadata[nutrientNumbers.vK2]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB1] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="B1"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB1]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB2] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="B2"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB2]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB3] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="B3"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB3]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB5] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="B5"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB5]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB6] ?? 0}
                       desiredValue={0}
-                      unit="мг"
-                      name="B6"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB6]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB9] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="B9"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB9]}
                     />
                   </Col>
                   <Col span={8}>
                     <Nutrient 
                       currentValue={nutrients[nutrientNumbers.vB12] ?? 0}
                       desiredValue={0}
-                      unit="мкг"
-                      name="B12"
+                      metadata={nutrientsMetadata[nutrientNumbers.vB12]}
                     />
                   </Col>
                 </Row>
@@ -349,7 +341,7 @@ const NutritionDashboard: React.FC<NutritionDashboardProps> = ({ startDate, endD
           nutrientName={modalState.nutrientName}
           nutrientUnit={modalState.nutrientUnit}
           meals={meals}
-          nutrientNumbers={modalState.nutrientNumbers}
+          nutrientNumber={modalState.nutrientNumber}
         />
       )}
     </Card>
