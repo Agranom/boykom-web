@@ -167,10 +167,8 @@ const nutrientMetadataMapRu: Record<number, {name: string, order: number}> = {
 /**
  * Fetches all nutrients from the API
  */
-const getNutrients = async (): Promise<Nutrient[]> => {
-    return httpClient
-        .get('nutrients')
-        .json();
+const getNutrients = async (nutrientNumbers?: number[]): Promise<Nutrient[]> => {
+    return httpClient.get(`nutrients?nutrientNumbers=${nutrientNumbers?.join(',')}`).json();
 };
 
 /**
@@ -200,7 +198,7 @@ export const useGetNutrientsMetadata = (): UseQueryResult<Record<number, Nutrien
     return useQuery({
         queryKey: [queryKeys.nutrientsMetadata],
         queryFn: async () => {
-            const nutrients = await getNutrients();
+            const nutrients = await getNutrients(Object.values(nutrientNumbers));
             return transformToNutrientsMetadata(nutrients);
         },
         staleTime: 5 * 60 * 1000,

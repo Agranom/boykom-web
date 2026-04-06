@@ -4,9 +4,8 @@ import { ScanOutlined } from '@ant-design/icons';
 import { Scanner, IDetectedBarcode } from '@yudiel/react-qr-scanner';
 import { useGetProductByBarcode } from '../api/get-product-by-barcode';
 import { ExternalProduct } from '../models/external-product.interface';
-import { useUpsertFoodProduct } from '../api/upsert-food-product';
-import { useAlert } from '../../../hooks/use-alert';
-import { FoodProductType, nutrientNumbers } from '@agranom/boykom-common';
+import { useGetNutrientsMetadata } from '../api/get-nutrients-metadata';
+import { ProductView } from './ProductView';
 
 const { Text } = Typography;
 type ViewMode = 'scanner' | 'product';
@@ -33,24 +32,38 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
   const [requestedBarcode, setRequestedBarcode] = useState<string | null>(null);
   const [isScannerEnabled, setIsScannerEnabled] = useState<boolean>(true);
   const [viewMode, setViewMode] = useState<ViewMode>('scanner');
-  const [searchName, setSearchName] = useState<string>('');
-  const { data: product, isFetching } = useGetProductByBarcode(requestedBarcode, {
-    onError: () => {
-      setRequestedBarcode(null);
-    },
-  });
-  const { isLoading: isUpserting, mutate: upsertProduct } = useUpsertFoodProduct();
-  const { showError } = useAlert();
+  const [nutrientValues, setNutrientValues] = useState<Record<number, number | null>>({});
+  const { data: product, isFetching } = useGetProductByBarcode(requestedBarcode);
+  const { data: nutrientsMetadata } = useGetNutrientsMetadata();
 
-  const formatProductName = useCallback((value: Pick<ExternalProduct, 'name' | 'brand'>): string => {
-    return `${value.name} (${value.brand})`;
-  }, []);
+  const hasProduct = !!product;
 
   useEffect(() => {
-    if (product != null) {
+    if (hasProduct) {
       setViewMode('product');
+      // Initialize nutrient values from product data
+      const initialNutrients: Record<number, number | null> = {};
+      if (nutrientsMetadata) {
+        Object.keys(nutrientsMetadata).forEach(nutrientNumberStr => {
+          const nutrientNumber = Number(nutrientNumberStr);
+          initialNutrients[nutrientNumber] = product.nutrientsPer100g[nutrientNumber] ?? null;
+        });
+      }
+      setNutrientValues(initialNutrients);
+    } else if (requestedBarcode && !hasProduct) {
+      // Product not found, show manual entry mode
+      setViewMode('product');
+      // Initialize empty nutrient values
+      const emptyNutrients: Record<number, number | null> = {};
+      if (nutrientsMetadata) {
+        Object.keys(nutrientsMetadata).forEach(nutrientNumberStr => {
+          const nutrientNumber = Number(nutrientNumberStr);
+          emptyNutrients[nutrientNumber] = null;
+        });
+      }
+      setNutrientValues(emptyNutrients);
     }
-  }, [product]);
+  }, [product, requestedBarcode, nutrientsMetadata]);
 
   const executeBarcodeSearch = useCallback((barcode: string): void => {
     const normalizedBarcode = barcode.trim();
@@ -83,94 +96,49 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
     }
   }, [scannedBarcode]);
 
-  const handleSearchNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearchName(e.target.value);
+
+  const handleNutrientValueChange = useCallback((nutrientNumber: number, value: number | null): void => {
+    setNutrientValues(prev => ({
+      ...prev,
+      [nutrientNumber]: value,
+    }));
   }, []);
 
   const handleScanButtonClick = useCallback((): void => {
     executeBarcodeSearch(manualBarcode);
   }, [executeBarcodeSearch, manualBarcode]);
 
-  const handleAddProduct = useCallback((): void => {
-    if (product == null || requestedBarcode == null || !searchName.trim()) {
-      return;
-    }
-
-    const finalSearchName = formatProductName({name: searchName.trim(), brand: product.brand});
-
-    // Upsert the product to the database
-    upsertProduct(
-      {
-        productNumber: requestedBarcode,
-        data: {
-          name: formatProductName(product),
-          type: FoodProductType.Barcode,
-          searchName: finalSearchName,
-          nutrientsPer100g: Object.entries(product.nutrientsPer100g).map(([nutrientNumber, amount]) => ({
-            nutrientNumber: Number(nutrientNumber),
-            amount: amount ?? 0,
-          })),
-        },
-      },
-      {
-        onSuccess: () => {
-          onBarcodeDetected({
-            barcode: requestedBarcode,
-            productName: finalSearchName,
-          });
-          onClose();
-        },
-        onError: (error) => {
-          console.error('Error upserting product:', error);
-          showError('Не удалось добавить продукт');
-        },
-      },
-    );
-  }, [
-    formatProductName,
-    onBarcodeDetected,
-    product,
-    requestedBarcode,
-    searchName,
-    onClose,
-    upsertProduct,
-    showError,
-  ]);
+  const handleProductAdded = useCallback((addedProduct: { barcode: string; productName: string }): void => {
+    onBarcodeDetected(addedProduct);
+    onClose();
+  }, [onBarcodeDetected, onClose]);
 
   const handleReturnToScannerView = useCallback((): void => {
     setViewMode('scanner');
     setRequestedBarcode(null);
-    setSearchName('');
+    setNutrientValues({});
     setIsScannerEnabled(true);
   }, []);
 
   const isScanButtonEnabled = manualBarcode.trim().length > 0;
-  const hasProduct = product != null;
-  const productLabel = hasProduct ? formatProductName(product) : '';
+  const isManualEntry = requestedBarcode != null && product === null;
 
-  const footer = useMemo(() => viewMode === 'product' ?
-    [
-      <Button key="back" onClick={handleReturnToScannerView} disabled={isUpserting}>
-        Отмена
-      </Button>,
-      <Button
-        key="add"
-        type="primary"
-        onClick={handleAddProduct}
-        loading={isUpserting}
-        disabled={isUpserting}
-      >
-        Добавить
-      </Button>,
-    ] : [
-      <Button key="cancel" onClick={onClose}>
-        Отмена
-      </Button>,
-    ], [viewMode, handleReturnToScannerView, handleAddProduct, onClose, isUpserting]);
+  const footer = useMemo(() => viewMode === 'scanner' ? [
+    <Button key="cancel" onClick={onClose}>
+      Отмена
+    </Button>,
+  ] : null, [viewMode, onClose]);
+
+  const modalTitle = useMemo(() => {
+    if (viewMode === 'scanner') {
+      return 'Поиск продукта по штрихкоду';
+    }
+    return isManualEntry ? 'Добавление нового продукта' : 'Найденный продукт';
+  }, [viewMode, isManualEntry]);
 
   return (
     <Modal
-      title="Поиск продукта по штрихкоду"
+      title={modalTitle}
       open={true}
       onCancel={onClose}
       footer={footer}
@@ -237,65 +205,14 @@ export const BarcodeProduct: React.FC<BarcodeProductProps> = ({
         </div>
       )}
       {viewMode === 'product' && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Text strong>Оригинальное название продукта:</Text>
-            <Input value={productLabel} disabled size="large" />
-          </div>
-          <div className="space-y-2">
-            <Text strong>Пищевая ценность на 100г:</Text>
-            {hasProduct && product.nutrientsPer100g && (
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span>Калории:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.kcal] ?? '-'} ккал</span>
-                    </div>
-                    <div className="flex justify-between">  
-                      <span>Белки:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.prot] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Углеводы:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.carbo] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Жиры:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.fat] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Клетчатка:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.fiber] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Сахар:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.sug] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Соль:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.salt] ?? '-'}г</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Натрий:</span>
-                      <span className="font-medium">{product.nutrientsPer100g[nutrientNumbers.sod] ?? '-'}мг</span>
-                    </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Text strong>Название для поиска:</Text>
-            <Input
-              required
-              onChange={handleSearchNameChange}
-              placeholder="Например: Фруктовый йогурт"
-              size="large"
-              autoFocus
-              disabled={isUpserting}
-              status={!searchName ? 'error' : undefined}
-            />
-          </div>
-        </div>
+        <ProductView
+          product={product ?? null}
+          requestedBarcode={requestedBarcode}
+          nutrientValues={nutrientValues}
+          onNutrientValueChange={handleNutrientValueChange}
+          onProductAdded={handleProductAdded}
+          onCancel={handleReturnToScannerView}
+        />
       )}
     </Modal>
   );
